@@ -1,0 +1,38 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[dev-packages]
+
+bandit = "*"
+coverage = "*"
+django-naomi = "*"
+isort = "*"
+model-mommy = "*"
+
+
+[packages]
+
+django = "*"
+celery = {extras = ["redis"]}
+django-model-utils = "*"
+django-import-export = "*"
+python-decouple = "*"
+"psycopg2" = "*"
+brotlipy = "*"
+django-log-request-id = "*"
+dj-database-url = "*"
+gunicorn = "*"
+whitenoise = "*"
+psutil = "*"
+ipython = "*"
+urllib3 = ">=1.24.2"
+djangorestframework = "*"
+djangorestframework_simplejwt = "*"
+
+[requires]
+
+python_version = "3.6"

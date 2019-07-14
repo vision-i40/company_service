@@ -22,6 +22,7 @@ class CompanyViewSetTest(TestCase):
     
     def tearDown(self):
         self.active_user.delete()
+        self.unactive_user.delete()
 
     def test_companies_list_authentication_response_is_401_when_there_is_no_authentication_token(self):
         assert_unauthorized_with_no_token(self, '/v1/companies', 'list')
@@ -32,7 +33,7 @@ class CompanyViewSetTest(TestCase):
     def test_companies_list_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
         assert_unauthorized_with_unactive_user(self, 'v1/companies', self.unactive_token, 'list')
     
-    def test_companies_list_response_is_200_when_a_valid_authentication_token_is_provided(self):
+    def test_companies_list_response_is_200(self):
         company_view = views.CompanyViewSet.as_view({'get': 'list'})
         factory = APIRequestFactory()
 
@@ -56,7 +57,7 @@ class CompanyViewSetTest(TestCase):
     def test_company_details_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
         assert_unauthorized_with_unactive_user(self, '/v1/companies/{}'.format(self.first_company.id), self.unactive_token, 'retrieve')
     
-    def test_company_details_response_is_200_when_a_valid_authentication_token_is_provided(self):
+    def test_company_details_response_is_200(self):
         company_view = views.CompanyViewSet.as_view({'get': 'retrieve'})
         factory = APIRequestFactory()
 
@@ -82,8 +83,41 @@ class CompanyViewSetTest(TestCase):
 
         self.assertEqual(response.status_code, 404)
 
-def assert_unauthorized_with_no_token(testInstance, route, rousource):
-    company_view = views.CompanyViewSet.as_view({'get': rousource})
+    def test_add_company_authentication_response_is_401_when_there_is_no_authentication_token(self):
+        assert_unauthorized_with_no_token(self, '/v1/companies', 'list', 'post')
+
+    def test_add_company_authentication_response_is_401_when_an_invalid_authentication_token_is_provided(self):
+        assert_unauthorized_with_invalid_token(self, '/v1/companies', 'list', 'post')
+    
+    def test_add_company_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
+        assert_unauthorized_with_unactive_user(self, '/v1/companies', self.unactive_token, 'list', 'post')
+
+    def test_add_company__response_is_200(self):
+        company_view = views.CompanyViewSet.as_view({'post': 'create'})
+        factory = APIRequestFactory()
+
+        payload = {
+            'name': 'test company name',
+            'slug': 'test-company-name',
+            'is_active': True,
+        }
+
+        request = factory.post('/v1/companies', payload, format='json', HTTP_AUTHORIZATION='Bearer {}'.format(self.active_token))
+        response = company_view(request)
+
+        response.render()
+        response_dict = json.loads(response.content.decode('utf-8'))
+        
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(self.active_user.companies.all()), 3)
+        self.assertEqual(response_dict['name'], payload['name'])
+        self.assertEqual(response_dict['slug'], payload['slug'])
+        self.assertEqual(response_dict['is_active'], payload['is_active'])
+
+
+
+def assert_unauthorized_with_no_token(testInstance, route, rousource='list', method='get'):
+    company_view = views.CompanyViewSet.as_view({method: rousource})
     factory = APIRequestFactory()
 
     request = factory.get(route)
@@ -94,8 +128,8 @@ def assert_unauthorized_with_no_token(testInstance, route, rousource):
     response_dict = json.loads(response.content.decode('utf-8'))
     testInstance.assertTrue("credentials were not provided" in response_dict['detail'])
 
-def assert_unauthorized_with_invalid_token(testInstance, route, rousource):
-    company_view = views.CompanyViewSet.as_view({'get': rousource})
+def assert_unauthorized_with_invalid_token(testInstance, route, rousource='list', method='get'):
+    company_view = views.CompanyViewSet.as_view({method: rousource})
     factory = APIRequestFactory()
 
     request = factory.get(route, HTTP_AUTHORIZATION='Bearer invalid.token')
@@ -106,8 +140,8 @@ def assert_unauthorized_with_invalid_token(testInstance, route, rousource):
     response_dict = json.loads(response.content.decode('utf-8'))
     testInstance.assertTrue("Given token not valid" in response_dict['detail'])
 
-def assert_unauthorized_with_unactive_user(testInstance, route, unactiveToken, rousource):
-    company_view = views.CompanyViewSet.as_view({'get': rousource})
+def assert_unauthorized_with_unactive_user(testInstance, route, unactiveToken, rousource='list', method='get'):
+    company_view = views.CompanyViewSet.as_view({method: rousource})
     factory = APIRequestFactory()
 
     request = factory.get(route, HTTP_AUTHORIZATION='Bearer {}'.format(unactiveToken))

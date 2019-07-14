@@ -14,6 +14,10 @@ class CompanyViewSet(viewsets.ModelViewSet):
                         .objects\
                         .filter(user=self.request.user)\
                         .order_by('-updated_at')
+    
+    def perform_create(self, serializer):
+        company = serializer.save()
+        self.request.user.companies.add(company)
 
 class ProductionLineViewSet(viewsets.ModelViewSet):
     authentication_classes = (JWTAuthentication,)

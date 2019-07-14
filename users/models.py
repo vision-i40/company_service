@@ -9,7 +9,6 @@ from company_service.models import Company
 
 class User(AbstractBaseUser, PermissionsMixin, IndexedTimeStampedModel):
     companies = models.ManyToManyField(Company)
-
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=256)
     is_staff = models.BooleanField(

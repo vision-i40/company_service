@@ -2,6 +2,11 @@
 
 ### Running
 
+Copy the .env file from .env.example 
+```
+    cp .env.example .env
+```
+
 User pipenv shell:
 ```
     pipenv shell
@@ -10,6 +15,11 @@ User pipenv shell:
 Run dependencies with docker-compose:
 ```
     docker-compose up -d
+```
+
+Run the migrations:
+```
+    python manage.py migrate
 ```
 
 Run the application:
@@ -22,6 +32,11 @@ Run the application:
 Run dependencies with docker-compose:
 ```
     docker-compose up -d
+```
+
+Run the migrations:
+```
+    python manage.py migrate
 ```
 
 Run the tests:

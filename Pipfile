@@ -32,6 +32,7 @@ ipython = "*"
 urllib3 = ">=1.24.2"
 djangorestframework = "*"
 djangorestframework_simplejwt = "*"
+drf-nested-routers = "*"
 
 [requires]
 

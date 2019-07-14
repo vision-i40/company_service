@@ -23,43 +23,16 @@ class CompanyViewSetTest(TestCase):
     def tearDown(self):
         self.active_user.delete()
 
-    def test_authentication_response_is_401_when_there_is_no_authentication_token(self):
-        company_view = views.CompanyViewSet.as_view({'get': 'list'})
-        factory = APIRequestFactory()
+    def test_companies_list_authentication_response_is_401_when_there_is_no_authentication_token(self):
+        assert_unauthorized_with_no_token(self, '/v1/companies', 'list')
 
-        request = factory.get('/v1/companies')
-        response = company_view(request)
+    def test_companies_list_authentication_response_is_401_when_an_invalid_authentication_token_is_provided(self):
+        assert_unauthorized_with_invalid_token(self, '/v1/companies', 'list')
 
-        self.assertEqual(response.status_code, 401)
-        response.render()
-        response_dict = json.loads(response.content.decode('utf-8'))
-        self.assertTrue("credentials were not provided" in response_dict['detail'])
-
-    def test_authentication_response_is_401_when_an_invalid_authentication_token_is_provided(self):
-        company_view = views.CompanyViewSet.as_view({'get': 'list'})
-        factory = APIRequestFactory()
-
-        request = factory.get('/v1/companies', HTTP_AUTHORIZATION='Bearer invalid.token')
-        response = company_view(request)
-
-        self.assertEqual(response.status_code, 401)
-        response.render()
-        response_dict = json.loads(response.content.decode('utf-8'))
-        self.assertTrue("Given token not valid" in response_dict['detail'])
-
-    def test_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
-        company_view = views.CompanyViewSet.as_view({'get': 'list'})
-        factory = APIRequestFactory()
-
-        request = factory.get('/v1/companies', HTTP_AUTHORIZATION='Bearer {}'.format(self.unactive_token))
-        response = company_view(request)
-
-        self.assertEqual(response.status_code, 401)
-        response.render()
-        response_dict = json.loads(response.content.decode('utf-8'))
-        self.assertTrue("User is inactive" in response_dict['detail'])
+    def test_companies_list_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
+        assert_unauthorized_with_unactive_user(self, 'v1/companies', self.unactive_token, 'list')
     
-    def test_authentication_response_is_200_when_a_valid_authentication_token_is_provided(self):
+    def test_companies_list_response_is_200_when_a_valid_authentication_token_is_provided(self):
         company_view = views.CompanyViewSet.as_view({'get': 'list'})
         factory = APIRequestFactory()
 
@@ -73,4 +46,74 @@ class CompanyViewSetTest(TestCase):
         self.assertEqual(len(response_dict['results']), 2)
         self.assertEqual(response_dict['results'][0]['name'], self.second_company.name)
         self.assertEqual(response_dict['results'][1]['name'], self.first_company.name)
-        
+
+    def test_company_details_authentication_response_is_401_when_there_is_no_authentication_token(self):
+        assert_unauthorized_with_no_token(self, '/v1/companies/{}'.format(self.first_company.id), 'retrieve')
+
+    def test_company_details_authentication_response_is_401_when_an_invalid_authentication_token_is_provided(self):
+        assert_unauthorized_with_invalid_token(self, '/v1/companies/{}'.format(self.first_company.id), 'retrieve')
+
+    def test_company_details_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
+        assert_unauthorized_with_unactive_user(self, '/v1/companies/{}'.format(self.first_company.id), self.unactive_token, 'retrieve')
+    
+    def test_company_details_response_is_200_when_a_valid_authentication_token_is_provided(self):
+        company_view = views.CompanyViewSet.as_view({'get': 'retrieve'})
+        factory = APIRequestFactory()
+
+        request = factory.get('/v1/companies/{}'.format(self.first_company.id), HTTP_AUTHORIZATION='Bearer {}'.format(self.active_token))
+        response = company_view(request, pk=self.first_company.id)
+
+        response.render()
+        response_dict = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(response.status_code, 200)
+        response_dict['id'] = self.first_company.id
+        response_dict['name'] = self.first_company.name
+    
+    def test_company_details_response_is_404_when_company_is_from_another_user(self):
+        company_view = views.CompanyViewSet.as_view({'get': 'retrieve'})
+        factory = APIRequestFactory()
+
+        request = factory.get('/v1/companies/{}'.format(self.noise_company.id), HTTP_AUTHORIZATION='Bearer {}'.format(self.active_token))
+        response = company_view(request, pk=self.noise_company.id)
+
+        response.render()
+        response_dict = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(response.status_code, 404)
+
+def assert_unauthorized_with_no_token(testInstance, route, rousource):
+    company_view = views.CompanyViewSet.as_view({'get': rousource})
+    factory = APIRequestFactory()
+
+    request = factory.get(route)
+    response = company_view(request)
+
+    testInstance.assertEqual(response.status_code, 401)
+    response.render()
+    response_dict = json.loads(response.content.decode('utf-8'))
+    testInstance.assertTrue("credentials were not provided" in response_dict['detail'])
+
+def assert_unauthorized_with_invalid_token(testInstance, route, rousource):
+    company_view = views.CompanyViewSet.as_view({'get': rousource})
+    factory = APIRequestFactory()
+
+    request = factory.get(route, HTTP_AUTHORIZATION='Bearer invalid.token')
+    response = company_view(request)
+
+    testInstance.assertEqual(response.status_code, 401)
+    response.render()
+    response_dict = json.loads(response.content.decode('utf-8'))
+    testInstance.assertTrue("Given token not valid" in response_dict['detail'])
+
+def assert_unauthorized_with_unactive_user(testInstance, route, unactiveToken, rousource):
+    company_view = views.CompanyViewSet.as_view({'get': rousource})
+    factory = APIRequestFactory()
+
+    request = factory.get(route, HTTP_AUTHORIZATION='Bearer {}'.format(unactiveToken))
+    response = company_view(request)
+
+    testInstance.assertEqual(response.status_code, 401)
+    response.render()
+    response_dict = json.loads(response.content.decode('utf-8'))
+    testInstance.assertTrue("User is inactive" in response_dict['detail'])

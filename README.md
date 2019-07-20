@@ -19,7 +19,7 @@ Run dependencies with docker-compose:
 
 Run the migrations:
 ```
-    python manage.py migrate
+    python3 manage.py migrate
 ```
 
 Run the application:
@@ -36,7 +36,7 @@ Run dependencies with docker-compose:
 
 Run the migrations:
 ```
-    python manage.py migrate
+    python3 manage.py migrate
 ```
 
 Run the tests:

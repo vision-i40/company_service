@@ -11,6 +11,7 @@ router.register(r'companies', views.CompanyViewSet, basename="companies")
 
 companies_router = routers.NestedSimpleRouter(router, r'companies', lookup='companies')
 companies_router.register(r'production_lines', views.ProductionLineViewSet, base_name='companies-production_lines')
+companies_router.register(r'units_of_measurement', views.UnitOfMeasurementViewSet, base_name='companies-units_of_measurement')
 
 urlpatterns = [
     url(r'^v1/', include(router.urls)),

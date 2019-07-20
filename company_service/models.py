@@ -8,6 +8,12 @@ class Company(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(default=timezone.now)
 
+class UnitOfMeasurement(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    name = models.CharField(max_length=256)
+    conversion_factor = models.FloatField()
+    is_global = models.BooleanField(default=False)
+
 class ProductionLine(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     name = models.CharField(max_length=256)

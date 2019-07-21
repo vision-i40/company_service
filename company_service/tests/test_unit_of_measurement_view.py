@@ -29,6 +29,7 @@ class UnitOfMeasurementViewSetTest(TestCase):
         self.single_route = '/v1/companies/{}/units_of_measurement/{}'.format(
             self.first_company.id,
             self.first_unit_of_measurement.id)
+        self.authorization_active_token = 'Bearer {}'.format(self.active_token)
 
     def tearDown(self):
         self.first_company.delete()
@@ -65,7 +66,7 @@ class UnitOfMeasurementViewSetTest(TestCase):
         units_view = self.view.as_view({'get': 'list'})
         factory = APIRequestFactory()
 
-        request = factory.get(self.index_route, HTTP_AUTHORIZATION='Bearer {}'.format(self.active_token))
+        request = factory.get(self.index_route, HTTP_AUTHORIZATION=self.authorization_active_token)
         response = units_view(request, companies_pk=self.first_company.id)
 
         response.render()
@@ -109,7 +110,7 @@ class UnitOfMeasurementViewSetTest(TestCase):
         unit_view = self.view.as_view({'get': 'retrieve'})
         factory = APIRequestFactory()
 
-        request = factory.get(self.single_route, HTTP_AUTHORIZATION='Bearer {}'.format(self.active_token))
+        request = factory.get(self.single_route, HTTP_AUTHORIZATION=self.authorization_active_token)
         response = unit_view(request, pk=self.first_unit_of_measurement.id, companies_pk=self.first_company.id)
 
         response.render()
@@ -124,7 +125,7 @@ class UnitOfMeasurementViewSetTest(TestCase):
         unit_view = self.view.as_view({'get': 'retrieve'})
         factory = APIRequestFactory()
 
-        request = factory.get(self.single_route, HTTP_AUTHORIZATION='Bearer {}'.format(self.active_token))
+        request = factory.get(self.single_route, HTTP_AUTHORIZATION=self.authorization_active_token)
         response = unit_view(request, pk=self.noise_unit_of_measurement.id, companies_pk=self.noise_company.id)
 
         response.render()
@@ -139,3 +140,75 @@ class UnitOfMeasurementViewSetTest(TestCase):
 
     def test_add_unit_of_measurement_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
         assert_unauthorized_with_unactive_user(self, self.index_route, self.unactive_token, method='post', resource='create', companies_pk=self.first_company.id)
+
+    def test_add_unit_of_measurement__response_is_201(self):
+        unit_view = self.view.as_view({'post': 'create'})
+        factory = APIRequestFactory()
+
+        payload = {
+            'name': 'test unit of measurement',
+            'conversion_factor': 2.5,
+            'is_global': True,
+        }
+
+        request = factory.post(self.index_route, payload, format='json', HTTP_AUTHORIZATION=self.authorization_active_token)
+        response = unit_view(request, companies_pk=self.first_company.id)
+
+        response.render()
+        response_dict = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(UnitOfMeasurement.objects.all()), 4)
+        self.assertEqual(response_dict['name'], payload['name'])
+        self.assertEqual(response_dict['conversion_factor'], payload['conversion_factor'])
+        self.assertEqual(response_dict['is_global'], payload['is_global'])
+
+    def test_update_unit_of_measurement_authentication_response_is_401_when_there_is_no_authentication_token(self):
+        assert_unauthorized_with_no_token(self, self.single_route, method='put', resource='update', pk=self.first_unit_of_measurement.id)
+
+    def test_update_unit_of_measurement_authentication_response_is_401_when_an_invalid_authentication_token_is_provided(self):
+        assert_unauthorized_with_invalid_token(self, self.single_route, method='put', resource='update', pk=self.first_unit_of_measurement.id)
+
+    def test_update_unit_of_measurement_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
+        assert_unauthorized_with_unactive_user(self, self.single_route, self.unactive_token, method='put', resource='update', pk=self.first_unit_of_measurement.id)
+
+    def test_update_unit_of_measurement__response_is_200(self):
+        unit_view = self.view.as_view({'put': 'update'})
+        factory = APIRequestFactory()
+
+        payload = {
+            'name': 'new test unit of measurement',
+            'conversion_factor': 5.5,
+            'is_global': False,
+        }
+
+        request = factory.put(self.single_route, payload, format='json', HTTP_AUTHORIZATION=self.authorization_active_token)
+        response = unit_view(request, pk=self.first_unit_of_measurement.id, companies_pk=self.first_company.id)
+
+        response.render()
+        response_dict = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(UnitOfMeasurement.objects.all()), 3)
+        self.assertEqual(response_dict['name'], payload['name'])
+        self.assertEqual(response_dict['conversion_factor'], payload['conversion_factor'])
+        self.assertEqual(response_dict['is_global'], payload['is_global'])
+
+    def test_destroy_unit_of_measurement_authentication_response_is_401_when_there_is_no_authentication_token(self):
+        assert_unauthorized_with_no_token(self, self.single_route, method='delete', resource='destroy', pk=self.first_unit_of_measurement.id)
+
+    def test_destroy_unit_of_measurement_authentication_response_is_401_when_an_invalid_authentication_token_is_provided(self):
+        assert_unauthorized_with_invalid_token(self, self.single_route, method='delete', resource='destroy', pk=self.first_unit_of_measurement.id)
+
+    def test_destroy_unit_of_measurement_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
+        assert_unauthorized_with_unactive_user(self, self.single_route, self.unactive_token, method='delete', resource='destroy', pk=self.first_unit_of_measurement.id)
+
+    def test_destroy_unit_of_measurement__response_is_204(self):
+        unit_view = self.view.as_view({'delete': 'destroy'})
+        factory = APIRequestFactory()
+
+        request = factory.delete(self.single_route, format='json', HTTP_AUTHORIZATION=self.authorization_active_token)
+        response = unit_view(request, pk=self.first_unit_of_measurement.id, companies_pk=self.first_company.id)
+
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(len(self.active_user.companies.all()), 1)

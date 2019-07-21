@@ -23,6 +23,8 @@ class CompanyViewSetTest(TestCase):
         self.active_token = str(active_refresh.access_token)
         self.unactive_token = str(unactive_refresh.access_token)
 
+        self.authorization_active_token = 'Bearer {}'.format(self.active_token)
+
     def tearDown(self):
         self.first_company.delete()
         self.second_company.delete()
@@ -43,7 +45,7 @@ class CompanyViewSetTest(TestCase):
         company_view = views.CompanyViewSet.as_view({'get': 'list'})
         factory = APIRequestFactory()
 
-        request = factory.get('/v1/companies', HTTP_AUTHORIZATION='Bearer {}'.format(self.active_token))
+        request = factory.get('/v1/companies', HTTP_AUTHORIZATION=self.authorization_active_token)
         response = company_view(request)
 
         response.render()
@@ -67,7 +69,7 @@ class CompanyViewSetTest(TestCase):
         company_view = views.CompanyViewSet.as_view({'get': 'retrieve'})
         factory = APIRequestFactory()
 
-        request = factory.get('/v1/companies/{}'.format(self.first_company.id), HTTP_AUTHORIZATION='Bearer {}'.format(self.active_token))
+        request = factory.get('/v1/companies/{}'.format(self.first_company.id), HTTP_AUTHORIZATION=self.authorization_active_token)
         response = company_view(request, pk=self.first_company.id)
 
         response.render()
@@ -81,7 +83,7 @@ class CompanyViewSetTest(TestCase):
         company_view = views.CompanyViewSet.as_view({'get': 'retrieve'})
         factory = APIRequestFactory()
 
-        request = factory.get('/v1/companies/{}'.format(self.noise_company.id), HTTP_AUTHORIZATION='Bearer {}'.format(self.active_token))
+        request = factory.get('/v1/companies/{}'.format(self.noise_company.id), HTTP_AUTHORIZATION=self.authorization_active_token)
         response = company_view(request, pk=self.noise_company.id)
 
         response.render()
@@ -107,7 +109,7 @@ class CompanyViewSetTest(TestCase):
             'is_active': True,
         }
 
-        request = factory.post('/v1/companies', payload, format='json', HTTP_AUTHORIZATION='Bearer {}'.format(self.active_token))
+        request = factory.post('/v1/companies', payload, format='json', HTTP_AUTHORIZATION=self.authorization_active_token)
         response = company_view(request)
 
         response.render()
@@ -138,7 +140,7 @@ class CompanyViewSetTest(TestCase):
             'is_active': False,
         }
 
-        request = factory.put('/v1/companies/{}'.format(self.first_company.id), payload, format='json', HTTP_AUTHORIZATION='Bearer {}'.format(self.active_token))
+        request = factory.put('/v1/companies/{}'.format(self.first_company.id), payload, format='json', HTTP_AUTHORIZATION=self.authorization_active_token)
         response = company_view(request, pk=self.first_company.id)
 
         response.render()
@@ -159,11 +161,11 @@ class CompanyViewSetTest(TestCase):
     def test_destroy_company_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
         assert_unauthorized_with_unactive_user(self, '/v1/companies/{}'.format(self.first_company.id), self.unactive_token, method='delete', resource='destroy', pk=self.first_company.id)
 
-    def test_update_company__response_is_200(self):
+    def test_destroy_company__response_is_200(self):
         company_view = views.CompanyViewSet.as_view({'delete': 'destroy'})
         factory = APIRequestFactory()
 
-        request = factory.delete('/v1/companies/{}'.format(self.first_company.id), format='json', HTTP_AUTHORIZATION='Bearer {}'.format(self.active_token))
+        request = factory.delete('/v1/companies/{}'.format(self.first_company.id), format='json', HTTP_AUTHORIZATION=self.authorization_active_token)
         response = company_view(request, pk=self.first_company.id)
 
         self.assertEqual(response.status_code, 204)

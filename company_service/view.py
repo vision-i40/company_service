@@ -29,6 +29,9 @@ class UnitOfMeasurementViewSet(viewsets.ModelViewSet):
                         .objects\
                         .filter(company__user=self.request.user, company=self.kwargs['companies_pk'])\
                         .order_by('-updated_at')
+    
+    def perform_create(self, serializer):
+        serializer.save(company=self.request.user.companies.get(pk=self.kwargs['companies_pk']))
 
 class ProductViewSet(viewsets.ModelViewSet):
     authentication_classes = (JWTAuthentication,)

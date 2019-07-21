@@ -7,11 +7,12 @@ from . import view as views
 from rest_framework_simplejwt.views import ( TokenObtainPairView, TokenRefreshView, )
 
 router = routers.SimpleRouter()
-router.register(r'companies', views.CompanyViewSet, basename="companies")
+router.register('companies', views.CompanyViewSet, basename="companies")
 
-companies_router = routers.NestedSimpleRouter(router, r'companies', lookup='companies')
-companies_router.register(r'production_lines', views.ProductionLineViewSet, base_name='companies-production_lines')
-companies_router.register(r'units_of_measurement', views.UnitOfMeasurementViewSet, base_name='companies-units_of_measurement')
+companies_router = routers.NestedSimpleRouter(router, 'companies', lookup='companies')
+companies_router.register('production_lines', views.ProductionLineViewSet, base_name='companies-production_lines')
+companies_router.register('units_of_measurement', views.UnitOfMeasurementViewSet, base_name='companies-units_of_measurement')
+companies_router.register('products', views.ProductViewSet, base_name='companies-products')
 
 urlpatterns = [
     url(r'^v1/', include(router.urls)),

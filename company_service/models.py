@@ -16,6 +16,19 @@ class UnitOfMeasurement(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+class Product(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    name = models.CharField(max_length=256)
+    production_rate_per_hour = models.FloatField()
+    description = models.TextField(default=None, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class ProductConversion(models.Model):
+    product = models.ForeignKey(Company, on_delete=models.CASCADE)
+    unit_of_measurement = models.ForeignKey(UnitOfMeasurement, on_delete=models.CASCADE)
+    conversion_factor = models.FloatField()
+
 class ProductionLine(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     name = models.CharField(max_length=256)

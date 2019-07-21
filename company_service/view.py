@@ -30,6 +30,31 @@ class UnitOfMeasurementViewSet(viewsets.ModelViewSet):
                         .filter(company__user=self.request.user, company=self.kwargs['companies_pk'])\
                         .order_by('-updated_at')
 
+class ProductViewSet(viewsets.ModelViewSet):
+    authentication_classes = (JWTAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.ProductSerializer
+
+    def get_queryset(self):
+        return models.Product\
+                        .objects\
+                        .filter(company__user=self.request.user, company=self.kwargs['companies_pk'])\
+                        .order_by('-updated_at')
+
+    def perform_create(self, serializer):
+        serializer.save(company=self.request.user.companies.get(pk=self.kwargs['companies_pk']))
+
+class ProductConversionViewSet(viewsets.ModelViewSet):
+    authentication_classes = (JWTAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.ProductConversionSerializer
+
+    def get_queryset(self):
+        return models.ProductConversion\
+                        .objects\
+                        .filter(product__company__user=self.request.user, product__company=self.kwargs['companies_pk'])\
+                        .order_by('-updated_at')
+
 class ProductionLineViewSet(viewsets.ModelViewSet):
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAuthenticated,)

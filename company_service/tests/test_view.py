@@ -84,7 +84,6 @@ class CompanyViewSetTest(TestCase):
         response = company_view(request, pk=self.noise_company.id)
 
         response.render()
-        response_dict = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(response.status_code, 404)
 

@@ -291,7 +291,15 @@ class UnitOfMeasurementViewSetTest(TestCase):
         response.render()
 
         self.assertEqual(response.status_code, 404)
+    
+    def test_add_unit_of_measurement_authentication_response_is_401_when_there_is_no_authentication_token(self):
+        assert_unauthorized_with_no_token(self, self.index_route, method='post', resource='create', companies_pk=self.first_company.id)
 
+    def test_add_unit_of_measurement_authentication_response_is_401_when_an_invalid_authentication_token_is_provided(self):
+        assert_unauthorized_with_invalid_token(self, self.index_route, method='post', resource='create', companies_pk=self.first_company.id)
+
+    def test_add_unit_of_measurement_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
+        assert_unauthorized_with_unactive_user(self, self.index_route, self.unactive_token, method='post', resource='create', companies_pk=self.first_company.id)
 
 def assert_unauthorized_with_no_token(testInstance, route, method='get', resource='list', pk=None, companies_pk=None):
     view = testInstance.view.as_view({method: resource})

@@ -13,7 +13,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
         return models.Company\
                         .objects\
                         .filter(user=self.request.user)\
-                        .order_by('-updated_at')
+                        .order_by('-created')
 
     def perform_create(self, serializer):
         company = serializer.save()
@@ -27,11 +27,14 @@ class UnitOfMeasurementViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return models.UnitOfMeasurement\
                         .objects\
-                        .filter(company__user=self.request.user, company=self.kwargs['companies_pk'])\
-                        .order_by('-updated_at')
-    
+                        .filter(product__company__user=self.request.user, product=self.kwargs['product_pk'])\
+                        .order_by('-created')
+
     def perform_create(self, serializer):
-        serializer.save(company=self.request.user.companies.get(pk=self.kwargs['companies_pk']))
+        product = models.Product\
+                        .objects\
+                        .get(company__user=self.request.user, pk=self.kwargs['product_pk'])
+        serializer.save(product=product)
 
 class ProductViewSet(viewsets.ModelViewSet):
     authentication_classes = (JWTAuthentication,)
@@ -42,7 +45,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         return models.Product\
                         .objects\
                         .filter(company__user=self.request.user, company=self.kwargs['companies_pk'])\
-                        .order_by('-updated_at')
+                        .order_by('-created')
 
     def perform_create(self, serializer):
         serializer.save(company=self.request.user.companies.get(pk=self.kwargs['companies_pk']))
@@ -56,7 +59,7 @@ class ProductConversionViewSet(viewsets.ModelViewSet):
         return models.ProductConversion\
                         .objects\
                         .filter(product__company__user=self.request.user, product__company=self.kwargs['companies_pk'])\
-                        .order_by('-updated_at')
+                        .order_by('-created')
 
 class ProductionLineViewSet(viewsets.ModelViewSet):
     authentication_classes = (JWTAuthentication,)
@@ -67,4 +70,4 @@ class ProductionLineViewSet(viewsets.ModelViewSet):
         return models.ProductionLine\
                         .objects\
                         .filter(company__user=self.request.user, company=self.kwargs['companies_pk'])\
-                        .order_by('-updated_at')
+                        .order_by('-created')

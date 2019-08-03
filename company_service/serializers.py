@@ -10,8 +10,8 @@ class CompanySerializer(serializers.HyperlinkedModelSerializer):
             'name',
             'slug',
             'is_active',
-            'created_at',
-            'updated_at'
+            'created',
+            'modified'
         )
 
 class UnitOfMeasurementSerializer(serializers.HyperlinkedModelSerializer):
@@ -23,8 +23,8 @@ class UnitOfMeasurementSerializer(serializers.HyperlinkedModelSerializer):
             'name',
             'conversion_factor',
             'is_global',
-            'created_at',
-            'updated_at'
+            'created',
+            'modified'
         )
 
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
@@ -36,8 +36,8 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             'name',
             'description',
             'production_rate_per_hour',
-            'created_at',
-            'updated_at'
+            'created',
+            'modified'
         )
 
 class ProductConversionSerializer(serializers.HyperlinkedModelSerializer):
@@ -48,8 +48,8 @@ class ProductConversionSerializer(serializers.HyperlinkedModelSerializer):
             'product_id',
             'unitofmeasurement_id',
             'conversion_factor',
-            'created_at',
-            'updated_at'
+            'created',
+            'modified'
         )
 
 class ProductionLineSerializer(serializers.HyperlinkedModelSerializer):
@@ -64,6 +64,6 @@ class ProductionLineSerializer(serializers.HyperlinkedModelSerializer):
             'discount_rework',
             'discount_waste',
             'stop_on_production_abscence',
-            'created_at',
-            'updated_at'
+            'created',
+            'modified'
         )

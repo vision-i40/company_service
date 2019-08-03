@@ -2,7 +2,7 @@
 
 ### Running
 
-Copy the .env file from .env.example 
+Copy the .env file from .env.example
 ```
     cp .env.example .env
 ```
@@ -25,6 +25,21 @@ Run the migrations:
 Run the application:
 ```
     python3 manage.py runserver
+```
+
+Create a super user
+```
+    python manage.py createsuperuser
+```
+
+Create a token for you to use.
+```
+    curl \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -d '{"email": "<USER_EMAIL_YOU_JUST_CREATED>", "password": "<PASSWORD_YOU_JUST_CREATE>"}' \
+    http://localhost:8000/auth/token/
+
 ```
 
 ### Running Tests

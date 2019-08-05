@@ -4,7 +4,7 @@ from django.conf.urls import include, url
 from rest_framework_nested import routers
 from . import view as views
 
-from rest_framework_simplejwt.views import ( TokenObtainPairView, TokenRefreshView, )
+from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView, )
 
 router = routers.SimpleRouter()
 router.register('companies', views.CompanyViewSet, basename="companies")
@@ -14,7 +14,8 @@ companies_router.register('production_lines', views.ProductionLineViewSet, base_
 companies_router.register('products', views.ProductViewSet, base_name='companies-products')
 
 products_router = routers.NestedSimpleRouter(companies_router, 'products', lookup='products')
-products_router.register('units_of_measurement', views.UnitOfMeasurementViewSet, base_name='companies-products-units_of_measurement')
+products_router.register('units_of_measurement', views.UnitOfMeasurementViewSet,
+                         base_name='companies-products-units_of_measurement')
 
 urlpatterns = [
     url(r'^v1/', include(router.urls)),

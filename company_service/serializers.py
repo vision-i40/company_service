@@ -14,6 +14,7 @@ class CompanySerializer(serializers.HyperlinkedModelSerializer):
             'modified'
         )
 
+
 class UnitOfMeasurementSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = UnitOfMeasurement
@@ -26,6 +27,7 @@ class UnitOfMeasurementSerializer(serializers.HyperlinkedModelSerializer):
             'created',
             'modified'
         )
+
 
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -40,6 +42,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             'modified'
         )
 
+
 class ProductConversionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ProductConversion
@@ -51,6 +54,7 @@ class ProductConversionSerializer(serializers.HyperlinkedModelSerializer):
             'created',
             'modified'
         )
+
 
 class ProductionLineSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

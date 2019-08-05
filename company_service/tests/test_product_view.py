@@ -14,10 +14,13 @@ class ProductViewSetTest(TestCase):
     def setUp(self):
         self.active_user = User.objects.create(email="test@test.com", password="any-pwd", is_active=True)
         self.first_company = Company.objects.create(name="company one", slug="c1", is_active=True)
-        self.first_product = Product.objects.create(company=self.first_company, name="product one", production_rate_per_hour=10.1, description="A desc")
-        self.second_product = Product.objects.create(company=self.first_company, name="product two", production_rate_per_hour=10.2, description="Another desc")
+        self.first_product = Product.objects.create(company=self.first_company, name="product one",
+                                                    production_rate_per_hour=10.1, description="A desc")
+        self.second_product = Product.objects.create(company=self.first_company, name="product two",
+                                                     production_rate_per_hour=10.2, description="Another desc")
         self.noise_company = Company.objects.create(name="company two", slug="c2", is_active=False)
-        self.noise_product = Product.objects.create(company=self.noise_company, name="product noise", production_rate_per_hour=10.3)
+        self.noise_product = Product.objects.create(company=self.noise_company, name="product noise",
+                                                    production_rate_per_hour=10.3)
         self.active_user.companies.add(self.first_company)
         self.unactive_user = User.objects.create(email="unactivetest@test.com", password="any-pwd")
         self.unactive_user.companies.add(self.noise_company)
@@ -75,10 +78,12 @@ class ProductViewSetTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response_dict['results']), 2)
         self.assertEqual(response_dict['results'][0]['name'], self.second_product.name)
-        self.assertEqual(response_dict['results'][0]['production_rate_per_hour'], self.second_product.production_rate_per_hour)
+        self.assertEqual(response_dict['results'][0]['production_rate_per_hour'],
+                         self.second_product.production_rate_per_hour)
         self.assertEqual(response_dict['results'][0]['description'], self.second_product.description)
         self.assertEqual(response_dict['results'][1]['name'], self.first_product.name)
-        self.assertEqual(response_dict['results'][1]['production_rate_per_hour'], self.first_product.production_rate_per_hour)
+        self.assertEqual(response_dict['results'][1]['production_rate_per_hour'],
+                         self.first_product.production_rate_per_hour)
         self.assertEqual(response_dict['results'][1]['description'], self.first_product.description)
 
     def test_product_details_authentication_response_is_401_when_there_is_no_authentication_token(self):
@@ -133,13 +138,16 @@ class ProductViewSetTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_add_product_authentication_response_is_401_when_there_is_no_authentication_token(self):
-        assert_unauthorized_with_no_token(self, self.index_route, method='post', resource='create', companies_pk=self.first_company.id)
+        assert_unauthorized_with_no_token(self, self.index_route, method='post',
+                                          resource='create', companies_pk=self.first_company.id)
 
     def test_add_product_authentication_response_is_401_when_an_invalid_authentication_token_is_provided(self):
-        assert_unauthorized_with_invalid_token(self, self.index_route, method='post', resource='create', companies_pk=self.first_company.id)
+        assert_unauthorized_with_invalid_token(self, self.index_route, method='post',
+                                               resource='create', companies_pk=self.first_company.id)
 
     def test_add_product_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
-        assert_unauthorized_with_unactive_user(self, self.index_route, self.unactive_token, method='post', resource='create', companies_pk=self.first_company.id)
+        assert_unauthorized_with_unactive_user(self, self.index_route, self.unactive_token, method='post',
+                                               resource='create', companies_pk=self.first_company.id)
 
     def test_add_product_response_is_201(self):
         product_view = self.view.as_view({'post': 'create'})
@@ -151,7 +159,8 @@ class ProductViewSetTest(TestCase):
             'production_rate_per_hour': 99.91,
         }
 
-        request = factory.post(self.index_route, payload, format='json', HTTP_AUTHORIZATION='Bearer {}'.format(self.active_token))
+        request = factory.post(self.index_route, payload, format='json',
+                               HTTP_AUTHORIZATION='Bearer {}'.format(self.active_token))
         response = product_view(request, companies_pk=self.first_company.id)
 
         response.render()

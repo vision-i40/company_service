@@ -7,6 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from company_service.tests.view_test_support import *
 import json
 
+
 class CompanyViewSetTest(TestCase):
     view = views.CompanyViewSet
 
@@ -57,19 +58,23 @@ class CompanyViewSetTest(TestCase):
         self.assertEqual(response_dict['results'][1]['name'], self.first_company.name)
 
     def test_company_details_authentication_response_is_401_when_there_is_no_authentication_token(self):
-        assert_unauthorized_with_no_token(self, '/v1/companies/{}'.format(self.first_company.id), resource='retrieve', pk=self.first_company.id)
+        assert_unauthorized_with_no_token(self, '/v1/companies/{}'.format(self.first_company.id), resource='retrieve',
+                                          pk=self.first_company.id)
 
     def test_company_details_authentication_response_is_401_when_an_invalid_authentication_token_is_provided(self):
-        assert_unauthorized_with_invalid_token(self, '/v1/companies/{}'.format(self.first_company.id), resource='retrieve', pk=self.first_company.id)
+        assert_unauthorized_with_invalid_token(self, '/v1/companies/{}'.format(self.first_company.id),
+                                               resource='retrieve', pk=self.first_company.id)
 
     def test_company_details_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
-        assert_unauthorized_with_unactive_user(self, '/v1/companies/{}'.format(self.first_company.id), self.unactive_token, resource='retrieve', pk=self.first_company.id)
+        assert_unauthorized_with_unactive_user(self, '/v1/companies/{}'.format(self.first_company.id),
+                                               self.unactive_token, resource='retrieve', pk=self.first_company.id)
 
     def test_company_details_response_is_200(self):
         company_view = views.CompanyViewSet.as_view({'get': 'retrieve'})
         factory = APIRequestFactory()
 
-        request = factory.get('/v1/companies/{}'.format(self.first_company.id), HTTP_AUTHORIZATION=self.authorization_active_token)
+        request = factory.get('/v1/companies/{}'.format(self.first_company.id),
+                              HTTP_AUTHORIZATION=self.authorization_active_token)
         response = company_view(request, pk=self.first_company.id)
 
         response.render()
@@ -83,7 +88,8 @@ class CompanyViewSetTest(TestCase):
         company_view = views.CompanyViewSet.as_view({'get': 'retrieve'})
         factory = APIRequestFactory()
 
-        request = factory.get('/v1/companies/{}'.format(self.noise_company.id), HTTP_AUTHORIZATION=self.authorization_active_token)
+        request = factory.get('/v1/companies/{}'.format(self.noise_company.id),
+                              HTTP_AUTHORIZATION=self.authorization_active_token)
         response = company_view(request, pk=self.noise_company.id)
 
         response.render()
@@ -97,7 +103,8 @@ class CompanyViewSetTest(TestCase):
         assert_unauthorized_with_invalid_token(self, '/v1/companies', method='post', resource='create')
 
     def test_add_company_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
-        assert_unauthorized_with_unactive_user(self, '/v1/companies', self.unactive_token, method='post', resource='create')
+        assert_unauthorized_with_unactive_user(self, '/v1/companies', self.unactive_token, method='post',
+                                               resource='create')
 
     def test_add_company__response_is_201(self):
         company_view = views.CompanyViewSet.as_view({'post': 'create'})
@@ -109,7 +116,8 @@ class CompanyViewSetTest(TestCase):
             'is_active': True,
         }
 
-        request = factory.post('/v1/companies', payload, format='json', HTTP_AUTHORIZATION=self.authorization_active_token)
+        request = factory.post('/v1/companies', payload, format='json',
+                               HTTP_AUTHORIZATION=self.authorization_active_token)
         response = company_view(request)
 
         response.render()
@@ -122,13 +130,17 @@ class CompanyViewSetTest(TestCase):
         self.assertEqual(response_dict['is_active'], payload['is_active'])
 
     def test_update_company_authentication_response_is_401_when_there_is_no_authentication_token(self):
-        assert_unauthorized_with_no_token(self, '/v1/companies/{}'.format(self.first_company.id), method='put', resource='update', pk=self.first_company.id)
+        assert_unauthorized_with_no_token(self, '/v1/companies/{}'.format(self.first_company.id), method='put',
+                                          resource='update', pk=self.first_company.id)
 
     def test_update_company_authentication_response_is_401_when_an_invalid_authentication_token_is_provided(self):
-        assert_unauthorized_with_invalid_token(self, '/v1/companies/{}'.format(self.first_company.id), method='put', resource='update', pk=self.first_company.id)
+        assert_unauthorized_with_invalid_token(self, '/v1/companies/{}'.format(self.first_company.id), method='put',
+                                               resource='update', pk=self.first_company.id)
 
     def test_update_company_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
-        assert_unauthorized_with_unactive_user(self, '/v1/companies/{}'.format(self.first_company.id), self.unactive_token, method='put', resource='update', pk=self.first_company.id)
+        assert_unauthorized_with_unactive_user(self, '/v1/companies/{}'.format(self.first_company.id),
+                                               self.unactive_token, method='put', resource='update',
+                                               pk=self.first_company.id)
 
     def test_update_company__response_is_200(self):
         company_view = views.CompanyViewSet.as_view({'put': 'update'})
@@ -140,7 +152,8 @@ class CompanyViewSetTest(TestCase):
             'is_active': False,
         }
 
-        request = factory.put('/v1/companies/{}'.format(self.first_company.id), payload, format='json', HTTP_AUTHORIZATION=self.authorization_active_token)
+        request = factory.put('/v1/companies/{}'.format(self.first_company.id), payload, format='json',
+                              HTTP_AUTHORIZATION=self.authorization_active_token)
         response = company_view(request, pk=self.first_company.id)
 
         response.render()
@@ -153,21 +166,25 @@ class CompanyViewSetTest(TestCase):
         self.assertEqual(response_dict['is_active'], payload['is_active'])
 
     def test_destroy_company_authentication_response_is_401_when_there_is_no_authentication_token(self):
-        assert_unauthorized_with_no_token(self, '/v1/companies/{}'.format(self.first_company.id), method='delete', resource='destroy', pk=self.first_company.id)
+        assert_unauthorized_with_no_token(self, '/v1/companies/{}'.format(self.first_company.id), method='delete',
+                                          resource='destroy', pk=self.first_company.id)
 
     def test_destroy_company_authentication_response_is_401_when_an_invalid_authentication_token_is_provided(self):
-        assert_unauthorized_with_invalid_token(self, '/v1/companies/{}'.format(self.first_company.id), method='delete', resource='destroy', pk=self.first_company.id)
+        assert_unauthorized_with_invalid_token(self, '/v1/companies/{}'.format(self.first_company.id), method='delete',
+                                               resource='destroy', pk=self.first_company.id)
 
     def test_destroy_company_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
-        assert_unauthorized_with_unactive_user(self, '/v1/companies/{}'.format(self.first_company.id), self.unactive_token, method='delete', resource='destroy', pk=self.first_company.id)
+        assert_unauthorized_with_unactive_user(self, '/v1/companies/{}'.format(self.first_company.id),
+                                               self.unactive_token, method='delete', resource='destroy',
+                                               pk=self.first_company.id)
 
     def test_destroy_company__response_is_200(self):
         company_view = views.CompanyViewSet.as_view({'delete': 'destroy'})
         factory = APIRequestFactory()
 
-        request = factory.delete('/v1/companies/{}'.format(self.first_company.id), format='json', HTTP_AUTHORIZATION=self.authorization_active_token)
+        request = factory.delete('/v1/companies/{}'.format(self.first_company.id), format='json',
+                                 HTTP_AUTHORIZATION=self.authorization_active_token)
         response = company_view(request, pk=self.first_company.id)
 
         self.assertEqual(response.status_code, 204)
         self.assertEqual(len(self.active_user.companies.all()), 1)
-

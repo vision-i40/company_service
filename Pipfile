@@ -16,7 +16,7 @@ model-mommy = "*"
 
 [packages]
 
-django = "*"
+django = ">=2.2.4"
 celery = {extras = ["redis"]}
 django-model-utils = "*"
 django-import-export = "*"
@@ -33,6 +33,7 @@ urllib3 = ">=1.24.2"
 djangorestframework = "*"
 djangorestframework_simplejwt = "*"
 drf-nested-routers = "*"
+django-cors-headers = "*"
 
 [requires]
 

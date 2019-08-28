@@ -3,6 +3,7 @@ from django.urls import path
 from django.conf.urls import include, url
 from rest_framework_nested import routers
 from . import view as views
+from users import view as user_views
 
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView, )
 
@@ -21,6 +22,7 @@ urlpatterns = [
     url(r'^v1/', include(router.urls)),
     url(r'^v1/', include(companies_router.urls)),
     url(r'^v1/', include(products_router.urls)),
+    url(r'^v1/user/$', user_views.get_user_profile, name='get_user_profile'),
     url(r'^auth/token/$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     url(r'^auth/token/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),
     url('admin/', admin.site.urls),

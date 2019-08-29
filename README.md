@@ -1,5 +1,12 @@
 # Company Service
 
+### Dependencies
+
+- Python 3.6
+- Pipenv
+- Pip
+- Docker and Docker Compose
+
 ### Running
 
 Copy the .env file from .env.example
@@ -32,16 +39,6 @@ Create a super user
     python manage.py createsuperuser
 ```
 
-Create a token for you to use.
-```
-    curl \
-    -X POST \
-    -H "Content-Type: application/json" \
-    -d '{"email": "<USER_EMAIL_YOU_JUST_CREATED>", "password": "<PASSWORD_YOU_JUST_CREATE>"}' \
-    http://localhost:8000/auth/token/
-
-```
-
 ### Running Tests
 
 Run dependencies with docker-compose:
@@ -58,3 +55,8 @@ Run the tests:
 ```
     python3 manage.py test
 ```
+
+
+### Documentation Reference
+
+- [Authentication](https://github.com/vision-i40/docs/tree/master/authentication)

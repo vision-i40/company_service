@@ -11,9 +11,9 @@ class CompanyViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.CompanySerializer
 
     def get_queryset(self):
-        return models.Company \
-            .objects \
-            .filter(user=self.request.user) \
+        return models.Company\
+            .objects\
+            .filter(user=self.request.user)\
             .order_by('-created')
 
     def perform_create(self, serializer):
@@ -27,14 +27,14 @@ class UnitOfMeasurementViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.UnitOfMeasurementSerializer
 
     def get_queryset(self):
-        return models.UnitOfMeasurement \
-            .objects \
-            .filter(product__company__user=self.request.user, product=self.kwargs['product_pk']) \
+        return models.UnitOfMeasurement\
+            .objects\
+            .filter(product__company__user=self.request.user, product=self.kwargs['product_pk'])\
             .order_by('-created')
 
     def perform_create(self, serializer):
-        product = models.Product \
-            .objects \
+        product = models.Product\
+            .objects\
             .get(company__user=self.request.user, pk=self.kwargs['product_pk'])
         serializer.save(product=product)
 
@@ -45,9 +45,9 @@ class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProductSerializer
 
     def get_queryset(self):
-        return models.Product \
-            .objects \
-            .filter(company__user=self.request.user, company=self.kwargs['companies_pk']) \
+        return models.Product\
+            .objects\
+            .filter(company__user=self.request.user, company=self.kwargs['companies_pk'])\
             .order_by('-created')
 
     def perform_create(self, serializer):
@@ -60,9 +60,9 @@ class ProductConversionViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProductConversionSerializer
 
     def get_queryset(self):
-        return models.ProductConversion \
-            .objects \
-            .filter(product__company__user=self.request.user, product__company=self.kwargs['companies_pk']) \
+        return models.ProductConversion\
+            .objects\
+            .filter(product__company__user=self.request.user, product__company=self.kwargs['companies_pk'])\
             .order_by('-created')
 
 
@@ -72,7 +72,7 @@ class ProductionLineViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProductionLineSerializer
 
     def get_queryset(self):
-        return models.ProductionLine \
-            .objects \
-            .filter(company__user=self.request.user, company=self.kwargs['companies_pk']) \
+        return models.ProductionLine\
+            .objects\
+            .filter(company__user=self.request.user, company=self.kwargs['companies_pk'])\
             .order_by('-created')

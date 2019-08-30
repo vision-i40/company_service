@@ -8,16 +8,16 @@ class CustomUserAdmin(UserAdmin):
     list_display = ('id', 'email', 'name', 'created', 'modified')
     list_filter = ('is_active', 'is_staff')
     search_fields = ('email',)
-    ordering = ('email',)
+    ordering = ('name',)
 
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
+        (None, {'fields': ('email', 'name', 'password')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2')}),
+            'fields': ('email', 'name', 'password1', 'password2')}),
     )
 
 admin.site.register(User, CustomUserAdmin)

@@ -59,4 +59,4 @@ Run the tests:
 
 ### Documentation Reference
 
-- [Authentication](https://github.com/vision-i40/docs/tree/master/authentication)
+- [Authentication](https://github.com/vision-i40/company_service/tree/master/authentication)

@@ -3,8 +3,8 @@
 ### Dependencies
 
 - Python 3.6
-- Pipenv
-- Pip
+- [Pip](https://linuxize.com/post/how-to-install-pip-on-ubuntu-18.04/)
+- [Pipenv](https://docs.pipenv.org/en/latest/install/)
 - Docker and Docker Compose
 
 ### Running

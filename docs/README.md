@@ -4,4 +4,4 @@ Vision is a opensource project which aims to help customer from industry to have
 
 ### Table of contents
 
- - [Authentication](https://github.com/vision-i40/company_service/tree/master/authentication)
+ - [Authentication](https://github.com/vision-i40/company_service/tree/master/docs/authentication)

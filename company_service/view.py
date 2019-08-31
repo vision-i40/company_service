@@ -48,11 +48,11 @@ class ProductViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return models.Product\
             .objects\
-            .filter(company__user=self.request.user, company=self.kwargs['companies_pk'])\
+            .filter(company__users=self.request.user, company=self.kwargs['companies_pk'])\
             .order_by('-created')
 
     def perform_create(self, serializer):
-        serializer.save(company=self.request.user.companies.get(pk=self.kwargs['companies_pk']))
+        serializer.save(company=models.Company.objects.get(users=self.request.user, pk=self.kwargs['companies_pk']))
 
 
 class ProductConversionViewSet(viewsets.ModelViewSet):

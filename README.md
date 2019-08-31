@@ -24,6 +24,8 @@ Run dependencies with docker-compose:
     docker-compose up -d
 ```
 
+Go to postgres admin site in `http://localhost:8080/` and login with a `PostgreSQL` connection using `postgres` as user and password. Then add the database `company_service`.
+
 Run the migrations:
 ```
     python3 manage.py migrate

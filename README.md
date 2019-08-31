@@ -9,34 +9,34 @@
 
 ### Running
 
-Copy the .env file from .env.example
+- Copy the .env file from .env.example
 ```
     cp .env.example .env
 ```
 
-User pipenv shell:
+- User pipenv shell:
 ```
     pipenv shell
 ```
 
-Run dependencies with docker-compose:
+- Run dependencies with docker-compose:
 ```
     docker-compose up -d
 ```
 
-Go to postgres admin site in `http://localhost:8080/` and login with a `PostgreSQL` connection using `postgres` as user and password. Then add the database `company_service`.
+- Go to postgres admin site in `http://localhost:8080/` and login with a `PostgreSQL` connection using `postgres` as user and password. Then add the database `company_service`.
 
-Run the migrations:
+- Run the migrations:
 ```
     python3 manage.py migrate
 ```
 
-Run the application:
+- Run the application:
 ```
     python3 manage.py runserver
 ```
 
-Create a super user
+- Create a super user
 ```
     python manage.py createsuperuser
 ```

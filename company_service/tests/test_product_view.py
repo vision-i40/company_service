@@ -22,7 +22,7 @@ class ProductViewSetTest(TestCase):
         self.noise_product = Product.objects.create(company=self.noise_company, name="product noise",
                                                     production_rate_per_hour=10.3)
         self.first_company.users.add(self.active_user)
-        self.unactive_user = User.objects.create(email="unactivetest@test.com", password="any-pwd")
+        self.unactive_user = User.objects.create(email="unactivetest@test.com", password="any-pwd", is_active=False)
         self.noise_company.users.add(self.unactive_user)
         active_refresh = RefreshToken.for_user(self.active_user)
         unactive_refresh = RefreshToken.for_user(self.unactive_user)

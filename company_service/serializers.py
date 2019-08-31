@@ -21,7 +21,6 @@ class CompanySerializer(serializers.HyperlinkedModelSerializer):
             'country',
             'industrial_sector',
             'size',
-            'slug',
             'is_active',
             'created',
             'modified'

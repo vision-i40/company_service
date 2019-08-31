@@ -18,7 +18,7 @@ class CompanyViewSetTest(TestCase):
         self.noise_company = Company.objects.create(trade_name="company two", slug="c2", is_active=False)
         self.first_company.users.add(self.active_user)
         self.second_company.users.add(self.active_user)
-        self.unactive_user = User.objects.create(email="unactivetest@test.com", password="any-pwd")
+        self.unactive_user = User.objects.create(email="unactivetest@test.com", password="any-pwd", is_active=False)
         self.noise_company.users.add(self.unactive_user)
         active_refresh = RefreshToken.for_user(self.active_user)
         unactive_refresh = RefreshToken.for_user(self.unactive_user)

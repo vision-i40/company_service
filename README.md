@@ -41,6 +41,8 @@
     python manage.py createsuperuser
 ```
 
+- The admin is acessible on `admin/` resource. Signin with the super user you've just created.
+
 ### Running Tests
 
 Run dependencies with docker-compose:

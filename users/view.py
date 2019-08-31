@@ -21,5 +21,6 @@ def get_user_profile(request):
         'default_company': {
             'name': 'A Name',
             'slug': 1,
+
         }
     })

@@ -18,6 +18,8 @@ class User(AbstractBaseUser, PermissionsMixin, IndexedTimeStampedModel):
         help_text=_('Designates whether this user should be treated as '
                     'active. Unselect this instead of deleting accounts.'))
 
+    default_company = models.ForeignKey('company_service.Company', on_delete=models.SET_NULL, null=True)
+
     objects = UserManager()
 
     USERNAME_FIELD = 'email'

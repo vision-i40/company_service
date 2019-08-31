@@ -41,3 +41,4 @@ def assert_unauthorized_with_unactive_user(testInstance, route, unactiveToken, m
     response.render()
     response_dict = json.loads(response.content.decode('utf-8'))
     testInstance.assertTrue("User is inactive" in response_dict['detail'])
+

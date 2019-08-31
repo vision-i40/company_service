@@ -149,7 +149,7 @@ class CompanyViewSetTest(TestCase):
 
         payload = {
             'trade_name': 'new test company trade_name',
-            'slug': 'new test-company-trade_name',
+            'slug': 'new-test-company-trade_name',
             'is_active': False,
         }
 

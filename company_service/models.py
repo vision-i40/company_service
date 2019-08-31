@@ -27,7 +27,7 @@ class Company(BaseModel):
     country = models.CharField(max_length=256, blank=True)
     industrial_sector = models.CharField(max_length=256, blank=True)
     size = models.CharField(max_length=256, blank=True)
-    slug = models.CharField(max_length=256, db_index=True)
+    slug = models.SlugField(db_index=True)
     is_active = models.BooleanField(default=False)
     users = models.ManyToManyField(User)
 

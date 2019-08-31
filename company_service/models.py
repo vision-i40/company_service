@@ -2,6 +2,8 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from model_utils.fields import AutoCreatedField, AutoLastModifiedField
+from users.models import User
+
 
 class BaseModel(models.Model):
     created = AutoCreatedField(_('created'), db_index=True)
@@ -15,6 +17,10 @@ class Company(BaseModel):
     name = models.CharField(max_length=256)
     slug = models.CharField(max_length=256, db_index=True)
     is_active = models.BooleanField(default=False)
+    users = models.ManyToManyField(User)
+
+    def __str__(self):
+        return self.name
 
 
 class Product(BaseModel):

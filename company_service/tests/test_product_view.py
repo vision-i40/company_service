@@ -13,17 +13,17 @@ class ProductViewSetTest(TestCase):
 
     def setUp(self):
         self.active_user = User.objects.create(email="test@test.com", password="any-pwd", is_active=True)
-        self.first_company = Company.objects.create(name="company one", slug="c1", is_active=True)
+        self.first_company = Company.objects.create(trade_name="company one", slug="c1", is_active=True)
         self.first_product = Product.objects.create(company=self.first_company, name="product one",
                                                     production_rate_per_hour=10.1, description="A desc")
         self.second_product = Product.objects.create(company=self.first_company, name="product two",
                                                      production_rate_per_hour=10.2, description="Another desc")
-        self.noise_company = Company.objects.create(name="company two", slug="c2", is_active=False)
+        self.noise_company = Company.objects.create(trade_name="company two", slug="c2", is_active=False)
         self.noise_product = Product.objects.create(company=self.noise_company, name="product noise",
                                                     production_rate_per_hour=10.3)
-        self.active_user.companies.add(self.first_company)
+        self.first_company.users.add(self.active_user)
         self.unactive_user = User.objects.create(email="unactivetest@test.com", password="any-pwd")
-        self.unactive_user.companies.add(self.noise_company)
+        self.noise_company.users.add(self.unactive_user)
         active_refresh = RefreshToken.for_user(self.active_user)
         unactive_refresh = RefreshToken.for_user(self.unactive_user)
         self.active_token = str(active_refresh.access_token)

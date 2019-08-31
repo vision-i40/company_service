@@ -13,12 +13,13 @@ class CompanyViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return models.Company\
             .objects\
-            .filter(user=self.request.user)\
+            .filter(users=self.request.user)\
             .order_by('-created')
 
     def perform_create(self, serializer):
         company = serializer.save()
-        self.request.user.companies.add(company)
+
+        company.users.add(self.request.user)
 
 
 class UnitOfMeasurementViewSet(viewsets.ModelViewSet):

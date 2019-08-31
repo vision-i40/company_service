@@ -13,12 +13,13 @@ class CompanyViewSetTest(TestCase):
 
     def setUp(self):
         self.active_user = User.objects.create(email="test@test.com", password="any-pwd", is_active=True)
-        self.first_company = Company.objects.create(name="company one", slug="c1", is_active=True)
-        self.second_company = Company.objects.create(name="company two", slug="c2", is_active=False)
-        self.noise_company = Company.objects.create(name="company two", slug="c2", is_active=False)
-        self.active_user.companies.add(self.first_company, self.second_company)
+        self.first_company = Company.objects.create(trade_name="company one", slug="c1", is_active=True)
+        self.second_company = Company.objects.create(trade_name="company two", slug="c2", is_active=False)
+        self.noise_company = Company.objects.create(trade_name="company two", slug="c2", is_active=False)
+        self.first_company.users.add(self.active_user)
+        self.second_company.users.add(self.active_user)
         self.unactive_user = User.objects.create(email="unactivetest@test.com", password="any-pwd")
-        self.unactive_user.companies.add(self.noise_company)
+        self.noise_company.users.add(self.unactive_user)
         active_refresh = RefreshToken.for_user(self.active_user)
         unactive_refresh = RefreshToken.for_user(self.unactive_user)
         self.active_token = str(active_refresh.access_token)
@@ -54,8 +55,8 @@ class CompanyViewSetTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response_dict['results']), 2)
-        self.assertEqual(response_dict['results'][0]['name'], self.second_company.name)
-        self.assertEqual(response_dict['results'][1]['name'], self.first_company.name)
+        self.assertEqual(response_dict['results'][0]['trade_name'], self.second_company.trade_name)
+        self.assertEqual(response_dict['results'][1]['trade_name'], self.first_company.trade_name)
 
     def test_company_details_authentication_response_is_401_when_there_is_no_authentication_token(self):
         assert_unauthorized_with_no_token(self, '/v1/companies/{}'.format(self.first_company.id), resource='retrieve',
@@ -82,7 +83,7 @@ class CompanyViewSetTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         response_dict['id'] = self.first_company.id
-        response_dict['name'] = self.first_company.name
+        response_dict['trade_name'] = self.first_company.trade_name
 
     def test_company_details_response_is_404_when_company_is_from_another_user(self):
         company_view = views.CompanyViewSet.as_view({'get': 'retrieve'})
@@ -111,8 +112,8 @@ class CompanyViewSetTest(TestCase):
         factory = APIRequestFactory()
 
         payload = {
-            'name': 'test company name',
-            'slug': 'test-company-name',
+            'trade_name': 'test company trade_name',
+            'slug': 'test-company-trade_name',
             'is_active': True,
         }
 
@@ -124,8 +125,8 @@ class CompanyViewSetTest(TestCase):
         response_dict = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(len(self.active_user.companies.all()), 3)
-        self.assertEqual(response_dict['name'], payload['name'])
+        self.assertEqual(len(Company.objects.get(pk=response_dict['id']).users.all()), 1)
+        self.assertEqual(response_dict['trade_name'], payload['trade_name'])
         self.assertEqual(response_dict['slug'], payload['slug'])
         self.assertEqual(response_dict['is_active'], payload['is_active'])
 
@@ -147,8 +148,8 @@ class CompanyViewSetTest(TestCase):
         factory = APIRequestFactory()
 
         payload = {
-            'name': 'new test company name',
-            'slug': 'new test-company-name',
+            'trade_name': 'new test company trade_name',
+            'slug': 'new test-company-trade_name',
             'is_active': False,
         }
 
@@ -160,8 +161,8 @@ class CompanyViewSetTest(TestCase):
         response_dict = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(self.active_user.companies.all()), 2)
-        self.assertEqual(response_dict['name'], payload['name'])
+        self.assertEqual(len(self.first_company.users.all()), 1)
+        self.assertEqual(response_dict['trade_name'], payload['trade_name'])
         self.assertEqual(response_dict['slug'], payload['slug'])
         self.assertEqual(response_dict['is_active'], payload['is_active'])
 
@@ -187,4 +188,3 @@ class CompanyViewSetTest(TestCase):
         response = company_view(request, pk=self.first_company.id)
 
         self.assertEqual(response.status_code, 204)
-        self.assertEqual(len(self.active_user.companies.all()), 1)

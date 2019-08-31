@@ -14,13 +14,25 @@ class BaseModel(models.Model):
 
 
 class Company(BaseModel):
-    name = models.CharField(max_length=256)
+    trade_name = models.CharField(max_length=256)
+    corporate_name = models.CharField(max_length=256, blank=True)
+    cnpj = models.CharField(max_length=14, blank=True)
+    email = models.CharField(max_length=256, blank=True)
+    phone = models.CharField(max_length=256, blank=True)
+    address = models.CharField(max_length=256, blank=True)
+    zip_code = models.CharField(max_length=256, blank=True)
+    neighborhood = models.CharField(max_length=256, blank=True)
+    city = models.CharField(max_length=256, blank=True)
+    state = models.CharField(max_length=256, blank=True)
+    country = models.CharField(max_length=256, blank=True)
+    industrial_sector = models.CharField(max_length=256, blank=True)
+    size = models.CharField(max_length=256, blank=True)
     slug = models.CharField(max_length=256, db_index=True)
     is_active = models.BooleanField(default=False)
     users = models.ManyToManyField(User)
 
     def __str__(self):
-        return self.name
+        return self.trade_name
 
 
 class Product(BaseModel):

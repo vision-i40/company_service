@@ -8,7 +8,7 @@ The singin endpoint should be use in order to retrieve a token to be used in bac
 | **Method**            | auth/signin/          |
 |-----------------------|:---------------------:|
 | **Resources**         | POST                  |
-| **Request Payload**   | `{"email": "email@email.com", "passsword": "awesome-hard-pwd"}` |
+| **Request Payload**   | `{"email": "email@email.com", "password": "awesome-hard-pwd"}` |
 | **Request Response**  | `{"access": "a.jwt.string","refresh":"a.jwt.string"}` |
 
 ## Refresh Token endpoint

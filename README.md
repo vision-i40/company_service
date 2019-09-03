@@ -13,7 +13,14 @@
 ```
     cp .env.example .env
 ```
-
+- Copy the local.py file from local.py.example
+```
+    cp company_service/settings/local.py.example company_service/settings/local.py
+```
+- Copy the test.py file from test.py.example
+```
+    cp company_service/settings/local.py.example company_service/settings/test.py
+```
 - User pipenv shell:
 ```
     pipenv shell

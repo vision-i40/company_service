@@ -12,12 +12,14 @@ class UserViewSetTest(TestCase):
 
     def setUp(self):
         self.first_company = Company.objects.create(trade_name="company one", slug="c1", is_active=True)
-        self.active_user = User.objects.create(email="test@test.com", password="any-pwd", is_active=True, default_company=self.first_company)
-        self.unactive_user = User.objects.create(email="unactivetest@test.com", password="any-pwd", is_active=False)
+        self.active_user = User.objects.create(email="test@test.com", password="any-pwd", is_active=True,
+                                               default_company=self.first_company)
+        self.unactivated_user = User.objects.create(email="unactivatedtest@test.com", password="any-pwd",
+                                                    is_active=False)
         active_refresh = RefreshToken.for_user(self.active_user)
-        unactive_refresh = RefreshToken.for_user(self.unactive_user)
+        unactivated_refresh = RefreshToken.for_user(self.unactivated_user)
         self.active_token = str(active_refresh.access_token)
-        self.unactive_token = str(unactive_refresh.access_token)
+        self.unactivated_token = str(unactivated_refresh.access_token)
         self.authorization_active_token = 'Bearer {}'.format(self.active_token)
 
 
@@ -27,8 +29,10 @@ class UserViewSetTest(TestCase):
     def test_current_user_authentication_response_is_401_when_an_invalid_authentication_token_is_provided(self):
         assert_unauthorized_with_invalid_token(self, route='/v1/users/current', method='get', resource='current')
 
-    def test_current_user_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
-        assert_unauthorized_with_unactive_user(self, route='/v1/users/current', unactiveToken=self.unactive_token, method='get', resource='current')
+    def test_current_user_authentication_response_is_401_when_a_token_from_an_unactivated_user_is_provided(self):
+        assert_unauthorized_with_unactivated_user(self, route='/v1/users/current',
+                                                  unactivatedToken=self.unactivated_token,
+                                                  method='get', resource='current')
 
     def test_current_user_profile_info_response_is_200(self):
         user_view = UserViewSet.as_view({'get': 'current'})

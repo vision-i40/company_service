@@ -15,10 +15,14 @@ router.register('users', UserViewSet, basename='users')
 companies_router = routers.NestedSimpleRouter(router, 'companies', lookup='companies')
 companies_router.register('production_lines', views.ProductionLineViewSet, base_name='companies-production_lines')
 companies_router.register('products', views.ProductViewSet, base_name='companies-products')
+companies_router.register('turn_schemes', views.TurnSchemeViewSet, base_name='companies-turn_schemes')
 
 products_router = routers.NestedSimpleRouter(companies_router, 'products', lookup='products')
 products_router.register('units_of_measurement', views.UnitOfMeasurementViewSet,
                          base_name='companies-products-units_of_measurement')
+
+# turn_schemes_router = routers.NestedSimpleRouter(companies_router, 'turn_schemes', lookup='turn_schemes')
+# turn_schemes_router.register('turns', views.TurnViewSet, base_name='companies-turn_schemes-turns')
 
 urlpatterns = [
     url(r'^v1/', include(router.urls)),

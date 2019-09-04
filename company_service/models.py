@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from model_utils.fields import AutoCreatedField, AutoLastModifiedField
 from users.models import User
 from common.models import IndexedTimeStampedModel
+from django.contrib.postgres.fields import ArrayField
 
 
 class Company(IndexedTimeStampedModel):
@@ -77,6 +78,10 @@ class Turn(IndexedTimeStampedModel):
     name = models.CharField(max_length=256)
     start_time = models.TimeField()
     end_time = models.TimeField()
+    days_week = ArrayField(
+        models.CharField(max_length=1),
+        default=list,
+    )
 
 
 class ProductionLine(IndexedTimeStampedModel):

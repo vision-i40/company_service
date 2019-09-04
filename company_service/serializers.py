@@ -71,3 +71,27 @@ class ProductionLineSerializer(serializers.HyperlinkedModelSerializer):
             'created',
             'modified'
         )
+
+
+class TurnSchemeSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = TurnScheme
+        fields = (
+            'id',
+            'company_id',
+            'name',
+            'modified'
+        )
+
+
+class TurnSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Turn
+        fields = (
+            'turn_scheme_id',
+            'name',
+            'start_time',
+            'end_time',
+            'days_week',
+            'modified'
+        )

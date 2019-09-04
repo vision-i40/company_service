@@ -18,12 +18,12 @@ class CompanyViewSetTest(TestCase):
         self.noise_company = Company.objects.create(trade_name="company two", slug="c2", is_active=False)
         self.first_company.users.add(self.active_user)
         self.second_company.users.add(self.active_user)
-        self.unactive_user = User.objects.create(email="unactivetest@test.com", password="any-pwd", is_active=False)
-        self.noise_company.users.add(self.unactive_user)
+        self.unactivated_user = User.objects.create(email="unactivatedtest@test.com", password="any-pwd", is_active=False)
+        self.noise_company.users.add(self.unactivated_user)
         active_refresh = RefreshToken.for_user(self.active_user)
-        unactive_refresh = RefreshToken.for_user(self.unactive_user)
+        unactivated_refresh = RefreshToken.for_user(self.unactivated_user)
         self.active_token = str(active_refresh.access_token)
-        self.unactive_token = str(unactive_refresh.access_token)
+        self.unactivated_token = str(unactivated_refresh.access_token)
 
         self.authorization_active_token = 'Bearer {}'.format(self.active_token)
 
@@ -32,7 +32,7 @@ class CompanyViewSetTest(TestCase):
         self.second_company.delete()
         self.noise_company.delete()
         self.active_user.delete()
-        self.unactive_user.delete()
+        self.unactivated_user.delete()
 
     def test_companies_list_authentication_response_is_401_when_there_is_no_authentication_token(self):
         assert_unauthorized_with_no_token(self, '/v1/companies', resource='list')
@@ -40,8 +40,8 @@ class CompanyViewSetTest(TestCase):
     def test_companies_list_authentication_response_is_401_when_an_invalid_authentication_token_is_provided(self):
         assert_unauthorized_with_invalid_token(self, '/v1/companies', resource='list')
 
-    def test_companies_list_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
-        assert_unauthorized_with_unactive_user(self, 'v1/companies', self.unactive_token, resource='list')
+    def test_companies_list_authentication_response_is_401_when_a_token_from_an_unactivated_user_is_provided(self):
+        assert_unauthorized_with_unactivated_user(self, 'v1/companies', self.unactivated_token, resource='list')
 
     def test_companies_list_response_is_200(self):
         company_view = views.CompanyViewSet.as_view({'get': 'list'})
@@ -66,9 +66,9 @@ class CompanyViewSetTest(TestCase):
         assert_unauthorized_with_invalid_token(self, '/v1/companies/{}'.format(self.first_company.id),
                                                resource='retrieve', pk=self.first_company.id)
 
-    def test_company_details_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
-        assert_unauthorized_with_unactive_user(self, '/v1/companies/{}'.format(self.first_company.id),
-                                               self.unactive_token, resource='retrieve', pk=self.first_company.id)
+    def test_company_details_authentication_response_is_401_when_a_token_from_an_unactivated_user_is_provided(self):
+        assert_unauthorized_with_unactivated_user(self, '/v1/companies/{}'.format(self.first_company.id),
+                                               self.unactivated_token, resource='retrieve', pk=self.first_company.id)
 
     def test_company_details_response_is_200(self):
         company_view = views.CompanyViewSet.as_view({'get': 'retrieve'})
@@ -103,8 +103,8 @@ class CompanyViewSetTest(TestCase):
     def test_add_company_authentication_response_is_401_when_an_invalid_authentication_token_is_provided(self):
         assert_unauthorized_with_invalid_token(self, '/v1/companies', method='post', resource='create')
 
-    def test_add_company_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
-        assert_unauthorized_with_unactive_user(self, '/v1/companies', self.unactive_token, method='post',
+    def test_add_company_authentication_response_is_401_when_a_token_from_an_unactivated_user_is_provided(self):
+        assert_unauthorized_with_unactivated_user(self, '/v1/companies', self.unactivated_token, method='post',
                                                resource='create')
 
     def test_add_company__response_is_201(self):
@@ -138,9 +138,9 @@ class CompanyViewSetTest(TestCase):
         assert_unauthorized_with_invalid_token(self, '/v1/companies/{}'.format(self.first_company.id), method='put',
                                                resource='update', pk=self.first_company.id)
 
-    def test_update_company_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
-        assert_unauthorized_with_unactive_user(self, '/v1/companies/{}'.format(self.first_company.id),
-                                               self.unactive_token, method='put', resource='update',
+    def test_update_company_authentication_response_is_401_when_a_token_from_an_unactivated_user_is_provided(self):
+        assert_unauthorized_with_unactivated_user(self, '/v1/companies/{}'.format(self.first_company.id),
+                                               self.unactivated_token, method='put', resource='update',
                                                pk=self.first_company.id)
 
     def test_update_company__response_is_200(self):
@@ -174,9 +174,9 @@ class CompanyViewSetTest(TestCase):
         assert_unauthorized_with_invalid_token(self, '/v1/companies/{}'.format(self.first_company.id), method='delete',
                                                resource='destroy', pk=self.first_company.id)
 
-    def test_destroy_company_authentication_response_is_401_when_a_token_from_an_unactive_user_is_provided(self):
-        assert_unauthorized_with_unactive_user(self, '/v1/companies/{}'.format(self.first_company.id),
-                                               self.unactive_token, method='delete', resource='destroy',
+    def test_destroy_company_authentication_response_is_401_when_a_token_from_an_unactivated_user_is_provided(self):
+        assert_unauthorized_with_unactivated_user(self, '/v1/companies/{}'.format(self.first_company.id),
+                                               self.unactivated_token, method='delete', resource='destroy',
                                                pk=self.first_company.id)
 
     def test_destroy_company__response_is_200(self):

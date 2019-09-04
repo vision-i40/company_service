@@ -29,12 +29,12 @@ def assert_unauthorized_with_invalid_token(testInstance, route, method='get', re
     testInstance.assertTrue("Given token not valid" in response_dict['detail'])
 
 
-def assert_unauthorized_with_unactive_user(testInstance, route, unactiveToken, method='get', resource='list', pk=None,
+def assert_unauthorized_with_unactivated_user(testInstance, route, unactivatedToken, method='get', resource='list', pk=None,
                                            companies_pk=None):
     view = testInstance.view.as_view({method: resource})
     factory = APIRequestFactory()
 
-    request = factory.get(route, HTTP_AUTHORIZATION='Bearer {}'.format(unactiveToken))
+    request = factory.get(route, HTTP_AUTHORIZATION='Bearer {}'.format(unactivatedToken))
     response = view(request, pk=pk, companies_pk=companies_pk)
 
     testInstance.assertEqual(response.status_code, 401)

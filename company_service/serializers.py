@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 
 class CompanySerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = Company
         fields = (
@@ -23,7 +24,7 @@ class CompanySerializer(serializers.HyperlinkedModelSerializer):
             'size',
             'is_active',
             'created',
-            'modified'
+            'modified',
         )
 
 
@@ -32,39 +33,26 @@ class UnitOfMeasurementSerializer(serializers.HyperlinkedModelSerializer):
         model = UnitOfMeasurement
         fields = (
             'id',
-            'company_id',
             'name',
+            'is_default',
             'conversion_factor',
-            'is_global',
             'created',
-            'modified'
+            'modified',
         )
 
 
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
+    units_of_measurement = UnitOfMeasurementSerializer(many=True, source='unitofmeasurement_set', read_only=True)
+
     class Meta:
         model = Product
         fields = (
             'id',
             'company_id',
             'name',
-            'description',
-            'production_rate_per_hour',
+            'units_of_measurement',
             'created',
-            'modified'
-        )
-
-
-class ProductConversionSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = ProductConversion
-        fields = (
-            'id',
-            'product_id',
-            'unitofmeasurement_id',
-            'conversion_factor',
-            'created',
-            'modified'
+            'modified',
         )
 
 

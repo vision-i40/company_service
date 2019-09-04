@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Company
+from . import models
 from users.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin.views.main import ChangeList
@@ -24,4 +24,36 @@ class CustomCompanyAdmin(admin.ModelAdmin):
                         'country', 'industrial_sector', 'size', 'is_active')}),
     )
 
-admin.site.register(Company, CustomCompanyAdmin)
+class CustomProductAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'company')
+    list_filter = ('name', 'company')
+    search_fields = ('name',)
+    ordering = ('name',)
+
+    fieldsets = (
+        (None, {'fields': ('name', 'company',)}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('name', 'company')}),
+    )
+
+class CustomUnitOfMeasurementAdmin(admin.ModelAdmin):
+    list_display = ('id', 'product', 'name', 'is_default', 'conversion_factor',)
+    list_filter = ('name', 'product', 'is_default',)
+    search_fields = ('name',)
+    ordering = ('name',)
+
+    fieldsets = (
+        (None, {'fields': ('name', 'product', 'is_default', 'conversion_factor',)}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('name', 'product', 'is_default', 'conversion_factor',)}),
+    )
+
+admin.site.register(models.Company, CustomCompanyAdmin)
+admin.site.register(models.Product, CustomProductAdmin)
+admin.site.register(models.UnitOfMeasurement, CustomUnitOfMeasurementAdmin)

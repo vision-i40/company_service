@@ -54,19 +54,6 @@ class ProductViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(company=models.Company.objects.get(users=self.request.user, pk=self.kwargs['companies_pk']))
 
-
-class ProductConversionViewSet(viewsets.ModelViewSet):
-    authentication_classes = (JWTAuthentication,)
-    permission_classes = (IsAuthenticated,)
-    serializer_class = serializers.ProductConversionSerializer
-
-    def get_queryset(self):
-        return models.ProductConversion\
-            .objects\
-            .filter(product__company__user=self.request.user, product__company=self.kwargs['companies_pk'])\
-            .order_by('-created')
-
-
 class ProductionLineViewSet(viewsets.ModelViewSet):
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAuthenticated,)

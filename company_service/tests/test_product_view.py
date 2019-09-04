@@ -14,13 +14,10 @@ class ProductViewSetTest(TestCase):
     def setUp(self):
         self.active_user = User.objects.create(email="test@test.com", password="any-pwd", is_active=True)
         self.first_company = Company.objects.create(trade_name="company one", slug="c1", is_active=True)
-        self.first_product = Product.objects.create(company=self.first_company, name="product one",
-                                                    production_rate_per_hour=10.1, description="A desc")
-        self.second_product = Product.objects.create(company=self.first_company, name="product two",
-                                                     production_rate_per_hour=10.2, description="Another desc")
+        self.first_product = Product.objects.create(company=self.first_company, name="product one")
+        self.second_product = Product.objects.create(company=self.first_company, name="product two")
         self.noise_company = Company.objects.create(trade_name="company two", slug="c2", is_active=False)
-        self.noise_product = Product.objects.create(company=self.noise_company, name="product noise",
-                                                    production_rate_per_hour=10.3)
+        self.noise_product = Product.objects.create(company=self.noise_company, name="product noise")
         self.first_company.users.add(self.active_user)
         self.unactive_user = User.objects.create(email="unactivetest@test.com", password="any-pwd", is_active=False)
         self.noise_company.users.add(self.unactive_user)
@@ -30,9 +27,7 @@ class ProductViewSetTest(TestCase):
         self.unactive_token = str(unactive_refresh.access_token)
 
         self.index_route = '/v1/companies/{}/products'.format(self.first_company.id)
-        self.single_route = '/v1/companies/{}/products/{}'.format(
-            self.first_company.id,
-            self.first_product.id)
+        self.single_route = '/v1/companies/{}/products/{}'.format(self.first_company.id, self.first_product.id)
 
     def tearDown(self):
         self.first_company.delete()
@@ -78,13 +73,7 @@ class ProductViewSetTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response_dict['results']), 2)
         self.assertEqual(response_dict['results'][0]['name'], self.second_product.name)
-        self.assertEqual(response_dict['results'][0]['production_rate_per_hour'],
-                         self.second_product.production_rate_per_hour)
-        self.assertEqual(response_dict['results'][0]['description'], self.second_product.description)
         self.assertEqual(response_dict['results'][1]['name'], self.first_product.name)
-        self.assertEqual(response_dict['results'][1]['production_rate_per_hour'],
-                         self.first_product.production_rate_per_hour)
-        self.assertEqual(response_dict['results'][1]['description'], self.first_product.description)
 
     def test_product_details_authentication_response_is_401_when_there_is_no_authentication_token(self):
         assert_unauthorized_with_no_token(
@@ -123,8 +112,6 @@ class ProductViewSetTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response_dict['name'], self.first_product.name)
-        self.assertEqual(response_dict['production_rate_per_hour'], self.first_product.production_rate_per_hour)
-        self.assertEqual(response_dict['description'], self.first_product.description)
 
     def test_product_details_response_is_404_when_product_is_from_another_company(self):
         product_view = self.view.as_view({'get': 'retrieve'})
@@ -155,8 +142,6 @@ class ProductViewSetTest(TestCase):
 
         payload = {
             'name': 'test product name',
-            'description': 'a new desc',
-            'production_rate_per_hour': 99.91,
         }
 
         request = factory.post(self.index_route, payload, format='json',
@@ -170,5 +155,3 @@ class ProductViewSetTest(TestCase):
         self.assertEqual(len(Product.objects.filter(company=self.first_company).all()), 3)
         self.assertEqual(len(Product.objects.all()), 4)
         self.assertEqual(response_dict['name'], payload['name'])
-        self.assertEqual(response_dict['description'], payload['description'])
-        self.assertEqual(response_dict['production_rate_per_hour'], payload['production_rate_per_hour'])

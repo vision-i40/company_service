@@ -79,7 +79,7 @@ class TurnSchemeViewSet(viewsets.ModelViewSet):
             order_by('-created')
 
     def perform_create(self, serializer):
-        serializer.save(company=models.Company.objects.get(pk=self.kwargs['companies_pk']))
+        serializer.save(company=models.Company.objects.get(users=self.request.user, pk=self.kwargs['companies_pk']))
 
 
 class TurnViewSet(viewsets.ModelViewSet):

@@ -171,3 +171,48 @@ class TurnSchemeSetTest(TestCase):
                                                   format(self.first_company.id, self.first_turn_scheme.id),
                                                   self.unactivated_token, method='put', resource='update',
                                                   pk=self.first_company.id)
+
+    def test_update_turn_scheme__response_is_200(self):
+        turn_scheme_view = views.TurnSchemeViewSet.as_view({'put': 'update'})
+        factory = APIRequestFactory()
+
+        payload = {
+            'name': 'new turn scheme name',
+        }
+
+        request = factory.put('/v1/companies/{}/turn_schemes/{}'.
+                              format(self.first_company.id, self.first_turn_scheme.id), payload,
+                              format='json', HTTP_AUTHORIZATION=self.authorization_active_token)
+        response = turn_scheme_view(request, companies_pk=self.first_company.id, pk=self.first_turn_scheme.id)
+
+        response.render()
+        response_dict = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response_dict['name'], payload['name'])
+
+    def test_destroy_turn_scheme_authentication_response_is_401_when_there_is_no_authentication_token(self):
+        assert_unauthorized_with_no_token(self, '/v1/companies/{}/turn_schemes/{}'.
+                                          format(self.first_company.id, self.first_turn_scheme.id),
+                                          method='delete', resource='destroy', pk=self.first_turn_scheme.id)
+
+    def test_destroy_turn_scheme_authentication_response_is_401_when_an_invalid_authentication_token_is_provided(self):
+        assert_unauthorized_with_invalid_token(self, '/v1/companies/{}/turn_schemes/{}'.
+                                               format(self.first_company.id, self.first_turn_scheme.id),
+                                               method='delete', resource='destroy', pk=self.first_turn_scheme.id)
+
+    def test_destroy_turn_scheme_authentication_response_is_401_when_a_token_from_an_unactivated_user_is_provided(self):
+        assert_unauthorized_with_unactivated_user(self, '/v1/companies/{}/turn_schemes/{}'.
+                                                  format(self.first_company.id, self.first_turn_scheme.id), self.unactivated_token,
+                                                  method='delete', resource='destroy', pk=self.first_company.id)
+
+    def test_destroy_turn_scheme__response_is_200(self):
+        turn_scheme_view = views.TurnSchemeViewSet.as_view({'delete': 'destroy'})
+        factory = APIRequestFactory()
+
+        request = factory.delete('/v1/companies/{}/turn_schemes/{}'.
+                                 format(self.first_company.id, self.first_turn_scheme.id), format='json',
+                                 HTTP_AUTHORIZATION=self.authorization_active_token)
+        response = turn_scheme_view(request, companies_pk=self.first_company.id, pk=self.first_turn_scheme.id)
+
+        self.assertEqual(response.status_code, 204)

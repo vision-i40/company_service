@@ -1,4 +1,4 @@
-# Product
+# Unit of Measurement
 
 ## Adding a Unit of Measurement
 This endpoint allows the current user to add a new Unit of Measurement in his company. [This route is authenticated](https://github.com/vision-i40/company_service/tree/master/docs/authentication#authenticated-endpoints).
@@ -10,7 +10,7 @@ This endpoint allows the current user to add a new Unit of Measurement in his co
 | **Request Response**  | `{"id": 4,"name" : "test unit 1",	"is_default": true,	"conversion_factor": 1,"created","2019-09-06T00:08:07.288388Z","modified":"2019-09-06T00:08:07.288388Z"}` |
 
 
-## Listing the products
+## Listing the Units of Measurements
 This endpoint allows the current user to list the products of his company. [This route is authenticated](https://github.com/vision-i40/company_service/tree/master/docs/authentication#authenticated-endpoints).
 
 | **Method**            | v1/companies/1/products/2/units_of_measurement     |

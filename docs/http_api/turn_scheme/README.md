@@ -1,7 +1,7 @@
 # Turn Scheme
 
 ## Adding a turn scheme
-This endpoint allows the current user to add a new turn scheme in his company. **This route is authenticated**.
+This endpoint allows the current user to add a new turn scheme in his company. [This route is authenticated](https://github.com/vision-i40/company_service/tree/master/docs/authentication#authenticated-endpoints).
 
 | **Method**            | v1/companies/1/turn_schemes/     |
 |-----------------------|:---------------------:|
@@ -11,7 +11,7 @@ This endpoint allows the current user to add a new turn scheme in his company. *
 
 
 ## Listing the turn schemes
-This endpoint allows the current user to list the turn schemes of his company. **This route is authenticated**.
+This endpoint allows the current user to list the turn schemes of his company. [This route is authenticated](https://github.com/vision-i40/company_service/tree/master/docs/authentication#authenticated-endpoints).
 
 | **Method**            | v1/companies/1/turn_schemes     |
 |-----------------------|:---------------------:|
@@ -20,7 +20,7 @@ This endpoint allows the current user to list the turn schemes of his company. *
 
 
 ## Retrieving a turn scheme
-This endpoint allows the current user to retrieve a turn scheme of his company. **This route is authenticated**.
+This endpoint allows the current user to retrieve a turn scheme of his company. [This route is authenticated](https://github.com/vision-i40/company_service/tree/master/docs/authentication#authenticated-endpoints).
 
 | **Method**            | v1/companies/1/turn_schemes/2     |
 |-----------------------|:---------------------:|
@@ -29,7 +29,7 @@ This endpoint allows the current user to retrieve a turn scheme of his company. 
 
 
 ## Updating a turn scheme
-This endpoint allows the current user to update a turn scheme of his company. **This route is authenticated**.
+This endpoint allows the current user to update a turn scheme of his company. [This route is authenticated](https://github.com/vision-i40/company_service/tree/master/docs/authentication#authenticated-endpoints).
 
 | **Method**            | v1/companies/1/turn_schemes/2/     |
 |-----------------------|:---------------------:|

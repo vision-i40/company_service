@@ -2,7 +2,7 @@ from django.test import TestCase
 from rest_framework.test import APIRequestFactory
 from company_service import view as views
 from users.models import User
-from company_service.models import Company, Product
+from company_service.models import Company, Product, UnitOfMeasurement
 from rest_framework_simplejwt.tokens import RefreshToken
 from company_service.tests.view_test_support import *
 import json
@@ -15,7 +15,10 @@ class ProductViewSetTest(TestCase):
         self.active_user = User.objects.create(email="test@test.com", password="any-pwd", is_active=True)
         self.first_company = Company.objects.create(trade_name="company one", slug="c1", is_active=True)
         self.first_product = Product.objects.create(company=self.first_company, name="product one")
+        self.first_product_unit_one =  UnitOfMeasurement.objects.create(name="can 300ml", is_default=True, conversion_factor=1.0, product=self.first_product)
+        self.first_product_unit_two =  UnitOfMeasurement.objects.create(name="soda pack", is_default=False, conversion_factor=12.0, product=self.first_product)
         self.second_product = Product.objects.create(company=self.first_company, name="product two")
+        self.second_product_unit_two =  UnitOfMeasurement.objects.create(name="can 473ml", is_default=True, conversion_factor=1.0, product=self.second_product)
         self.noise_company = Company.objects.create(trade_name="company two", slug="c2", is_active=False)
         self.noise_product = Product.objects.create(company=self.noise_company, name="product noise")
         self.first_company.users.add(self.active_user)
@@ -74,6 +77,12 @@ class ProductViewSetTest(TestCase):
         self.assertEqual(len(response_dict['results']), 2)
         self.assertEqual(response_dict['results'][0]['name'], self.second_product.name)
         self.assertEqual(response_dict['results'][1]['name'], self.first_product.name)
+
+        self.assertEqual(len(response_dict['results'][0]['units_of_measurement']), 1)
+        self.assertEqual(response_dict['results'][0]['units_of_measurement'][0]['name'], self.second_product_unit_two.name)
+        self.assertEqual(len(response_dict['results'][1]['units_of_measurement']), 2)
+        self.assertEqual(response_dict['results'][1]['units_of_measurement'][0]['name'], self.first_product_unit_two.name)
+        self.assertEqual(response_dict['results'][1]['units_of_measurement'][1]['name'], self.first_product_unit_one.name)
 
     def test_product_details_authentication_response_is_401_when_there_is_no_authentication_token(self):
         assert_unauthorized_with_no_token(

@@ -89,3 +89,10 @@ class TurnViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         pass
+
+    def perform_create(self, serializer):
+        serializer.save(company=models.Company.objects.get(users=self.request.user, pk=self.kwargs['companies_pk'],
+                                                           turnscheme=self.kwargs['turn_schemes_pk']))
+
+    # def perform_create(self, serializer):
+    #     serializer.save(company=models.Company.objects.get(users=self.request.user, pk=self.kwargs['companies_pk']))

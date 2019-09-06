@@ -79,6 +79,7 @@ class TurnSchemeSerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'company_id',
             'name',
+            'created',
             'modified'
         )
 
@@ -87,10 +88,12 @@ class TurnSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Turn
         fields = (
+            'id',
             'turn_scheme_id',
             'name',
             'start_time',
             'end_time',
-            'days_week',
+            'days_of_week',
+            'created',
             'modified'
         )

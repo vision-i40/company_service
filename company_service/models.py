@@ -74,11 +74,11 @@ class TurnScheme(IndexedTimeStampedModel):
 
 
 class Turn(IndexedTimeStampedModel):
-    turn_scheme = models.ForeignKey(TurnScheme, on_delete=models.CASCADE)
+    turn_scheme = models.ForeignKey(TurnScheme, on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField(max_length=256)
     start_time = models.TimeField()
     end_time = models.TimeField()
-    days_week = ArrayField(
+    days_of_week = ArrayField(
         models.CharField(max_length=1),
         default=list,
     )

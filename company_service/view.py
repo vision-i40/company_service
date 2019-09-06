@@ -30,13 +30,13 @@ class UnitOfMeasurementViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return models.UnitOfMeasurement \
             .objects \
-            .filter(product__company__user=self.request.user, product=self.kwargs['product_pk']) \
+            .filter(product__company__user=self.request.user, product=self.kwargs['products_pk']) \
             .order_by('-created')
 
     def perform_create(self, serializer):
         product = models.Product \
             .objects \
-            .get(company__user=self.request.user, pk=self.kwargs['product_pk'])
+            .get(company__user=self.request.user, pk=self.kwargs['products_pk'])
         serializer.save(product=product)
 
 

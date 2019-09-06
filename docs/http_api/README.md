@@ -4,3 +4,4 @@ The entire api follows the Django pattern. So there are CRUD implementation for 
 
 - [Product](https://github.com/vision-i40/company_service/tree/master/docs/http_api/product)
 - [Turn Scheme](https://github.com/vision-i40/company_service/tree/master/docs/http_api/turn_scheme)
+- [Unit of Measurement](https://github.com/vision-i40/company_service/tree/master/docs/http_api/unit_of_measurement)

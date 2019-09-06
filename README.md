@@ -72,4 +72,4 @@ Run the tests:
 
 - [Authentication](https://github.com/vision-i40/company_service/tree/master/docs/authentication)
 - [User Info](https://github.com/vision-i40/company_service/tree/master/docs/user)
-- [Company Service](https://github.com/vision-i40/company_service/tree/master/docs/company_service/)
+- [Resources HTTP Api](https://github.com/vision-i40/company_service/tree/master/docs/http_api/)

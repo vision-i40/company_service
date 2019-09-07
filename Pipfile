@@ -34,6 +34,7 @@ djangorestframework = "*"
 djangorestframework_simplejwt = "*"
 drf-nested-routers = "*"
 django-cors-headers = "*"
+django-rest-swagger = "*"
 
 [requires]
 

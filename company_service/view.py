@@ -66,6 +66,9 @@ class ProductionLineViewSet(viewsets.ModelViewSet):
             .filter(company__user=self.request.user, company=self.kwargs['companies_pk']) \
             .order_by('-created')
 
+    def perform_create(self, serializer):
+        serializer.save(company=models.Company.objects.get(users=self.request.user, pk=self.kwargs['companies_pk']))
+
 
 class TurnSchemeViewSet(viewsets.ModelViewSet):
     authentication_classes = (JWTAuthentication,)

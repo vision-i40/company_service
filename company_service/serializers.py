@@ -63,10 +63,12 @@ class ProductionLineSerializer(serializers.HyperlinkedModelSerializer):
             'company_id',
             'name',
             'is_active',
-            'oee_goal',
             'discount_rework',
             'discount_waste',
-            'stop_on_production_abscence',
+            'stop_on_production_absence',
+            'time_to_consider_absence',
+            'reset_production_changing_order',
+            'micro_stop_seconds',
             'created',
             'modified'
         )

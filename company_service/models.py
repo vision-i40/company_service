@@ -94,10 +94,12 @@ class ProductionLine(IndexedTimeStampedModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     name = models.CharField(max_length=256)
     is_active = models.BooleanField(default=True)
-    oee_goal = models.FloatField(blank=True, null=True)
     discount_rework = models.BooleanField(default=False)
     discount_waste = models.BooleanField(default=False)
-    stop_on_production_abscence = models.BooleanField(default=False)
+    stop_on_production_absence = models.BooleanField(default=False)
+    time_to_consider_absence = models.IntegerField(blank=True, null=True)
+    reset_production_changing_order = models.BooleanField(default=False)
+    micro_stop_seconds = models.IntegerField(blank=True, null=True)
     turn_scheme = models.ForeignKey(TurnScheme, blank=True, null=True, on_delete=models.SET_NULL)
 
 

@@ -89,8 +89,25 @@ class CustomTurnAdmin(admin.ModelAdmin):
     )
 
 
+class CustomProductionLineAdmin(admin.ModelAdmin):
+    list_display = ('id', 'company', 'name',)
+    list_filter = ('name', 'company',)
+    search_fields = ('name',)
+    ordering = ('name',)
+
+    fieldsets = (
+        (None, {'fields': ('company', 'name', 'is_active', 'discount_rework', 'discount_waste', 'stop_on_production_absence', 'time_to_consider_absence', 'reset_production_changing_order', 'micro_stop_seconds', 'turn_scheme',)}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('name', 'company', 'name', 'is_active', 'discount_rework', 'discount_waste', 'stop_on_production_absence', 'time_to_consider_absence', 'reset_production_changing_order', 'micro_stop_seconds', 'turn_scheme',)}),
+    )
+
+
 admin.site.register(models.Company, CustomCompanyAdmin)
 admin.site.register(models.Product, CustomProductAdmin)
 admin.site.register(models.UnitOfMeasurement, CustomUnitOfMeasurementAdmin)
 admin.site.register(models.TurnScheme, CustomTurnSchemeAdmin)
 admin.site.register(models.Turn, CustomTurnAdmin)
+admin.site.register(models.ProductionLine, CustomProductionLineAdmin)

@@ -24,7 +24,11 @@ class TurnSetTest(TestCase):
         self.noise_turn_scheme = TurnScheme.objects.create(company=self.noise_company, name="turn_scheme noise")
 
         self.first_turn = Turn.objects.create(turn_scheme=self.first_turn_scheme, name="turn 1",
-                                              start_time="08:00", end_time="12:30", days_of_week=['2', '3', '4'])
+                                              start_time="08:00:12", end_time="12:30:23", days_of_week=[4, 5, 6])
+        self.second_turn = Turn.objects.create(turn_scheme=self.first_turn_scheme, name="turn 2",
+                                              start_time="08:00:23", end_time="12:40:21", days_of_week=[1, 2, 3])
+        self.third_turn = Turn.objects.create(turn_scheme=self.second_turn_scheme, name="turn 3",
+                                              start_time="08:00:23", end_time="12:40:21", days_of_week=[1, 2, 3])
 
         self.first_company.users.add(self.active_user)
         self.noise_company.users.add(self.unactivated_user)
@@ -38,25 +42,41 @@ class TurnSetTest(TestCase):
         self.index_route = '/v1/companies/{}/turn_schemes/{}/turns/'.format(self.first_company.id, self.first_turn_scheme.id)
         self.single_route = '/v1/companies/{}/turn_schemes/{}/turns/{}'.format(self.first_company.id, self.first_turn_scheme.id, self.first_turn)
 
+    def test_turn_list_response_is_200(self):
+        turn_view = self.view.as_view({'get': 'list'})
+        factory = APIRequestFactory()
+
+        request = factory.get(self.index_route, HTTP_AUTHORIZATION='Bearer {}'.format(self.active_token))
+        response = turn_view(request, companies_pk=self.first_company.id, turn_schemes_pk=self.first_turn_scheme.id)
+
+        response.render()
+        response_dict = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response_dict['results']), 2)
+        self.assertEqual(response_dict['results'][0]['name'], self.second_turn.name)
+        self.assertEqual(response_dict['results'][1]['name'], self.first_turn.name)
+
     def test_add_turn__response_is_201(self):
         turn_view = self.view.as_view({'post': 'create'})
         factory = APIRequestFactory()
 
         payload = {
             'name': 'turn-scheme-name',
-            'start_time': '07:30',
-            'end_time': '12:00',
-            'days_of_week': ['1', '2', '3', '4', '5'],
+            'start_time': '07:30:15',
+            'end_time': '12:00:25',
+            'days_of_week': [1, 2, 3, 4],
         }
 
         request = factory.post(self.index_route, payload, format='json',
                                HTTP_AUTHORIZATION='Bearer {}'.format(self.active_token))
-        response = turn_view(request, companies_pk=self.first_company.id, turn_schemes_pk=self.first_turn_scheme.id)
+        response = turn_view(request, turn_schemes_pk=self.first_turn_scheme.id)
 
         response.render()
         response_dict = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(response.status_code, 201)
-        # self.assertEqual(len(TurnScheme.objects.filter(company=self.first_company).all()), 3)
-        # self.assertEqual(len(TurnScheme.objects.all()), 4)
-        # self.assertEqual(response_dict['name'], payload['name'])
+        self.assertEqual(response_dict['name'], payload['name'])
+        self.assertEqual(response_dict['start_time'], payload['start_time'])
+        self.assertEqual(response_dict['end_time'], payload['end_time'])
+        self.assertEqual(response_dict['days_of_week'], payload['days_of_week'])

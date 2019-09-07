@@ -85,14 +85,16 @@ class TurnSchemeViewSet(viewsets.ModelViewSet):
 class TurnViewSet(viewsets.ModelViewSet):
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
-    serializer_class = serializers.TurnSchemeSerializer
+    serializer_class = serializers.TurnSerializer
 
     def get_queryset(self):
-        pass
+        return models.Turn \
+            .objects \
+            .filter(turn_scheme__company__user=self.request.user, turn_scheme=self.kwargs['turn_schemes_pk']) \
+            .order_by('-created')
 
     def perform_create(self, serializer):
-        serializer.save(company=models.Company.objects.get(users=self.request.user, pk=self.kwargs['companies_pk'],
-                                                           turnscheme=self.kwargs['turn_schemes_pk']))
-
-    # def perform_create(self, serializer):
-    #     serializer.save(company=models.Company.objects.get(users=self.request.user, pk=self.kwargs['companies_pk']))
+        turn_scheme = models.TurnScheme \
+            .objects \
+            .get(company__user=self.request.user, pk=self.kwargs['turn_schemes_pk'])
+        serializer.save(turn_scheme=turn_scheme)

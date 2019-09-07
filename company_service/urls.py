@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^v1/', include(router.urls)),
     url(r'^v1/', include(companies_router.urls)),
     url(r'^v1/', include(products_router.urls)),
+    url(r'^v1/', include(turn_schemes_router.urls)),
     url(r'^auth/token/$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     url(r'^auth/token/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),
     url('admin/', admin.site.urls),

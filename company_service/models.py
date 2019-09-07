@@ -72,6 +72,9 @@ class TurnScheme(IndexedTimeStampedModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     name = models.CharField(max_length=256)
 
+    def __str__(self):
+        return self.name
+
 
 class Turn(IndexedTimeStampedModel):
     turn_scheme = models.ForeignKey(TurnScheme, on_delete=models.CASCADE, blank=True, null=True)
@@ -79,9 +82,12 @@ class Turn(IndexedTimeStampedModel):
     start_time = models.TimeField()
     end_time = models.TimeField()
     days_of_week = ArrayField(
-        models.CharField(max_length=1),
+        models.IntegerField(),
         default=list,
     )
+
+    def __str__(self):
+        return self.name
 
 
 class ProductionLine(IndexedTimeStampedModel):

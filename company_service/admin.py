@@ -59,18 +59,33 @@ class CustomUnitOfMeasurementAdmin(admin.ModelAdmin):
 
 
 class CustomTurnSchemeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name',)
+    list_display = ('id', 'name', 'company',)
     list_filter = ('name',)
     search_fields = ('name',)
     ordering = ('name',)
 
     fieldsets = (
-        (None, {'fields': ('name',)}),
+        (None, {'fields': ('name', 'company',)}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('name',)}),
+            'fields': ('name', 'company'),}),
+    )
+
+class CustomTurnAdmin(admin.ModelAdmin):
+    list_display = ('id', 'turn_scheme', 'name', 'start_time', 'end_time', 'days_of_week',)
+    list_filter = ('name', 'turn_scheme',)
+    search_fields = ('name',)
+    ordering = ('name',)
+
+    fieldsets = (
+        (None, {'fields': ('turn_scheme', 'name', 'start_time', 'end_time', 'days_of_week',)}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('name', 'turn_scheme', 'name', 'start_time', 'end_time', 'days_of_week',)}),
     )
 
 
@@ -78,3 +93,4 @@ admin.site.register(models.Company, CustomCompanyAdmin)
 admin.site.register(models.Product, CustomProductAdmin)
 admin.site.register(models.UnitOfMeasurement, CustomUnitOfMeasurementAdmin)
 admin.site.register(models.TurnScheme, CustomTurnSchemeAdmin)
+admin.site.register(models.Turn, CustomTurnAdmin)

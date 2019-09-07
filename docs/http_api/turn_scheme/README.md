@@ -36,3 +36,11 @@ This endpoint allows the current user to update a turn scheme of his company. [T
 | **Resources**         | PUT                   |
 | **Request Payload**   | `{"name": "turn 2 updated"}` |
 | **Request Response**  | `{"id": 2, "company_id": 1, "name": "turn 2 updated", "modified": "2019-09-05T21:14:52.410398Z"}` |
+
+
+## Deleting a Turn Scheme
+This endpoint allows the current user to delete a turn scheme of his company. [This route is authenticated](https://github.com/vision-i40/company_service/tree/master/docs/authentication#authenticated-endpoints).
+
+| **Method**            | v1/companies/1/turn_schemes/2/     |
+|-----------------------|:---------------------:|
+| **Resources**         | DELETE                   |

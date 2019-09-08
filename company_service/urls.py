@@ -5,9 +5,6 @@ from rest_framework_nested import routers
 from . import view as views
 from users.view import UserViewSet
 from rest_framework_swagger.views import get_swagger_view
-
-swagger_view = get_swagger_view(title='Vision API')
-
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView, )
 
 router = routers.SimpleRouter()
@@ -19,6 +16,7 @@ companies_router = routers.NestedSimpleRouter(router, 'companies', lookup='compa
 companies_router.register('production_lines', views.ProductionLineViewSet, base_name='companies-production_lines')
 companies_router.register('products', views.ProductViewSet, base_name='companies-products')
 companies_router.register('turn_schemes', views.TurnSchemeViewSet, base_name='companies-turn_schemes')
+companies_router.register('code_groups', views.CodeGroupViewSet, base_name='companies-code_groups')
 
 products_router = routers.NestedSimpleRouter(companies_router, 'products', lookup='products')
 products_router.register('units_of_measurement', views.UnitOfMeasurementViewSet,
@@ -27,12 +25,18 @@ products_router.register('units_of_measurement', views.UnitOfMeasurementViewSet,
 turn_schemes_router = routers.NestedSimpleRouter(companies_router, 'turn_schemes', lookup='turn_schemes')
 turn_schemes_router.register('turns', views.TurnViewSet, base_name='companies-turn_schemes-turns')
 
+code_group_router = routers.NestedSimpleRouter(companies_router, 'code_groups', lookup='code_groups')
+code_group_router.register('stop_codes', views.StopCodeViewSet, base_name='companies-code_groups-stop_codes')
+
+swagger_view = get_swagger_view(title='Vision API')
+
 urlpatterns = [
     url(r'^swagger/$', swagger_view),
     url(r'^v1/', include(router.urls)),
     url(r'^v1/', include(companies_router.urls)),
     url(r'^v1/', include(products_router.urls)),
     url(r'^v1/', include(turn_schemes_router.urls)),
+    url(r'^v1/', include(code_group_router.urls)),
     url(r'^auth/token/$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     url(r'^auth/token/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),
     url('admin/', admin.site.urls),

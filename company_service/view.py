@@ -101,3 +101,34 @@ class TurnViewSet(viewsets.ModelViewSet):
             .objects \
             .get(company__user=self.request.user, pk=self.kwargs['turn_schemes_pk'])
         serializer.save(turn_scheme=turn_scheme)
+
+class CodeGroupViewSet(viewsets.ModelViewSet):
+    authentication_classes = (JWTAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.CodeGroupSerializer
+
+    def get_queryset(self):
+        return models.CodeGroup \
+            .objects \
+            .filter(company__user=self.request.user, company=self.kwargs['companies_pk']) \
+            .order_by('-created')
+
+    def perform_create(self, serializer):
+        serializer.save(company=models.Company.objects.get(users=self.request.user, pk=self.kwargs['companies_pk']))
+
+class StopCodeViewSet(viewsets.ModelViewSet):
+    authentication_classes = (JWTAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.StopCodeSerializer
+
+    def get_queryset(self):
+        return models.StopCode \
+            .objects \
+            .filter(code_group__company__user=self.request.user, code_group=self.kwargs['code_groups_pk']) \
+            .order_by('-created')
+
+    def perform_create(self, serializer):
+        code_group = models.CodeGroup \
+            .objects \
+            .get(company__user=self.request.user, pk=self.kwargs['code_groups_pk'])
+        serializer.save(code_group=code_group)

@@ -104,6 +104,36 @@ class CustomProductionLineAdmin(admin.ModelAdmin):
             'fields': ('name', 'company', 'name', 'is_active', 'discount_rework', 'discount_waste', 'stop_on_production_absence', 'time_to_consider_absence', 'reset_production_changing_order', 'micro_stop_seconds', 'turn_scheme',)}),
     )
 
+class CustomCodeGroupAdmin(admin.ModelAdmin):
+    list_display = ('id', 'company', 'name', 'group_type',)
+    list_filter = ('name', 'company',)
+    search_fields = ('name',)
+    ordering = ('name',)
+
+    fieldsets = (
+        (None, {'fields': ('company', 'name', 'group_type',)}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('name', 'company', 'name', 'group_type',)}),
+    )
+
+class CustomStopCodeAdmin(admin.ModelAdmin):
+    list_display = ('id', 'company', 'name', 'code_group',)
+    list_filter = ('name', 'company',)
+    search_fields = ('name',)
+    ordering = ('name',)
+
+    fieldsets = (
+        (None, {'fields': ('company', 'name', 'code_group',)}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('name', 'company', 'name', 'code_group',)}),
+    )
+
 
 admin.site.register(models.Company, CustomCompanyAdmin)
 admin.site.register(models.Product, CustomProductAdmin)
@@ -111,3 +141,5 @@ admin.site.register(models.UnitOfMeasurement, CustomUnitOfMeasurementAdmin)
 admin.site.register(models.TurnScheme, CustomTurnSchemeAdmin)
 admin.site.register(models.Turn, CustomTurnAdmin)
 admin.site.register(models.ProductionLine, CustomProductionLineAdmin)
+admin.site.register(models.CodeGroup, CustomCodeGroupAdmin)
+admin.site.register(models.StopCode, CustomStopCodeAdmin)

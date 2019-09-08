@@ -99,3 +99,29 @@ class TurnSerializer(serializers.HyperlinkedModelSerializer):
             'created',
             'modified'
         )
+
+class CodeGroupSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = CodeGroup
+        fields = (
+            'id',
+            'company',
+            'name',
+            'group_type',
+            'created',
+            'modified'
+        )
+
+class StopCodeSerializer(serializers.HyperlinkedModelSerializer):
+    code_group = CodeGroupSerializer()
+
+    class Meta:
+        model = StopCode
+        fields = (
+            'id',
+            'company',
+            'name',
+            'code_group',
+            'created',
+            'modified'
+        )

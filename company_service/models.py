@@ -47,13 +47,18 @@ class UnitOfMeasurement(IndexedTimeStampedModel):
 class CodeGroup(IndexedTimeStampedModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     name = models.CharField(max_length=256)
-    groupType = models.CharField(max_length=256)
+    group_type = models.CharField(max_length=256)
 
+    def __str__(self):
+        return self.name
 
 class StopCode(IndexedTimeStampedModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     code_group = models.ForeignKey(CodeGroup, blank=True, null=True, on_delete=models.SET_NULL)
     name = models.CharField(max_length=256)
+
+    def __str__(self):
+        return self.name
 
 
 class WasteCode(IndexedTimeStampedModel):
@@ -101,6 +106,9 @@ class ProductionLine(IndexedTimeStampedModel):
     reset_production_changing_order = models.BooleanField(default=False)
     micro_stop_seconds = models.IntegerField(blank=True, null=True)
     turn_scheme = models.ForeignKey(TurnScheme, blank=True, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.name
 
 
 class StopEvent(IndexedTimeStampedModel):

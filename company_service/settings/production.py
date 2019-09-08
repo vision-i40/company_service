@@ -1,6 +1,8 @@
 from decouple import Csv, config
 from dj_database_url import parse as db_url
 from .base import *
+import django_heroku
+
 
 DEBUG = False
 
@@ -87,3 +89,5 @@ LOGGING = {
         },
     }
 }
+
+django_heroku.settings(locals())

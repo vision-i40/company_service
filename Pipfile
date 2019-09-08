@@ -35,6 +35,7 @@ djangorestframework_simplejwt = "*"
 drf-nested-routers = "*"
 django-cors-headers = "*"
 django-rest-swagger = "*"
+django-heroku = "*"
 
 [requires]
 

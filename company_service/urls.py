@@ -4,12 +4,12 @@ from django.conf.urls import include, url
 from rest_framework_nested import routers
 from . import view as views
 from users.view import UserViewSet
-from rest_framework_swagger.views import get_swagger_view
+from rest_framework.schemas import get_schema_view
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView, )
+from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
 
 router = routers.SimpleRouter()
 router.register('companies', views.CompanyViewSet, basename="companies")
-
 router.register('users', UserViewSet, basename='users')
 
 companies_router = routers.NestedSimpleRouter(router, 'companies', lookup='companies')
@@ -28,10 +28,13 @@ turn_schemes_router.register('turns', views.TurnViewSet, base_name='companies-tu
 code_group_router = routers.NestedSimpleRouter(companies_router, 'code_groups', lookup='code_groups')
 code_group_router.register('stop_codes', views.StopCodeViewSet, base_name='companies-code_groups-stop_codes')
 
-swagger_view = get_swagger_view(title='Vision API')
+swagger_view = get_schema_view(
+    title='Docs',
+    renderer_classes=[OpenAPIRenderer, SwaggerUIRenderer]
+)
 
 urlpatterns = [
-    url(r'^swagger/$', swagger_view),
+    url(r'^docs/$', swagger_view),
     url(r'^v1/', include(router.urls)),
     url(r'^v1/', include(companies_router.urls)),
     url(r'^v1/', include(products_router.urls)),

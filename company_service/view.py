@@ -1,12 +1,13 @@
 from rest_framework import viewsets
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from . import serializers as serializers
 from . import models as models
 
 
 class CompanyViewSet(viewsets.ModelViewSet):
-    authentication_classes = (JWTAuthentication,)
+    authentication_classes = (SessionAuthentication, JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CompanySerializer
 
@@ -23,7 +24,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
 
 class UnitOfMeasurementViewSet(viewsets.ModelViewSet):
-    authentication_classes = (JWTAuthentication,)
+    authentication_classes = (SessionAuthentication, JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.UnitOfMeasurementSerializer
 
@@ -41,7 +42,7 @@ class UnitOfMeasurementViewSet(viewsets.ModelViewSet):
 
 
 class ProductViewSet(viewsets.ModelViewSet):
-    authentication_classes = (JWTAuthentication,)
+    authentication_classes = (SessionAuthentication, JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.ProductSerializer
 
@@ -56,7 +57,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 
 class ProductionLineViewSet(viewsets.ModelViewSet):
-    authentication_classes = (JWTAuthentication,)
+    authentication_classes = (SessionAuthentication, JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.ProductionLineSerializer
 
@@ -71,7 +72,7 @@ class ProductionLineViewSet(viewsets.ModelViewSet):
 
 
 class TurnSchemeViewSet(viewsets.ModelViewSet):
-    authentication_classes = (JWTAuthentication,)
+    authentication_classes = (SessionAuthentication, JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.TurnSchemeSerializer
 
@@ -86,7 +87,7 @@ class TurnSchemeViewSet(viewsets.ModelViewSet):
 
 
 class TurnViewSet(viewsets.ModelViewSet):
-    authentication_classes = (JWTAuthentication,)
+    authentication_classes = (SessionAuthentication, JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.TurnSerializer
 
@@ -103,7 +104,7 @@ class TurnViewSet(viewsets.ModelViewSet):
         serializer.save(turn_scheme=turn_scheme)
 
 class CodeGroupViewSet(viewsets.ModelViewSet):
-    authentication_classes = (JWTAuthentication,)
+    authentication_classes = (SessionAuthentication, JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CodeGroupSerializer
 
@@ -117,7 +118,7 @@ class CodeGroupViewSet(viewsets.ModelViewSet):
         serializer.save(company=models.Company.objects.get(users=self.request.user, pk=self.kwargs['companies_pk']))
 
 class StopCodeViewSet(viewsets.ModelViewSet):
-    authentication_classes = (JWTAuthentication,)
+    authentication_classes = (SessionAuthentication, JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.StopCodeSerializer
 

@@ -5,6 +5,8 @@ from datetime import timedelta
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+LOGIN_URL = 'admin/'
+LOGOUT_URL = 'admin/logout/'
 
 def base_dir_join(*args):
     return os.path.join(BASE_DIR, *args)
@@ -24,6 +26,16 @@ DATABASES = {
     'default': dj_database_url.config(
         default=config('DATABASE_URL', '')
     )
+}
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'api_key': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization'
+        }
+    },
 }
 
 AUTH_USER_MODEL = "users.User"
@@ -62,6 +74,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',

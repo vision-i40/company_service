@@ -4,7 +4,7 @@ from .base import *
 import django_heroku
 
 
-DEBUG = False
+DEBUG = config('DEBUG')
 
 SECRET_KEY = config('SECRET_KEY')
 

@@ -105,7 +105,7 @@ class CodeGroupSerializer(serializers.HyperlinkedModelSerializer):
         model = CodeGroup
         fields = (
             'id',
-            'company',
+            'company_id',
             'name',
             'group_type',
             'created',
@@ -113,13 +113,42 @@ class CodeGroupSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 class StopCodeSerializer(serializers.HyperlinkedModelSerializer):
-    code_group = CodeGroupSerializer()
+    code_group = CodeGroupSerializer(read_only=True)
 
     class Meta:
         model = StopCode
         fields = (
             'id',
-            'company',
+            'company_id',
+            'was_planned',
+            'name',
+            'code_group',
+            'created',
+            'modified'
+        )
+
+class WasteCodeSerializer(serializers.HyperlinkedModelSerializer):
+    code_group = CodeGroupSerializer(read_only=True)
+
+    class Meta:
+        model = WasteCode
+        fields = (
+            'id',
+            'company_id',
+            'name',
+            'code_group',
+            'created',
+            'modified'
+        )
+
+class ReworkCodeSerializer(serializers.HyperlinkedModelSerializer):
+    code_group = CodeGroupSerializer(read_only=True)
+
+    class Meta:
+        model = ReworkCode
+        fields = (
+            'id',
+            'company_id',
             'name',
             'code_group',
             'created',

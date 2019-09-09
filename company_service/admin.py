@@ -120,18 +120,48 @@ class CustomCodeGroupAdmin(admin.ModelAdmin):
     )
 
 class CustomStopCodeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'company', 'name', 'code_group',)
-    list_filter = ('name', 'company',)
+    list_display = ('id', 'company', 'name', 'is_planned', 'code_group',)
+    list_filter = ('name', 'company', 'is_planned', )
     search_fields = ('name',)
     ordering = ('name',)
 
     fieldsets = (
-        (None, {'fields': ('company', 'name', 'code_group',)}),
+        (None, {'fields': ('company', 'name', 'code_group', 'is_planned', )}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('name', 'company', 'name', 'code_group',)}),
+            'fields': ('name', 'company', 'name', 'code_group', 'is_planned', )}),
+    )
+
+class CustomWasteCodeAdmin(admin.ModelAdmin):
+    list_display = ('id', 'company', 'name', 'code_group',)
+    list_filter = ('name', 'company', )
+    search_fields = ('name',)
+    ordering = ('name',)
+
+    fieldsets = (
+        (None, {'fields': ('company', 'name', 'code_group', )}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('name', 'company', 'name', 'code_group', )}),
+    )
+
+class CustomReworkCodeAdmin(admin.ModelAdmin):
+    list_display = ('id', 'company', 'name', 'code_group',)
+    list_filter = ('name', 'company', )
+    search_fields = ('name',)
+    ordering = ('name',)
+
+    fieldsets = (
+        (None, {'fields': ('company', 'name', 'code_group', )}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('name', 'company', 'name', 'code_group', )}),
     )
 
 
@@ -143,3 +173,4 @@ admin.site.register(models.Turn, CustomTurnAdmin)
 admin.site.register(models.ProductionLine, CustomProductionLineAdmin)
 admin.site.register(models.CodeGroup, CustomCodeGroupAdmin)
 admin.site.register(models.StopCode, CustomStopCodeAdmin)
+admin.site.register(models.ReworkCode, CustomReworkCodeAdmin)

@@ -47,7 +47,19 @@ class UnitOfMeasurement(IndexedTimeStampedModel):
 class CodeGroup(IndexedTimeStampedModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     name = models.CharField(max_length=256)
-    group_type = models.CharField(max_length=256)
+    STOP_CODE = 'StopCode'
+    WASTE_CODE = 'WasteCode'
+    REWORK_CODE = 'ReworkCode'
+    GROUP_TYPES = (
+        (STOP_CODE, 'Stop Code'),
+        (WASTE_CODE, 'Waste Code'),
+        (REWORK_CODE, 'Rework Code'),
+    )
+
+    group_type = models.CharField(
+        max_length=256,
+        choices=GROUP_TYPES,
+    )
 
     def __str__(self):
         return self.name
@@ -56,6 +68,7 @@ class StopCode(IndexedTimeStampedModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     code_group = models.ForeignKey(CodeGroup, blank=True, null=True, on_delete=models.SET_NULL)
     name = models.CharField(max_length=256)
+    is_planned = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -66,12 +79,16 @@ class WasteCode(IndexedTimeStampedModel):
     code_group = models.ForeignKey(CodeGroup, blank=True, null=True, on_delete=models.SET_NULL)
     name = models.CharField(max_length=256)
 
+    def __str__(self):
+        return self.name
 
 class ReworkCode(IndexedTimeStampedModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     code_group = models.ForeignKey(CodeGroup, blank=True, null=True, on_delete=models.SET_NULL)
     name = models.CharField(max_length=256)
 
+    def __str__(self):
+        return self.name
 
 class TurnScheme(IndexedTimeStampedModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)

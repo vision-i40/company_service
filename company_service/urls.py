@@ -27,6 +27,8 @@ turn_schemes_router.register('turns', views.TurnViewSet, base_name='companies-tu
 
 code_group_router = routers.NestedSimpleRouter(companies_router, 'code_groups', lookup='code_groups')
 code_group_router.register('stop_codes', views.StopCodeViewSet, base_name='companies-code_groups-stop_codes')
+code_group_router.register('waste_codes', views.WasteCodeViewSet, base_name='companies-code_groups-waste_codes')
+code_group_router.register('rework_codes', views.ReworkCodeViewSet, base_name='companies-code_groups-rework_codes')
 
 swagger_view = get_schema_view(
     title='Docs',

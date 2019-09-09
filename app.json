@@ -1,5 +1,5 @@
 {
-    "name": "company_service",
+    "name": "vision-i40-staging",
     "description": "Company Service Heroku app.",
     "scripts": {
       "postdeploy": "python manage.py migrate"

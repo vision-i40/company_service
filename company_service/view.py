@@ -133,3 +133,37 @@ class StopCodeViewSet(viewsets.ModelViewSet):
             .objects \
             .get(company__user=self.request.user, pk=self.kwargs['code_groups_pk'])
         serializer.save(code_group=code_group)
+
+class WasteCodeViewSet(viewsets.ModelViewSet):
+    authentication_classes = (SessionAuthentication, JWTAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.WasteCodeSerializer
+
+    def get_queryset(self):
+        return models.WasteCode \
+            .objects \
+            .filter(code_group__company__user=self.request.user, code_group=self.kwargs['code_groups_pk']) \
+            .order_by('-created')
+
+    def perform_create(self, serializer):
+        code_group = models.CodeGroup \
+            .objects \
+            .get(company__user=self.request.user, pk=self.kwargs['code_groups_pk'])
+        serializer.save(code_group=code_group)
+
+class ReworkCodeViewSet(viewsets.ModelViewSet):
+    authentication_classes = (SessionAuthentication, JWTAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.ReworkCodeSerializer
+
+    def get_queryset(self):
+        return models.ReworkCode \
+            .objects \
+            .filter(code_group__company__user=self.request.user, code_group=self.kwargs['code_groups_pk']) \
+            .order_by('-created')
+
+    def perform_create(self, serializer):
+        code_group = models.CodeGroup \
+            .objects \
+            .get(company__user=self.request.user, pk=self.kwargs['code_groups_pk'])
+        serializer.save(code_group=code_group)

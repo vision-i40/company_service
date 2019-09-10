@@ -165,7 +165,22 @@ class CustomReworkCodeAdmin(admin.ModelAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('name', 'company', 'name', 'code_group', )}),
+            'fields': ('name', 'company', 'code_group', )}),
+    )
+
+class CustomProductionOrderAdmin(admin.ModelAdmin):
+    list_display = ('id', 'product', 'production_line', 'code', 'quantity', 'state')
+    list_filter = ('production_line', 'product', )
+    search_fields = ('production_line',)
+    ordering = ('production_line',)
+
+    fieldsets = (
+        (None, {'fields': ('product', 'production_line', 'code', 'quantity', 'state', )}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('production_line', 'product', 'code', 'quantity', 'state', )}),
     )
 
 
@@ -178,3 +193,4 @@ admin.site.register(models.ProductionLine, CustomProductionLineAdmin)
 admin.site.register(models.CodeGroup, CustomCodeGroupAdmin)
 admin.site.register(models.StopCode, CustomStopCodeAdmin)
 admin.site.register(models.ReworkCode, CustomReworkCodeAdmin)
+admin.site.register(models.ProductionOrder, CustomProductionOrderAdmin)

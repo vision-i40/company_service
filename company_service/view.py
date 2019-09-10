@@ -167,3 +167,21 @@ class ReworkCodeViewSet(viewsets.ModelViewSet):
             .objects \
             .get(company__user=self.request.user, pk=self.kwargs['code_groups_pk'])
         serializer.save(code_group=code_group)
+
+class ProductionOrderViewSet(viewsets.ModelViewSet):
+    authentication_classes = (SessionAuthentication, JWTAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.ProductionOrderSerializer
+
+    def get_queryset(self):
+        return models.ProductionOrder \
+            .objects \
+            .filter(product__company__user=self.request.user, product__company=self.kwargs['companies_pk']) \
+            .order_by('-created')
+
+    def perform_create(self, serializer):
+        product_id = serializer.validated_data['product_id']
+        product = models.Product \
+            .objects \
+            .get(company__user=self.request.user, company=self.kwargs['companies_pk'], pk=product_id)
+        serializer.save(product=product)

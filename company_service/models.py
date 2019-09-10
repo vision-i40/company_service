@@ -128,33 +128,34 @@ class ProductionLine(IndexedTimeStampedModel):
         return self.name
 
 
-class StopEvent(IndexedTimeStampedModel):
+class ProductionLineProductionRate(IndexedTimeStampedModel):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
-    stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)
-
-
-class WasteEvent(IndexedTimeStampedModel):
-    production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
-    waste_code = models.ForeignKey(WasteCode, on_delete=models.SET_NULL, null=True)
-
-
-class ReworkEvent(IndexedTimeStampedModel):
-    production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
-    rework_code = models.ForeignKey(ReworkCode, on_delete=models.SET_NULL, null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    rate = models.FloatField()
 
 
 class ProductionOrder(IndexedTimeStampedModel):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     production_line = models.ForeignKey(ProductionLine, on_delete=models.SET_NULL, blank=True, null=True)
     code = models.CharField(max_length=256)
-    state = models.CharField(max_length=256)
+    quantity = models.IntegerField(default=0)
 
+    RELEASED = 'Released'
+    IN_PROGRESS = 'InProgress'
+    INTERRUPTED = 'Interrupted'
+    DONE = 'Done'
+    STATES = (
+        (RELEASED, 'Released'),
+        (IN_PROGRESS, 'In Progress'),
+        (INTERRUPTED, 'Interrupted'),
+        (DONE, 'Done'),
+    )
 
-class ProductionLineProductionRate(IndexedTimeStampedModel):
-    production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    rate = models.FloatField()
-
+    state = models.CharField(
+        max_length=256,
+        choices=STATES,
+        default=RELEASED
+    )
 
 class Collector(IndexedTimeStampedModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
@@ -169,3 +170,53 @@ class Channel(IndexedTimeStampedModel):
     channelType = models.CharField(max_length=256)
     inverse_state = models.BooleanField(default=False)
     is_cumulative = models.BooleanField(default=False)
+
+
+class StateEvent(IndexedTimeStampedModel):
+    production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
+    stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)
+    production_order = models.ForeignKey(ProductionOrder, on_delete=models.SET_NULL, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
+    channel = models.ForeignKey(Channel, on_delete=models.SET_NULL, null=True, blank=True)
+    event_datetime = models.DateTimeField(default=None, db_index=True)
+
+    ON = 'On'
+    OFF = 'Off'
+    STATES = (
+        (ON, 'On'),
+        (OFF, 'Off'),
+    )
+
+    state = models.CharField(
+        max_length=3,
+        choices=STATES,
+        default=ON,
+        db_index=True
+    )
+
+
+class ProductionEvent(IndexedTimeStampedModel):
+    production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
+    stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)
+    production_order = models.ForeignKey(ProductionOrder, on_delete=models.SET_NULL, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
+    channel = models.ForeignKey(Channel, on_delete=models.SET_NULL, null=True, blank=True)
+    unit_of_measurement = models.ForeignKey(UnitOfMeasurement, on_delete=models.SET_NULL, null=True, blank=True)
+    event_datetime = models.DateTimeField(default=None, db_index=True)
+    quantity = models.IntegerField(default=0)
+
+    PRODUCTION = 'Production'
+    WASTE = 'Waste'
+    REWORK = 'Rework'
+    EVENT_TYPES = (
+        (PRODUCTION, 'Production'),
+        (WASTE, 'Waste'),
+        (REWORK, 'Rework'),
+    )
+
+    event_type = models.CharField(
+        max_length=20,
+        choices=EVENT_TYPES,
+        default=PRODUCTION,
+        db_index=True
+    )

@@ -104,6 +104,7 @@ class CustomProductionLineAdmin(admin.ModelAdmin):
             'fields': ('name', 'company', 'name', 'is_active', 'discount_rework', 'discount_waste', 'stop_on_production_absence', 'time_to_consider_absence', 'reset_production_changing_order', 'micro_stop_seconds', 'turn_scheme',)}),
     )
 
+
 class CustomCodeGroupAdmin(admin.ModelAdmin):
     list_display = ('id', 'company', 'name', 'group_type',)
     list_filter = ('name', 'company',)
@@ -118,6 +119,7 @@ class CustomCodeGroupAdmin(admin.ModelAdmin):
             'classes': ('wide',),
             'fields': ('name', 'company', 'name', 'group_type',)}),
     )
+
 
 class CustomStopCodeAdmin(admin.ModelAdmin):
     list_display = ('id', 'company', 'name', 'is_planned', 'code_group',)
@@ -134,6 +136,7 @@ class CustomStopCodeAdmin(admin.ModelAdmin):
             'fields': ('name', 'company', 'name', 'code_group', 'is_planned', )}),
     )
 
+
 class CustomWasteCodeAdmin(admin.ModelAdmin):
     list_display = ('id', 'company', 'name', 'code_group',)
     list_filter = ('name', 'company', )
@@ -148,6 +151,7 @@ class CustomWasteCodeAdmin(admin.ModelAdmin):
             'classes': ('wide',),
             'fields': ('name', 'company', 'name', 'code_group', )}),
     )
+
 
 class CustomReworkCodeAdmin(admin.ModelAdmin):
     list_display = ('id', 'company', 'name', 'code_group',)

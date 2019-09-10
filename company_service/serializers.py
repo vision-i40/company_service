@@ -120,7 +120,7 @@ class StopCodeSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'id',
             'company_id',
-            'was_planned',
+            'is_planned',
             'name',
             'code_group',
             'created',
@@ -153,4 +153,25 @@ class ReworkCodeSerializer(serializers.HyperlinkedModelSerializer):
             'code_group',
             'created',
             'modified'
+        )
+
+class ProductionOrderSerializer(serializers.HyperlinkedModelSerializer):
+    product = ProductSerializer(read_only=True)
+    production_line = ProductionLineSerializer(read_only=True)
+
+    product_id = serializers.IntegerField(required=True)
+    production_line_id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = ProductionOrder
+        fields = (
+            'id',
+            'product',
+            'product_id',
+            'production_line',
+            'production_line_id',
+            'code',
+            'state',
+            'created',
+            'modified',
         )

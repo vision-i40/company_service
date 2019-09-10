@@ -157,6 +157,9 @@ class ProductionOrder(IndexedTimeStampedModel):
         default=RELEASED
     )
 
+    def __str__(self):
+        return self.code
+
 class Collector(IndexedTimeStampedModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     mac = models.CharField(max_length=256)
@@ -171,11 +174,14 @@ class Channel(IndexedTimeStampedModel):
     inverse_state = models.BooleanField(default=False)
     is_cumulative = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.number
+
 
 class StateEvent(IndexedTimeStampedModel):
+    production_order = models.ForeignKey(ProductionOrder, on_delete=models.SET_NULL, null=True, blank=True)
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
     stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)
-    production_order = models.ForeignKey(ProductionOrder, on_delete=models.SET_NULL, null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     channel = models.ForeignKey(Channel, on_delete=models.SET_NULL, null=True, blank=True)
     event_datetime = models.DateTimeField(default=None, db_index=True)
@@ -196,8 +202,8 @@ class StateEvent(IndexedTimeStampedModel):
 
 
 class ProductionEvent(IndexedTimeStampedModel):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
-    stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)
     production_order = models.ForeignKey(ProductionOrder, on_delete=models.SET_NULL, null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     channel = models.ForeignKey(Channel, on_delete=models.SET_NULL, null=True, blank=True)
@@ -220,3 +226,7 @@ class ProductionEvent(IndexedTimeStampedModel):
         default=PRODUCTION,
         db_index=True
     )
+
+    stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True, blank=True)
+    waste_code = models.ForeignKey(WasteCode, on_delete=models.SET_NULL, null=True, blank=True)
+    rework_code = models.ForeignKey(ReworkCode, on_delete=models.SET_NULL, null=True, blank=True)

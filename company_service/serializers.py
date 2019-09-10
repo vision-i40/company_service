@@ -162,6 +162,10 @@ class ProductionOrderSerializer(serializers.HyperlinkedModelSerializer):
     product_id = serializers.IntegerField(required=True)
     production_line_id = serializers.IntegerField(required=False)
 
+    production_quantity = serializers.IntegerField()
+    waste_quantity = serializers.IntegerField()
+    rework_quantity = serializers.IntegerField()
+
     class Meta:
         model = ProductionOrder
         fields = (
@@ -172,6 +176,40 @@ class ProductionOrderSerializer(serializers.HyperlinkedModelSerializer):
             'production_line_id',
             'code',
             'state',
+            'production_quantity',
+            'waste_quantity',
+            'rework_quantity',
             'created',
             'modified',
         )
+
+
+class ProductionEventSerializer(serializers.HyperlinkedModelSerializer):
+    production_order = ProductionOrderSerializer(read_only=True)
+    production_line = ProductionLineSerializer(read_only=True)
+    product = ProductSerializer(read_only=True)
+    unit_of_measurement = UnitOfMeasurementSerializer(read_only=True)
+
+    production_line_id = serializers.IntegerField(required=False)
+    production_order_id = serializers.IntegerField(required=True)
+
+    class Meta:
+        model = ProductionEvent
+        fields = (
+            'id',
+            'product',
+            'production_line',
+            'production_line_id',
+            'production_order',
+            'production_order_id',
+            'unit_of_measurement',
+            'event_datetime',
+            'quantity',
+            'event_type',
+            'stop_code',
+            'waste_code',
+            'rework_code',
+            'created',
+            'modified',
+        )
+

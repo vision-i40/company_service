@@ -2,6 +2,7 @@ from rest_framework import viewsets
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
+from django.db.models import Sum, Q
 from . import serializers as serializers
 from . import models as models
 
@@ -176,6 +177,20 @@ class ProductionOrderViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return models.ProductionOrder \
             .objects \
+            .annotate(
+                production_quantity=Sum(
+                    'productionevent__quantity',
+                    filter=Q(productionevent__event_type=models.ProductionEvent.PRODUCTION)
+                ),
+                waste_quantity=Sum(
+                    'productionevent__quantity',
+                    filter=Q(productionevent__event_type=models.ProductionEvent.WASTE)
+                ),
+                rework_quantity=Sum(
+                    'productionevent__quantity',
+                    filter=Q(productionevent__event_type=models.ProductionEvent.REWORK)
+                )
+            ) \
             .filter(product__company__user=self.request.user, product__company=self.kwargs['companies_pk']) \
             .order_by('-created')
 
@@ -185,3 +200,27 @@ class ProductionOrderViewSet(viewsets.ModelViewSet):
             .objects \
             .get(company__user=self.request.user, company=self.kwargs['companies_pk'], pk=product_id)
         serializer.save(product=product)
+
+class ProductionEventViewSet(viewsets.ModelViewSet):
+    authentication_classes = (SessionAuthentication, JWTAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.ProductionEventSerializer
+
+    def get_queryset(self):
+        return models.ProductionEvent \
+            .objects \
+            .filter(company__user=self.request.user, product__company=self.kwargs['companies_pk']) \
+            .order_by('-created')
+
+    def perform_create(self, serializer):
+        production_order = models.ProductionOrder \
+            .objects \
+            .get(
+                company__user=self.request.user,
+                company=self.kwargs['companies_pk'],
+                pk=self.kwargs['production_orders_pk']
+            )
+        serializer.save(
+            production_order=production_order,
+            product=production_order.product
+        )

@@ -183,6 +183,21 @@ class CustomProductionOrderAdmin(admin.ModelAdmin):
             'fields': ('production_line', 'product', 'code', 'quantity', 'state', )}),
     )
 
+class CustomProductionEventAdmin(admin.ModelAdmin):
+    list_display = ('id', 'company', 'product', 'production_line', 'production_order', 'quantity', 'event_type',)
+    list_filter = ('production_line', 'product', )
+    search_fields = ('production_line',)
+    ordering = ('production_line',)
+
+    fieldsets = (
+        (None, {'fields': ('company', 'product', 'production_line', 'production_order', 'quantity', 'event_type', 'event_datetime', 'stop_code', 'waste_code', 'rework_code', )}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('company', 'product', 'production_line', 'production_order', 'quantity', 'event_type', 'event_datetime', 'stop_code', 'waste_code', 'rework_code', )}),
+    )
+
 
 admin.site.register(models.Company, CustomCompanyAdmin)
 admin.site.register(models.Product, CustomProductAdmin)
@@ -194,3 +209,4 @@ admin.site.register(models.CodeGroup, CustomCodeGroupAdmin)
 admin.site.register(models.StopCode, CustomStopCodeAdmin)
 admin.site.register(models.ReworkCode, CustomReworkCodeAdmin)
 admin.site.register(models.ProductionOrder, CustomProductionOrderAdmin)
+admin.site.register(models.ProductionEvent, CustomProductionEventAdmin)

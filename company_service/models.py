@@ -163,14 +163,27 @@ class ProductionOrder(IndexedTimeStampedModel):
 class Collector(IndexedTimeStampedModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     mac = models.CharField(max_length=256)
-    collectorType = models.CharField(max_length=256)
-
+    collector_type = models.CharField(max_length=256)
 
 class Channel(IndexedTimeStampedModel):
     collector = models.ForeignKey(Collector, on_delete=models.CASCADE)
     production_line = models.ForeignKey(ProductionLine, blank=True, null=True, on_delete=models.SET_NULL)
     number = models.IntegerField()
-    channelType = models.CharField(max_length=256)
+
+    GOOD = 'Good'
+    REWORK = 'Rework'
+    WASTE = 'Waste'
+    TYPES = (
+        (GOOD, 'Good'),
+        (REWORK, 'Rework'),
+        (WASTE, 'Waste'),
+    )
+
+    channel_type = models.CharField(
+        max_length=256,
+        choices=TYPES,
+        default=GOOD
+    )
     inverse_state = models.BooleanField(default=False)
     is_cumulative = models.BooleanField(default=False)
 

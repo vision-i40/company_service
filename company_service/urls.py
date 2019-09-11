@@ -17,7 +17,8 @@ companies_router.register('production_lines', views.ProductionLineViewSet, base_
 companies_router.register('products', views.ProductViewSet, base_name='companies-products')
 companies_router.register('turn_schemes', views.TurnSchemeViewSet, base_name='companies-turn_schemes')
 companies_router.register('code_groups', views.CodeGroupViewSet, base_name='companies-code_groups')
-companies_router.register('production_orders', views.ProductionOrderViewSet, basename='production_orders')
+companies_router.register('production_orders', views.ProductionOrderViewSet, base_name='production_orders')
+companies_router.register('collectors', views.CollectorViewSet, base_name='collectors')
 
 products_router = routers.NestedSimpleRouter(companies_router, 'products', lookup='products')
 products_router.register('units_of_measurement', views.UnitOfMeasurementViewSet,
@@ -32,7 +33,13 @@ code_group_router.register('waste_codes', views.WasteCodeViewSet, base_name='com
 code_group_router.register('rework_codes', views.ReworkCodeViewSet, base_name='companies-code_groups-rework_codes')
 
 production_order_router = routers.NestedSimpleRouter(companies_router, 'production_orders', lookup='production_orders')
-production_order_router.register('production_events', views.ProductionEventViewSet, base_name='companies-production_orders-production_events')
+production_order_router.register('production_events', views.ProductionEventViewSet, basename='companies-production_orders-production_events')
+
+production_lines_router = routers.NestedSimpleRouter(companies_router, 'production_lines', lookup='production_lines')
+production_lines_router.register('collectors', views.CollectorViewSet, base_name='production_lines-collectors')
+
+collectors_router = routers.NestedSimpleRouter(production_lines_router, 'collectors', lookup='collectors')
+collectors_router.register('channels', views.ChannelViewSet, base_name='collectors-channels')
 
 swagger_view = get_schema_view(
     title='Docs',
@@ -47,6 +54,8 @@ urlpatterns = [
     url(r'^v1/', include(turn_schemes_router.urls)),
     url(r'^v1/', include(code_group_router.urls)),
     url(r'^v1/', include(production_order_router.urls)),
+    url(r'^v1/', include(production_lines_router.urls)),
+    url(r'^v1/', include(collectors_router.urls)),
     url(r'^auth/token/$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     url(r'^auth/token/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),
     url('admin/', admin.site.urls),

@@ -1,5 +1,6 @@
 import os
 import dj_database_url
+import psycopg2
 from decouple import config
 from datetime import timedelta
 

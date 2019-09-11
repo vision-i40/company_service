@@ -125,8 +125,8 @@ class StopCodeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return models.StopCode \
-            .objects \
             .filter(code_group__company__user=self.request.user, code_group=self.kwargs['code_groups_pk']) \
+            .objects \
             .order_by('-created')
 
     def perform_create(self, serializer):
@@ -224,3 +224,34 @@ class ProductionEventViewSet(viewsets.ModelViewSet):
             production_order=production_order,
             product=production_order.product
         )
+
+class CollectorViewSet(viewsets.ModelViewSet):
+    authentication_classes = (SessionAuthentication, JWTAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.CollectorSerializer
+
+    def get_queryset(self):
+        return models.Collector \
+            .objects \
+            .filter(company__users=self.request.user, company=self.kwargs['companies_pk']) \
+            .order_by('-created')
+
+    def perform_create(self, serializer):
+        serializer.save(company=models.Company.objects.get(users=self.request.user, pk=self.kwargs['companies_pk']))
+
+class ChannelViewSet(viewsets.ModelViewSet):
+    authentication_classes = (SessionAuthentication, JWTAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.ChannelSerializer
+
+    def get_queryset(self):
+        return models.Channel \
+            .objects \
+            .filter(collector__company__user=self.request.user, collector=self.kwargs['collectors_pk']) \
+            .order_by('-created')
+
+    def perform_create(self, serializer):
+        channel = models.Channel \
+            .objects \
+            .get(collector=self.request.user, pk=self.kwargs['collectors_pk'])
+        serializer.save(channel=channel)

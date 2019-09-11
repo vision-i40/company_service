@@ -213,3 +213,34 @@ class ProductionEventSerializer(serializers.HyperlinkedModelSerializer):
             'modified',
         )
 
+class CollectorSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Collector
+        fields = (
+            'id',
+            'created',
+            'modified',
+            'mac',
+            'collector_type',
+            'company_id',
+        )
+
+class ChannelSerializer(serializers.HyperlinkedModelSerializer):
+    production_line = ProductionLineSerializer(read_only=True)
+
+    production_line_id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = Channel
+        fields = (
+            'id',
+            'created',
+            'modified',
+            'number',
+            'channel_type',
+            'inverse_state',
+            'is_cumulative',
+            'production_line',
+            'production_line_id',
+            'collector_id'
+        )

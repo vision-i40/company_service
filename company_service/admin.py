@@ -198,6 +198,35 @@ class CustomProductionEventAdmin(admin.ModelAdmin):
             'fields': ('company', 'product', 'production_line', 'production_order', 'quantity', 'event_type', 'event_datetime', 'stop_code', 'waste_code', 'rework_code', )}),
     )
 
+class CustomCollectorAdmin(admin.ModelAdmin):
+    list_display = ('id', 'company', 'collector_type', 'mac')
+    list_filter = ('collector_type', 'mac',)
+    search_fields = ('collector_type',)
+    ordering = ('collector_type',)
+
+    fieldsets = (
+        (None, {'fields': ('company', 'collector_type', 'mac',)}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide', ),
+            'fields': ('company', 'collector_type', 'mac',)}),
+    )
+
+class CustomChannelAdmin(admin.ModelAdmin):
+    list_display = ('id', 'collector', 'production_line', 'number', 'channel_type', 'inverse_state', 'is_cumulative')
+    list_filter = ('production_line', 'channel_type', 'collector',)
+    search_fields = ('channel_type', 'number',)
+    ordering = ('channel_type',)
+
+    fieldsets = (
+        (None, {'fields': ('collector', 'production_line', 'number', 'channel_type', 'inverse_state', 'is_cumulative')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide', ),
+            'fields': ('company', 'collector_type', 'mac')}),
+    )
 
 admin.site.register(models.Company, CustomCompanyAdmin)
 admin.site.register(models.Product, CustomProductAdmin)
@@ -210,3 +239,5 @@ admin.site.register(models.StopCode, CustomStopCodeAdmin)
 admin.site.register(models.ReworkCode, CustomReworkCodeAdmin)
 admin.site.register(models.ProductionOrder, CustomProductionOrderAdmin)
 admin.site.register(models.ProductionEvent, CustomProductionEventAdmin)
+admin.site.register(models.Collector, CustomCollectorAdmin)
+admin.site.register(models.Channel, CustomChannelAdmin)

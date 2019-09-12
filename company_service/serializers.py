@@ -227,7 +227,7 @@ class CollectorSerializer(serializers.HyperlinkedModelSerializer):
 
 class ChannelSerializer(serializers.HyperlinkedModelSerializer):
     production_line = ProductionLineSerializer(read_only=True)
-
+    
     production_line_id = serializers.IntegerField(required=False)
 
     class Meta:

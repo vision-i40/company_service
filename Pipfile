@@ -17,7 +17,7 @@ celery = {extras = ["redis"]}
 django-model-utils = "*"
 django-import-export = "*"
 python-decouple = "*"
-psycopg2 = "*"
+"psycopg2" = "*"
 brotlipy = "*"
 django-log-request-id = "*"
 dj-database-url = "*"

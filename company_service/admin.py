@@ -190,12 +190,12 @@ class CustomProductionEventAdmin(admin.ModelAdmin):
     ordering = ('production_line',)
 
     fieldsets = (
-        (None, {'fields': ('company', 'product', 'production_line', 'production_order', 'quantity', 'event_type', 'event_datetime', 'stop_code', 'waste_code', 'rework_code', )}),
+        (None, {'fields': ('company', 'product', 'production_line', 'production_order', 'quantity', 'event_type', 'event_datetime', 'waste_code', 'rework_code', )}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('company', 'product', 'production_line', 'production_order', 'quantity', 'event_type', 'event_datetime', 'stop_code', 'waste_code', 'rework_code', )}),
+            'fields': ('company', 'product', 'production_line', 'production_order', 'quantity', 'event_type', 'event_datetime', 'waste_code', 'rework_code', )}),
     )
 
 

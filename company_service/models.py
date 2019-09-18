@@ -202,6 +202,9 @@ class Channel(IndexedTimeStampedModel):
     inverse_state = models.BooleanField(default=False)
     is_cumulative = models.BooleanField(default=False)
 
+    def __str__(self):
+        return str(self.number)
+
 class StateEvent(IndexedTimeStampedModel):
     production_order = models.ForeignKey(ProductionOrder, on_delete=models.SET_NULL, null=True, blank=True)
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)

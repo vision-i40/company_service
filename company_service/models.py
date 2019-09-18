@@ -163,7 +163,22 @@ class ProductionOrder(IndexedTimeStampedModel):
 class Collector(IndexedTimeStampedModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     mac = models.CharField(max_length=256)
-    collector_type = models.CharField(max_length=256)
+    
+    WISE = 'Wise'
+    HW = 'HW'
+    LORA = 'Lora'
+    TYPES = (
+        (WISE, 'Wise'),
+        (HW, 'HW'),
+        (LORA, 'Lora'),
+    )
+    collector_type = models.CharField(
+        max_length=256,
+        choices=TYPES,
+    )
+
+    def __str__(self):
+        return self.mac
 
 class Channel(IndexedTimeStampedModel):
     collector = models.ForeignKey(Collector, on_delete=models.CASCADE)
@@ -186,10 +201,6 @@ class Channel(IndexedTimeStampedModel):
     )
     inverse_state = models.BooleanField(default=False)
     is_cumulative = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.number
-
 
 class StateEvent(IndexedTimeStampedModel):
     production_order = models.ForeignKey(ProductionOrder, on_delete=models.SET_NULL, null=True, blank=True)

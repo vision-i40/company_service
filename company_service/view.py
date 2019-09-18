@@ -247,15 +247,14 @@ class ChannelViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return models.Channel \
             .objects \
-            .filter(collector__production_line__company__user=self.request.user, collector__production_line=self.kwargs['collectors_pk']) \
+            .filter(collector__company__user=self.request.user, collector=self.kwargs['collectors_pk']) \
             .order_by('-created')
 
     def perform_create(self, serializer):
         channel = models.Channel \
             .objects \
             .get(
-                production_line__company__user=self.request.user,
-                production_line=self.kwargs['production_lines_pk'],
+                company__user=self.request.user,
                 pk=self.kwargs['collectors_pk']
             )
         serializer.save(channel=channel)

@@ -7,6 +7,7 @@
 /staticfiles/*
 /mediafiles/*
 __pycache__/
+.vscode/*
 
 # coverage result
 .coverage
@@ -20,7 +21,6 @@ __pycache__/
 
 #Folders
 .DS_Store
-.vscode
 
 # General
 /venv/

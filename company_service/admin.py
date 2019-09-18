@@ -225,7 +225,7 @@ class CustomChannelAdmin(admin.ModelAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide', ),
-            'fields': ('company', 'collector_type', 'mac')}),
+            'fields': ('collector', 'production_line', 'channel_type', 'number', 'inverse_state', 'is_cumulative')}),
     )
 
 admin.site.register(models.Company, CustomCompanyAdmin)

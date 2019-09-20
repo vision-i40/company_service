@@ -2,10 +2,10 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from model_utils.fields import AutoCreatedField, AutoLastModifiedField
+from django.db.models import Sum
 from users.models import User
 from common.models import IndexedTimeStampedModel
 from django.contrib.postgres.fields import ArrayField
-
 
 class Company(IndexedTimeStampedModel):
     trade_name = models.CharField(max_length=256)

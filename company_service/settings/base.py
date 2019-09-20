@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'common',
     'company_service',
     'users',
+    'groups',
 ]
 
 MIDDLEWARE = [

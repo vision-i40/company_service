@@ -4,6 +4,7 @@ from company_service import view as views
 from users.models import User
 from company_service.models import Company
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.test import force_authenticate
 from company_service.tests.view_test_support import *
 import json
 

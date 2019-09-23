@@ -124,6 +124,9 @@ class ProductionLine(IndexedTimeStampedModel):
     micro_stop_seconds = models.IntegerField(blank=True, null=True)
     turn_scheme = models.ForeignKey(TurnScheme, blank=True, null=True, on_delete=models.SET_NULL)
 
+    def in_progress_order(self):
+        return self.production_orders.filter(state=ProductionOrder.IN_PROGRESS).first()
+
     def __str__(self):
         return self.name
 
@@ -136,7 +139,7 @@ class ProductionLineProductionRate(IndexedTimeStampedModel):
 
 class ProductionOrder(IndexedTimeStampedModel):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    production_line = models.ForeignKey(ProductionLine, on_delete=models.SET_NULL, blank=True, null=True)
+    production_line = models.ForeignKey(ProductionLine, on_delete=models.SET_NULL, blank=True, null=True, related_name="production_orders")
     code = models.CharField(max_length=256)
     quantity = models.IntegerField(default=0)
 
@@ -154,8 +157,21 @@ class ProductionOrder(IndexedTimeStampedModel):
     state = models.CharField(
         max_length=256,
         choices=STATES,
-        default=RELEASED
+        default=RELEASED,
+        db_index=True
     )
+
+    def production_quantity(self):
+        return self.event_quantity(event_type=ProductionEvent.PRODUCTION)
+
+    def waste_quantity(self):
+        return self.event_quantity(event_type=ProductionEvent.WASTE)
+
+    def rework_quantity(self):
+        return self.event_quantity(event_type=ProductionEvent.REWORK)
+
+    def event_quantity(self, event_type):
+        return self.production_events.filter(event_type=event_type).aggregate(Sum('quantity'))['quantity__sum']
 
     def __str__(self):
         return self.code
@@ -231,7 +247,7 @@ class StateEvent(IndexedTimeStampedModel):
 class ProductionEvent(IndexedTimeStampedModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
-    production_order = models.ForeignKey(ProductionOrder, on_delete=models.SET_NULL, null=True, blank=True)
+    production_order = models.ForeignKey(ProductionOrder, on_delete=models.SET_NULL, null=True, blank=True, related_name="production_events")
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     channel = models.ForeignKey(Channel, on_delete=models.SET_NULL, null=True, blank=True)
     unit_of_measurement = models.ForeignKey(UnitOfMeasurement, on_delete=models.SET_NULL, null=True, blank=True)
@@ -254,6 +270,5 @@ class ProductionEvent(IndexedTimeStampedModel):
         db_index=True
     )
 
-    stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True, blank=True)
     waste_code = models.ForeignKey(WasteCode, on_delete=models.SET_NULL, null=True, blank=True)
     rework_code = models.ForeignKey(ReworkCode, on_delete=models.SET_NULL, null=True, blank=True)

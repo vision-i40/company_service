@@ -251,10 +251,10 @@ class ChannelViewSet(viewsets.ModelViewSet):
             .order_by('-created')
 
     def perform_create(self, serializer):
-        channel = models.Channel \
+        collector = models.Collector \
             .objects \
             .get(
                 company__user=self.request.user,
                 pk=self.kwargs['collectors_pk']
             )
-        serializer.save(channel=channel)
+        serializer.save(collector=collector)

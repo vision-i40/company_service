@@ -33,7 +33,7 @@ code_group_router.register('waste_codes', views.WasteCodeViewSet, base_name='com
 code_group_router.register('rework_codes', views.ReworkCodeViewSet, base_name='companies-code_groups-rework_codes')
 
 production_order_router = routers.NestedSimpleRouter(companies_router, 'production_orders', lookup='production_orders')
-production_order_router.register('production_events', views.ProductionEventViewSet, basename='companies-production_orders-production_events')
+production_order_router.register('production_events', views.ProductionEventViewSet, base_name='companies-production_orders-production_events')
 
 collectors_router = routers.NestedSimpleRouter(companies_router, 'collectors', lookup='collectors')
 collectors_router.register('channels', views.ChannelViewSet, base_name='companies-collectors-channels')

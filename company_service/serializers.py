@@ -1,5 +1,6 @@
 from .models import *
 from rest_framework import serializers
+from drf_writable_nested import WritableNestedModelSerializer
 
 class CompanySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -81,8 +82,8 @@ class ProductionOrderSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class ProductionLineSerializer(serializers.HyperlinkedModelSerializer):
-    in_progress_order = ProductionOrderSerializer()
+class ProductionLineSerializer(WritableNestedModelSerializer, serializers.HyperlinkedModelSerializer):
+    in_progress_order = ProductionOrderSerializer(read_only=True)
 
     class Meta:
         model = ProductionLine
@@ -193,6 +194,9 @@ class ProductionEventSerializer(serializers.HyperlinkedModelSerializer):
 
     production_line_id = serializers.IntegerField(required=False)
     production_order_id = serializers.IntegerField(required=True)
+
+    rework_code = ReworkCodeSerializer(read_only=True)
+    waste_code = WasteCodeSerializer(read_only=True)
 
     class Meta:
         model = ProductionEvent

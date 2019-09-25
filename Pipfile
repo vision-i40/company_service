@@ -32,6 +32,7 @@ drf-nested-routers = "*"
 django-cors-headers = "*"
 django-rest-swagger = "*"
 django-heroku = "*"
+drf-writable-nested = "*"
 
 [requires]
 python_version = "3.6"

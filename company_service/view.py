@@ -125,8 +125,8 @@ class StopCodeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return models.StopCode \
-            .filter(code_group__company__user=self.request.user, code_group=self.kwargs['code_groups_pk']) \
             .objects \
+            .filter(code_group__company__user=self.request.user, code_group=self.kwargs['code_groups_pk']) \
             .order_by('-created')
 
     def perform_create(self, serializer):

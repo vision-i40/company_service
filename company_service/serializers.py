@@ -192,8 +192,7 @@ class ProductionEventSerializer(serializers.HyperlinkedModelSerializer):
     product = ProductSerializer(read_only=True)
     unit_of_measurement = UnitOfMeasurementSerializer(read_only=True)
 
-    production_line_id = serializers.IntegerField(required=False)
-    production_order_id = serializers.IntegerField(required=True)
+    production_line_id = serializers.IntegerField(required=True)
 
     rework_code = ReworkCodeSerializer(read_only=True)
     waste_code = WasteCodeSerializer(read_only=True)
@@ -205,7 +204,6 @@ class ProductionEventSerializer(serializers.HyperlinkedModelSerializer):
             'product',
             'production_line_id',
             'production_order',
-            'production_order_id',
             'unit_of_measurement',
             'event_datetime',
             'quantity',
@@ -230,7 +228,7 @@ class CollectorSerializer(serializers.HyperlinkedModelSerializer):
 
 class ChannelSerializer(serializers.HyperlinkedModelSerializer):
     production_line = ProductionLineSerializer(read_only=True)
-    
+
     production_line_id = serializers.IntegerField(required=False, allow_null=True)
 
     class Meta:

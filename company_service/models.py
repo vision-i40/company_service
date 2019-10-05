@@ -179,7 +179,7 @@ class ProductionOrder(IndexedTimeStampedModel):
 class Collector(IndexedTimeStampedModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     mac = models.CharField(max_length=256)
-    
+
     WISE = 'Wise'
     HW = 'HW'
     LORA = 'Lora'

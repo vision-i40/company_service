@@ -26,6 +26,11 @@
     pipenv shell
 ```
 
+- Install all dependencies:
+```
+    pipenv install --dev
+```
+
 - Run dependencies with docker-compose:
 ```
     docker-compose up -d

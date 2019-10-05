@@ -1,19 +1,17 @@
 from rest_framework import serializers
-from .models import User
+from .models import Group
 from company_service.serializers import CompanySerializer
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class GroupSerializer(serializers.HyperlinkedModelSerializer):
     default_company = CompanySerializer()
 
     class Meta:
-        model = User
+        model = Group
         fields = (
             'id',
             'name',
-            'email',
-            'is_active',
             'default_company',
-            'group',
+            'permissions',
             'created',
             'modified',
         )

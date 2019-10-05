@@ -3,9 +3,8 @@ from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import ugettext_lazy as _
 from common.models import IndexedTimeStampedModel
-from django.db import models
 from .managers import UserManager
-
+from groups.models import Group
 
 class User(AbstractBaseUser, PermissionsMixin, IndexedTimeStampedModel):
     email = models.EmailField(max_length=255, unique=True)
@@ -19,6 +18,10 @@ class User(AbstractBaseUser, PermissionsMixin, IndexedTimeStampedModel):
                     'active. Unselect this instead of deleting accounts.'))
 
     default_company = models.ForeignKey('company_service.Company', on_delete=models.SET_NULL, null=True)
+    groups = models.ManyToManyField(
+        Group,
+        help_text=_('Please select only one group.')
+    )
 
     objects = UserManager()
 

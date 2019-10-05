@@ -1,5 +1,6 @@
 import os
 import dj_database_url
+import psycopg2
 from decouple import config
 from datetime import timedelta
 
@@ -53,6 +54,7 @@ INSTALLED_APPS = [
     'common',
     'company_service',
     'users',
+    'groups',
 ]
 
 MIDDLEWARE = [

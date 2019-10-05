@@ -22,7 +22,7 @@ This endpoint allows the current user to list the turns of his company. [This ro
 ## Retrieving a turn
 This endpoint allows the current user to retrieve a turn of his company. [This route is authenticated](https://github.com/vision-i40/company_service/tree/master/docs/authentication#authenticated-endpoints).
 
-| **Method**            | v1/companies/1/turn_schemes/2/turns/1     |
+| **Method**            | v1/companies/1/turn_schemes/2/turns/1/     |
 |-----------------------|:---------------------:|
 | **Resources**         | GET                   |
 | **Request Response**  | `{ "id": 1, "turn_scheme_id": 2, "name": "manha", "start_time": "11:48:58", "end_time": "18:00:00", "days_of_week": [ 1, 2, 3 ], "created": "2019-09-07T11:49:29.441922Z", "modified": "2019-09-07T11:49:29.441922Z"}` |
@@ -31,7 +31,7 @@ This endpoint allows the current user to retrieve a turn of his company. [This r
 ## Updating a turn
 This endpoint allows the current user to update a turn of his company. [This route is authenticated](https://github.com/vision-i40/company_service/tree/master/docs/authentication#authenticated-endpoints).
 
-| **Method**            | v1/companies/1/turn_schemes/1/turns/2     |
+| **Method**            | v1/companies/1/turn_schemes/1/turns/2/     |
 |-----------------------|:---------------------:|
 | **Resources**         | PUT                   |
 | **Request Payload**   | `{"name" : "turn test 2 - updated", "start_time": "09:12:12", "end_time": "12:13:15", "days_of_week": [1, 2]}` |

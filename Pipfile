@@ -1,21 +1,17 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [dev-packages]
-
 bandit = "*"
 coverage = "*"
 django-naomi = "*"
 isort = "*"
 model-mommy = "*"
-
+pylint = "*"
 
 [packages]
-
 django = ">=2.2.4"
 celery = {extras = ["redis"]}
 django-model-utils = "*"
@@ -36,7 +32,7 @@ drf-nested-routers = "*"
 django-cors-headers = "*"
 django-rest-swagger = "*"
 django-heroku = "*"
+drf-writable-nested = "*"
 
 [requires]
-
 python_version = "3.6"

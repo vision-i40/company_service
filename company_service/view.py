@@ -184,7 +184,11 @@ class ProductionOrderViewSet(viewsets.ModelViewSet):
         product_id = serializer.validated_data['product_id']
         product = models.Product \
             .objects \
-            .get(company__user=self.request.user, company=self.kwargs['companies_pk'], pk=product_id)
+            .get(
+                company__user=self.request.user,
+                company=self.kwargs['companies_pk'],
+                pk=product_id
+            )
         serializer.save(product=product)
 
 class ProductionEventViewSet(viewsets.ModelViewSet):
@@ -195,18 +199,22 @@ class ProductionEventViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return models.ProductionEvent \
             .objects \
-            .filter(company__user=self.request.user, product__company=self.kwargs['companies_pk']) \
+            .filter(
+                company__user=self.request.user,
+                product__company=self.kwargs['companies_pk']
+            ) \
             .order_by('-created')
 
     def perform_create(self, serializer):
         production_order = models.ProductionOrder \
             .objects \
             .get(
-                company__user=self.request.user,
-                company=self.kwargs['companies_pk'],
+                product__company__user=self.request.user,
+                product__company=self.kwargs['companies_pk'],
                 pk=self.kwargs['production_orders_pk']
             )
         serializer.save(
+            company_id=self.kwargs['companies_pk'],
             production_order=production_order,
             product=production_order.product
         )

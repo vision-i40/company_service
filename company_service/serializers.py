@@ -232,7 +232,6 @@ class ChannelSerializer(serializers.HyperlinkedModelSerializer):
     production_line = ProductionLineSerializer(read_only=True)
     
     production_line_id = serializers.IntegerField(required=False, allow_null=True)
-    collector_id = serializers.IntegerField(required=False)
 
     class Meta:
         model = Channel
@@ -246,5 +245,4 @@ class ChannelSerializer(serializers.HyperlinkedModelSerializer):
             'is_cumulative',
             'production_line',
             'production_line_id',
-            'collector_id'
         )

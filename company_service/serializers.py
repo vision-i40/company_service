@@ -77,6 +77,7 @@ class ProductionOrderSerializer(serializers.HyperlinkedModelSerializer):
             'production_quantity',
             'waste_quantity',
             'rework_quantity',
+            'quantity',
             'created',
             'modified',
         )

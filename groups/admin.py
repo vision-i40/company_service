@@ -6,19 +6,19 @@ from django.utils.translation import ugettext_lazy as _
 from .models import Group
 
 class CustomGroupAdmin(GroupAdmin):
-    list_display = ('name', 'default_company',)
-    list_filter = ('name', 'default_company',)
-    search_fields = ('name', 'default_company',)
+    list_display = ('name', )
+    list_filter = ('name', )
+    search_fields = ('name', )
     ordering = ('name',)
 
     filter_horizontal = (
         ('permissions'), ('users'),
-    ) 
+    )
     fieldsets = (
-        (None, {'fields': ('name', 'permissions', 'default_company', 'users',)}),
-    ) 
+        (None, {'fields': ('name', 'permissions', 'users',)}),
+    )
     add_fieldsets = (
-        None, {'fields': ('name', 'default_company',)}
+        None, {'fields': ('name',)}
     )
 
 admin.site.register(Group, CustomGroupAdmin)

@@ -30,10 +30,10 @@ jobs:
           - /usr/local/bin
           - /usr/local/lib/python3.6/site-packages
       - restore_cache:
-        keys:
-          - v1-npm-cache-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
-          - v1-npm-cache-{{ .Branch }}-
-          - v1-npm-cache-
+          keys:
+            - v1-npm-cache-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+            - v1-npm-cache-{{ .Branch }}-
+            - v1-npm-cache-
 
       - run:
         command: pipenv run coverage run manage.py test

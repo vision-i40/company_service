@@ -25,10 +25,10 @@ jobs:
         command: pipenv install --dev
       - save_cache:
           key: pipenv-cache-{{  Branch }}-{{ .Environment.CIRCLE_SHA1 }}
-        paths:
-          - .venv
-          - /usr/local/bin
-          - /usr/local/lib/python3.6/site-packages
+          paths:
+            - .venv
+            - /usr/local/bin
+            - /usr/local/lib/python3.6/site-packages
       - restore_cache:
           keys:
             - v1-npm-cache-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}

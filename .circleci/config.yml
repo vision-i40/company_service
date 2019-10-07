@@ -23,7 +23,7 @@ jobs:
             - v1-pipenv-cache-
       - run:
           command: |
-            pipenv install --dev
+            sudo pip install pipenv
       - save_cache:
           key: pipenv-cache-{{  Branch }}-{{ .Environment.CIRCLE_SHA1 }}
           paths:
@@ -37,8 +37,11 @@ jobs:
             - v1-npm-cache-
 
       - run:
-          command: |
-            pipenv run coverage run manage.py test
-        environment:
-          DJANGO_SETTINGS_MODULE: 'github_integration.settings.local_base'
+          command: | 
+            pipenv shell 
+            pipenv install --dev
+            pipenv run python manage.py test
+
+      - store_test_results:
+          path: test-results
 

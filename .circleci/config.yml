@@ -17,14 +17,14 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-        keys:
-          - v1-pipenv-cache-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
-          - v1-pipenv-cache-{{ .Branch }}-
-          - v1-pipenv-cache-
+          keys:
+            - v1-pipenv-cache-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+            - v1-pipenv-cache-{{ .Branch }}-
+            - v1-pipenv-cache-
       - run:
         command: pipenv install --dev
       - save_cache:
-        key: pipenv-cache-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: pipenv-cache-{{  Branch }}-{{ .Environment.CIRCLE_SHA1 }}
         paths:
           - .venv
           - /usr/local/bin

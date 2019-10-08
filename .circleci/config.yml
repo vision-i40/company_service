@@ -8,6 +8,7 @@ jobs:
           PIPENV_IGNORE_VIRTUALENVS: True
           PIPENV_VENV_IN_PROJECT: True
           PIPENV_DONT_LOAD_ENV: 0
+          DJANGO_SETTINGS_MODULE: 'company_service.settings.test'
       - image: circleci/postgres:9.6.2-alpine
         environment:
           POSTGRES_USER: postgres
@@ -18,30 +19,29 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-pipenv-cache-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
-            - v1-pipenv-cache-{{ .Branch }}-
-            - v1-pipenv-cache-
+            - desp9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+            - desp9-{{ .Branch }}
+            - desp9-
       - run:
+          name: Installing dependencies
           command: |
             sudo pip install pipenv
-      - save_cache:
-          key: pipenv-cache-{{  Branch }}-{{ .Environment.CIRCLE_SHA1 }}
-          paths:
-            - .venv
-            - /usr/local/bin
-            - /usr/local/lib/python3.6/site-packages
-      - restore_cache:
-          keys:
-            - v1-npm-cache-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
-            - v1-npm-cache-{{ .Branch }}-
-            - v1-npm-cache-
-
-      - run:
-          command: | 
-            pipenv shell 
             pipenv install --dev
-            pipenv run python manage.py test
-
+      - save_cache:
+          key: desp9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          paths:
+            - ".venv"
+            - "/usr/local/bin"
+            - "/usr/local/lib/python3.6/site-packages"
+      - run:
+          name: Running tests
+          command: |
+            mkdir test-results
+            mkdir test-reports
+            pipenv run python3 manage.py test
       - store_test_results:
           path: test-results
+      - store_artifacts:
+          path: test-reports
+          destination: test-reports
 

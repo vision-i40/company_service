@@ -18,9 +18,9 @@ class CollectorViewSetTest(TestCase):
 
         self.unactivated_user = User.objects.create(email="unactivatedtest@test.com", password="any-pwd", is_active=False)
 
-        self.first_collector = Collector.objects.create(company=self.first_company, mac="23123232")
-        self.second_collector = Collector.objects.create(company=self.first_company, mac="1223244")
-        self.noise_collector = Collector.objects.create(company=self.noise_company, mac="")
+        self.first_collector = Collector.objects.create(company=self.first_company, mac="23123232", collector_type="type 1")
+        self.second_collector = Collector.objects.create(company=self.first_company, mac="1223244", collector_type="type 2")
+        self.noise_collector = Collector.objects.create(company=self.noise_company, mac="", collector_type="")
         
         self.first_company.users.add(self.active_user)
         self.noise_company.users.add(self.unactivated_user)
@@ -34,6 +34,12 @@ class CollectorViewSetTest(TestCase):
 
         self.index_route = '/v1/companies/{}/collectors'.format(self.first_company.id)
         self.single_route = '/v1/companies/{}/collectors/{}'.format(self.first_company.id, self.first_collector.id)
+    
+    def tearDown(self):
+        self.first_company.delete()
+        self.noise_company.delete()
+        self.active_user.delete()
+        self.unactivated_user.delete()
     
     def test_collector_list_authentication_response_is_401_when_there_is_no_authentication_token(self):
         assert_unauthorized_with_no_token(
@@ -56,7 +62,6 @@ class CollectorViewSetTest(TestCase):
         assert_unauthorized_with_invalid_token(
             self,
             self.index_route,
-            self.unactivated_token,
             resource='list',
             companies_pk=self.first_company.id
         )
@@ -65,7 +70,7 @@ class CollectorViewSetTest(TestCase):
         collector_view = self.view.as_view({'get': 'list'})
         factory = APIRequestFactory()
 
-        request = factory.get(self.index_route, HTTP_AUTHORIZATION='Bearer {}'.format(self.active_token))
+        request = factory.get(self.index_route, HTTP_AUTHORIZATION=self.authorization_active_token)
         response = collector_view(request, companies_pk=self.first_company.id)
 
         response.render()
@@ -165,8 +170,8 @@ class CollectorViewSetTest(TestCase):
         response_dict = json.loads(response.content.decode('UTF-8'))
 
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(len(Collector.objects.filter(company=self.first_company).all()), 2)
-        self.assertEqual(len(Collector.objects.all()), 3)
+        self.assertEqual(len(Collector.objects.filter(company=self.first_company).all()), 3)
+        self.assertEqual(len(Collector.objects.all()), 4)
         self.assertEqual(response_dict['mac'], payload['mac'])
         self.assertEqual(response_dict['collector_type'], payload['collector_type'])
 
@@ -204,18 +209,16 @@ class CollectorViewSetTest(TestCase):
 
         payload = {
             'mac': '12232144',
-            'collector_type': 'type 1',
         }
 
         request = factory.put(self.single_route, payload, format='json', HTTP_AUTHORIZATION=self.authorization_active_token)
         response = collector_view(request, companies_pk=self.first_company.id, pk=self.first_collector.id)
 
         response.render()
-        response_dict = json.loads(response.content.decode('UTF-8'))
+        response_dict = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response_dict['mac'], payload['mac'])
-        self.assertEqual(response_dict['collector_type'], payload['collector_type'])
     
     def test_destroy_collector_authentication_response_is_401_when_there_is_no_authentication_token(self):
         assert_unauthorized_with_no_token(
@@ -242,7 +245,7 @@ class CollectorViewSetTest(TestCase):
             self.unactivated_token,
             method='delete',
             resource='destroy',
-            pk=self.first_collector.id
+            pk=self.first_company.id
         )
 
     def test_destroy_collector_response_is_204(self):

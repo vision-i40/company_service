@@ -3,45 +3,48 @@ jobs:
   build:
     working_directory: ~/company_service
     docker:
-      - image: circleci/python:3.6.1
-        environment:
-          PIPENV_IGNORE_VIRTUALENVS: True
-          PIPENV_VENV_IN_PROJECT: True
-          PIPENV_DONT_LOAD_ENV: 0
-          DJANGO_SETTINGS_MODULE: "company_service.settings.test"
+      - image: circleci/python:3.6.4
       - image: circleci/postgres:9.6.2-alpine
         environment:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: company_service_test
+          POSTGRES_DB: company_service
 
     steps:
       - checkout
+      - run: sudo chown -R circleci:circleci /usr/local/bin
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
       - restore_cache:
           keys:
-            - desp9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-            - desp9-{{ .Branch }}
-            - desp9-
+            - v1-pipenv-cache-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+            - v1-pipenv-cache-{{ .Branch }}-
+            - v1-pipenv-cache-
       - run:
           name: Installing dependencies
           command: |
-            sudo pip install pipenv
             pipenv install --dev
       - save_cache:
-          key: desp9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          key: pipenv-cache-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
           paths:
-            - ".venv"
-            - "/usr/local/bin"
-            - "/usr/local/lib/python3.6/site-packages"
+            - .venv
+            - /usr/local/bin
+            - /usr/local/lib/python3.6/site-packages
+      - run:
+          command: cp company_service/settings/local.py.example company_service/settings/local.py
+      - run:
+          command: cp company_service/settings/test.py.example company_service/settings/test.py
+      - run:
+          command: cp .env.example .env
+      - run:
+          command: pipenv run python3 manage.py makemigrations
+      - run:
+          command: pipenv run python3 manage.py migrate
       - run:
           name: Running tests
           command: |
-            mkdir test-results
-            mkdir test-reports
-            pipenv run python3 manage.py test --settings=company_service.settings.test
+            pipenv run python3 manage.py test
       - store_test_results:
           path: test-results
       - store_artifacts:
-          path: test-reports
-          destination: test-reports
-
+          path: test-results
+          destination: tr1

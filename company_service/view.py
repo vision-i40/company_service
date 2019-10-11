@@ -220,7 +220,7 @@ class ProductionEventViewSet(viewsets.ModelViewSet):
         )
 
 class CollectorViewSet(viewsets.ModelViewSet):
-    authentication_classes = (SessionAuthentication, JWTAuthentication,)
+    authentication_classes = (JWTAuthentication, SessionAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CollectorSerializer
 
@@ -234,7 +234,7 @@ class CollectorViewSet(viewsets.ModelViewSet):
         serializer.save(company=models.Company.objects.get(users=self.request.user, pk=self.kwargs['companies_pk']))
 
 class ChannelViewSet(viewsets.ModelViewSet):
-    authentication_classes = (SessionAuthentication, JWTAuthentication,)
+    authentication_classes = (JWTAuthentication, SessionAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.ChannelSerializer
 

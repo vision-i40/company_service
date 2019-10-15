@@ -13,6 +13,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'email',
             'is_active',
             'default_company',
+            'group',
             'created',
             'modified',
         )

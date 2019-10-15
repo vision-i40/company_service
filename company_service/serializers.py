@@ -224,7 +224,6 @@ class CollectorSerializer(serializers.HyperlinkedModelSerializer):
             'modified',
             'mac',
             'collector_type',
-            'company_id',
         )
 
 class ChannelSerializer(serializers.HyperlinkedModelSerializer):

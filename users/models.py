@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
 from django.utils.translation import ugettext_lazy as _
 from common.models import IndexedTimeStampedModel
 from .managers import UserManager
@@ -17,6 +17,7 @@ class User(AbstractBaseUser, PermissionsMixin, IndexedTimeStampedModel):
                     'active. Unselect this instead of deleting accounts.'))
 
     default_company = models.ForeignKey('company_service.Company', on_delete=models.SET_NULL, null=True)
+    group = models.ForeignKey(Group, on_delete=models.SET_NULL, null=True, related_name='user_group')
 
     objects = UserManager()
 

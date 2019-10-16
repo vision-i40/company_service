@@ -228,6 +228,22 @@ class CustomChannelAdmin(admin.ModelAdmin):
             'fields': ('collector', 'production_line', 'channel_type', 'number', 'inverse_state', 'is_cumulative')}),
     )
 
+class CustomStateEventAdmin(admin.ModelAdmin):
+    list_display = ('id', 'production_order', 'production_line', 'channel', 'event_datetime', 'state')
+    list_filter = ('production_order', 'production_line', 'channel', 'event_datetime', 'state',)
+    search_fields = ('production_order', 'production_line', 'channel', 'event_datetime',)
+    ordering = ('event_datetime',)
+
+    fieldsets = (
+        (None, {'fields': ('production_order', 'production_line', 'channel', 'event_datetime', 'state')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('production_order', 'production_line', 'channel', 'event_datetime', 'state')
+        })
+    )
+
 admin.site.register(models.Company, CustomCompanyAdmin)
 admin.site.register(models.Product, CustomProductAdmin)
 admin.site.register(models.UnitOfMeasurement, CustomUnitOfMeasurementAdmin)
@@ -242,3 +258,4 @@ admin.site.register(models.ProductionOrder, CustomProductionOrderAdmin)
 admin.site.register(models.ProductionEvent, CustomProductionEventAdmin)
 admin.site.register(models.Collector, CustomCollectorAdmin)
 admin.site.register(models.Channel, CustomChannelAdmin)
+admin.site.register(models.StateEvent, CustomStateEventAdmin)

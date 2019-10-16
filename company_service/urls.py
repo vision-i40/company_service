@@ -34,6 +34,7 @@ code_group_router.register('rework_codes', views.ReworkCodeViewSet, base_name='c
 
 production_order_router = routers.NestedSimpleRouter(companies_router, 'production_orders', lookup='production_orders')
 production_order_router.register('production_events', views.ProductionEventViewSet, base_name='companies-production_orders-production_events')
+production_order_router.register('state_events', views.StateEventViewSet, base_name='companies-production_orders-production_events-state_events')
 
 collectors_router = routers.NestedSimpleRouter(companies_router, 'collectors', lookup='collectors')
 collectors_router.register('channels', views.ChannelViewSet, base_name='companies-collectors-channels')

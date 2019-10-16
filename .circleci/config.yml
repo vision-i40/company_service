@@ -20,35 +20,50 @@ jobs:
       - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
       - restore_cache:
           keys:
-            - v1-pipenv-cache-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+            - v1-pipenv-cache-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
             - v1-pipenv-cache-{{ .Branch }}-
             - v1-pipenv-cache-
       - run:
-          name: Installing dependencies
+          name: Installing dependencies and setting up environment
           command: |
             pipenv install --dev
+            cp company_service/settings/local.py.example company_service/settings/local.py
+            cp company_service/settings/test.py.example company_service/settings/test.py
+            cp .env.example .env
+            pipenv run python3 manage.py makemigrations
+            pipenv run python3 manage.py migrate
       - save_cache:
-          key: pipenv-cache-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: pipenv-cache-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
           paths:
             - .venv
             - /usr/local/bin
-            - /usr/local/lib/python3.6/site-packages
-      - run:
-          command: cp company_service/settings/local.py.example company_service/settings/local.py
-      - run:
-          command: cp company_service/settings/test.py.example company_service/settings/test.py
-      - run:
-          command: cp .env.example .env
-      - run:
-          command: pipenv run python3 manage.py makemigrations
-      - run:
-          command: pipenv run python3 manage.py migrate
+            - /usr/local/lib/python3.6/site-packages 
       - run:
           name: Running tests
           command: |
             pipenv run python3 manage.py test
-      - store_test_results:
-          path: test-results
-      - store_artifacts:
-          path: test-results
-          destination: tr1
+  deploy:
+    staging:
+      branch: master
+      heroku:
+        appname: vision-i40-staging
+    docker:
+      - image: buildpack-deps:trusty
+    steps:
+      - checkout
+      - run:
+          name: Deploying and migrating on Heroku
+          command: |
+              git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master

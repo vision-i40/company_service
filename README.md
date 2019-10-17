@@ -36,18 +36,6 @@
     docker-compose up -d
 ```
 
-- On __Pipfile__ the package psycopg2 has double dashes on it, in order to make it work right take them out of it's name.
-
-- After that run the following command to add the dependencies of the project to the Pipfile.lock:
-```
-    pipenv install
-```
-
-- And this command will install the packages specified on the Pipfile.lock:
-```
-    pipenv sync
-```    
-
 - Go to postgres admin site in `http://localhost:8080/` and login with a `PostgreSQL` connection using `postgres` as user and password. Then add the database `company_service`.
 
 - Run the migrations:

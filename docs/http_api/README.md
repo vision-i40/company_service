@@ -10,3 +10,8 @@ The entire api follows the Django pattern. So there are CRUD implementation for 
 - [Collector](https://github.com/vision-i40/company_service/tree/master/docs/http_api/collector)
 - [Channel](https://github.com/vision-i40/company_service/tree/master/docs/http_api/channel)
 - [Production Event](https://github.com/vision-i40/company_service/tree/master/docs/http_api/production_event)
+- [Code Groups](https://github.com/vision-i40/company_service/tree/master/docs/http_api/code_groups)
+    - [Stop Code](https://github.com/vision-i40/company_service/tree/master/docs/http_api/code_groups/stop_code)
+    - [Rework Code](https://github.com/vision-i40/company_service/tree/master/docs/http_api/code_groups/rework_code)
+    - [Waste Code](https://github.com/vision-i40/company_service/tree/master/docs/http_api/code_groups/waste_code)
+- [State Events](https://github.com/vision-i40/company_service/tree/master/docs/http_api/state_events)

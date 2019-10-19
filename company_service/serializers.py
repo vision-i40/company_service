@@ -248,14 +248,12 @@ class ChannelSerializer(serializers.HyperlinkedModelSerializer):
 class StateEventSerializer(serializers.HyperlinkedModelSerializer):
     channel = ChannelSerializer(read_only=True)
 
-    production_line_id = serializers.IntegerField(required=True)
     channel_id = serializers.IntegerField(required=False)
 
     class Meta:
         model = StateEvent
         fields = (
             'id',
-            'production_line_id',
             'channel',
             'channel_id',
             'event_datetime',

@@ -261,18 +261,14 @@ class StateEventViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return models.StateEvent \
             .objects \
-            .filter(product__company__user=self.request.user, product__company=self.kwargs['companies_pk']) \
+            .filter(production_line__company__user=self.request.user, production_line=self.kwargs['production_lines_pk']) \
             .order_by('-created')
     
     def perform_create(self, serializer):
-        production_order = models.ProductionOrder \
+        production_line = models.ProductionLine \
             .objects \
             .get(
-                product__company__user=self.request.user,
-                product__company=self.kwargs['companies_pk'],
-                pk=self.kwargs['production_orders_pk']
+                company__user=self.request.user,
+                pk=self.kwargs['production_lines_pk']
             )
-        serializer.save(
-            production_order=production_order,
-            product=production_order.product
-        )
+        serializer.save(production_line=production_line)

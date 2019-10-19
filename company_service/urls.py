@@ -32,9 +32,11 @@ code_group_router.register('stop_codes', views.StopCodeViewSet, base_name='compa
 code_group_router.register('waste_codes', views.WasteCodeViewSet, base_name='companies-code_groups-waste_codes')
 code_group_router.register('rework_codes', views.ReworkCodeViewSet, base_name='companies-code_groups-rework_codes')
 
+production_line_router = routers.NestedSimpleRouter(companies_router, 'production_lines', lookup='production_lines')
+production_line_router.register('state_events', views.StateEventViewSet, base_name='companies-production_lines-state_events')
+
 production_order_router = routers.NestedSimpleRouter(companies_router, 'production_orders', lookup='production_orders')
 production_order_router.register('production_events', views.ProductionEventViewSet, base_name='companies-production_orders-production_events')
-production_order_router.register('state_events', views.StateEventViewSet, base_name='companies-production_orders-production_events-state_events')
 
 collectors_router = routers.NestedSimpleRouter(companies_router, 'collectors', lookup='collectors')
 collectors_router.register('channels', views.ChannelViewSet, base_name='companies-collectors-channels')
@@ -52,6 +54,7 @@ urlpatterns = [
     url(r'^v1/', include(turn_schemes_router.urls)),
     url(r'^v1/', include(code_group_router.urls)),
     url(r'^v1/', include(production_order_router.urls)),
+    url(r'^v1/', include(production_line_router.urls)),
     url(r'^v1/', include(collectors_router.urls)),
     url(r'^auth/token/$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     url(r'^auth/token/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),

@@ -1,6 +1,6 @@
-[![CircleCI](https://circleci.com/gh/vision-i40/company_service/tree/master.svg?style=svg)](https://circleci.com/gh/vision-i40/company_service/tree/master)
-
 # Company Service
+
+[![CircleCI](https://circleci.com/gh/vision-i40/company_service/tree/master.svg?style=svg)](https://circleci.com/gh/vision-i40/company_service/tree/master)
 
 ### Dependencies
 

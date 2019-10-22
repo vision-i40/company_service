@@ -84,28 +84,6 @@ class ProductionOrderSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class ProductionLineSerializer(WritableNestedModelSerializer, serializers.HyperlinkedModelSerializer):
-    in_progress_order = ProductionOrderSerializer(read_only=True)
-
-    class Meta:
-        model = ProductionLine
-        fields = (
-            'id',
-            'company_id',
-            'name',
-            'is_active',
-            'discount_rework',
-            'discount_waste',
-            'stop_on_production_absence',
-            'time_to_consider_absence',
-            'reset_production_changing_order',
-            'micro_stop_seconds',
-            'in_progress_order',
-            'created',
-            'modified'
-        )
-
-
 class TurnSchemeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = TurnScheme
@@ -128,6 +106,29 @@ class TurnSerializer(serializers.HyperlinkedModelSerializer):
             'start_time',
             'end_time',
             'days_of_week',
+            'created',
+            'modified'
+        )
+
+class ProductionLineSerializer(WritableNestedModelSerializer, serializers.HyperlinkedModelSerializer):
+    in_progress_order = ProductionOrderSerializer(read_only=True)
+    turn = TurnSerializer(read_only=True)
+
+    class Meta:
+        model = ProductionLine
+        fields = (
+            'id',
+            'company_id',
+            'name',
+            'is_active',
+            'discount_rework',
+            'discount_waste',
+            'stop_on_production_absence',
+            'time_to_consider_absence',
+            'reset_production_changing_order',
+            'micro_stop_seconds',
+            'in_progress_order',
+            'turn',
             'created',
             'modified'
         )
@@ -186,8 +187,6 @@ class ReworkCodeSerializer(serializers.HyperlinkedModelSerializer):
             'created',
             'modified'
         )
-
-
 
 class ProductionEventSerializer(serializers.HyperlinkedModelSerializer):
     production_order = ProductionOrderSerializer(read_only=True)

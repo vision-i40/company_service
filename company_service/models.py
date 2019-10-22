@@ -124,6 +124,7 @@ class ProductionLine(IndexedTimeStampedModel):
     reset_production_changing_order = models.BooleanField(default=False)
     micro_stop_seconds = models.IntegerField(blank=True, null=True)
     turn_scheme = models.ForeignKey(TurnScheme, blank=True, null=True, on_delete=models.SET_NULL)
+    turn = models.ForeignKey(Turn, on_delete=models.SET_NULL, blank=True, null=True)
 
     def in_progress_order(self):
         return self.production_orders.filter(state=ProductionOrder.IN_PROGRESS).first()

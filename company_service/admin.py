@@ -96,12 +96,12 @@ class CustomProductionLineAdmin(admin.ModelAdmin):
     ordering = ('name',)
 
     fieldsets = (
-        (None, {'fields': ('company', 'name', 'is_active', 'discount_rework', 'discount_waste', 'stop_on_production_absence', 'time_to_consider_absence', 'reset_production_changing_order', 'micro_stop_seconds', 'turn_scheme',)}),
+        (None, {'fields': ('company', 'name', 'is_active', 'discount_rework', 'discount_waste', 'stop_on_production_absence', 'time_to_consider_absence', 'reset_production_changing_order', 'micro_stop_seconds', 'turn_scheme', 'turn',)}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('name', 'company', 'name', 'is_active', 'discount_rework', 'discount_waste', 'stop_on_production_absence', 'time_to_consider_absence', 'reset_production_changing_order', 'micro_stop_seconds', 'turn_scheme',)}),
+            'fields': ('name', 'company', 'name', 'is_active', 'discount_rework', 'discount_waste', 'stop_on_production_absence', 'time_to_consider_absence', 'reset_production_changing_order', 'micro_stop_seconds', 'turn_scheme', 'turn',)}),
     )
 
 

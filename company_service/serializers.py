@@ -275,6 +275,7 @@ class ManualStopSerializer(serializers.HyperlinkedModelSerializer):
             'stop_code_id',
             'start_datetime',
             'end_datetime',
-            'start_state_event',
-            'end_state_event',
+            'state_event',
+            'created',
+            'modified',
         )

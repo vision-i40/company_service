@@ -282,17 +282,14 @@ class ManualStop(IndexedTimeStampedModel):
     end_datetime = models.DateTimeField(default=None, db_index=True)
 
     @property
-    def start_state_event(self):
-        return {
+    def state_event(self):
+        return [{
             'start_datetime' : self.start_datetime,
             'stop_code': self.stop_code.name,
             'state': StateEvent.OFF,
-        }
-
-    @property
-    def end_state_event(self):
-        return {
-            'end_datetime' : self.end_datetime,
+        },
+        {
+            'end_datetime': self.end_datetime,
             'stop_code': self.stop_code.name,
-            'state': StateEvent.OFF,
-        }
+            'state': StateEvent.OFF
+        }]

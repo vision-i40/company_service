@@ -34,13 +34,15 @@ code_group_router.register('rework_codes', views.ReworkCodeViewSet, base_name='c
 
 production_line_router = routers.NestedSimpleRouter(companies_router, 'production_lines', lookup='production_lines')
 production_line_router.register('state_events', views.StateEventViewSet, base_name='companies-production_lines-state_events')
-production_line_router.register('manual_stops', views.ManualStopViewSet, base_name='companies-production_lines-manual_stops')
 
 production_order_router = routers.NestedSimpleRouter(companies_router, 'production_orders', lookup='production_orders')
 production_order_router.register('production_events', views.ProductionEventViewSet, base_name='companies-production_orders-production_events')
 
 collectors_router = routers.NestedSimpleRouter(companies_router, 'collectors', lookup='collectors')
 collectors_router.register('channels', views.ChannelViewSet, base_name='companies-collectors-channels')
+
+state_event_router = routers.NestedSimpleRouter(production_line_router, 'state_events', lookup='state_events')
+state_event_router.register('manual_stops', views.ManualStopViewSet, base_name='companies-production_lines-state_events-manual_stops')
 
 swagger_view = get_schema_view(
     title='Docs',
@@ -57,6 +59,7 @@ urlpatterns = [
     url(r'^v1/', include(production_order_router.urls)),
     url(r'^v1/', include(production_line_router.urls)),
     url(r'^v1/', include(collectors_router.urls)),
+    url(r'^v1/', include(state_event_router.urls)),
     url(r'^auth/token/$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     url(r'^auth/token/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),
     url('admin/', admin.site.urls),

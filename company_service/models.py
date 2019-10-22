@@ -6,6 +6,7 @@ from django.db.models import Sum
 from users.models import User
 from common.models import IndexedTimeStampedModel
 from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.fields import JSONField
 
 class Company(IndexedTimeStampedModel):
     trade_name = models.CharField(max_length=256)
@@ -272,3 +273,26 @@ class ProductionEvent(IndexedTimeStampedModel):
 
     waste_code = models.ForeignKey(WasteCode, on_delete=models.SET_NULL, null=True, blank=True)
     rework_code = models.ForeignKey(ReworkCode, on_delete=models.SET_NULL, null=True, blank=True)
+
+class ManualStop(IndexedTimeStampedModel):
+    production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE, null=True)
+    state_event = models.ForeignKey(StateEvent, on_delete=models.SET_NULL, null=True, blank=True)
+    stop_code = models.ForeignKey(StopCode, on_delete=models.CASCADE, null=True)
+    start_datetime = models.DateTimeField(default=None, db_index=True)
+    end_datetime = models.DateTimeField(default=None, db_index=True)
+
+    @property
+    def start_state_event(self):
+        return {
+            'start_datetime' : self.start_datetime,
+            'stop_code': self.stop_code.name,
+            'state': StateEvent.OFF,
+        }
+
+    @property
+    def end_state_event(self):
+        return {
+            'end_datetime' : self.end_datetime,
+            'stop_code': self.stop_code.name,
+            'state': StateEvent.OFF,
+        }

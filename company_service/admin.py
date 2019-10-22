@@ -244,6 +244,22 @@ class CustomStateEventAdmin(admin.ModelAdmin):
         })
     )
 
+class CustomManualStopAdmin(admin.ModelAdmin):
+    list_display = ('id', 'production_line', 'start_datetime', 'end_datetime',)
+    list_filter = ('production_line', 'start_datetime', 'end_datetime',)
+    search_fields = ('production_line', 'start_datetime', 'end_datetime',)
+    ordering = ('start_datetime',)
+
+    fieldsets = (
+        (None, {'fields': ('production_line', 'start_datetime', 'end_datetime',)}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('production_line', 'start_datetime', 'end_datetime',)
+        })
+    )
+
 admin.site.register(models.Company, CustomCompanyAdmin)
 admin.site.register(models.Product, CustomProductAdmin)
 admin.site.register(models.UnitOfMeasurement, CustomUnitOfMeasurementAdmin)
@@ -259,3 +275,4 @@ admin.site.register(models.ProductionEvent, CustomProductionEventAdmin)
 admin.site.register(models.Collector, CustomCollectorAdmin)
 admin.site.register(models.Channel, CustomChannelAdmin)
 admin.site.register(models.StateEvent, CustomStateEventAdmin)
+admin.site.register(models.ManualStop, CustomManualStopAdmin)

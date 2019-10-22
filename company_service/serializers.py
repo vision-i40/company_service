@@ -1,6 +1,7 @@
 from .models import *
 from rest_framework import serializers
 from drf_writable_nested import WritableNestedModelSerializer
+from typing import Dict, Any
 
 class CompanySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -260,4 +261,20 @@ class StateEventSerializer(serializers.HyperlinkedModelSerializer):
             'state',
             'created',
             'modified',
+        )
+
+class ManualStopSerializer(serializers.HyperlinkedModelSerializer):
+
+    stop_code_id = serializers.IntegerField(write_only=True)
+    start_datetime = serializers.DateTimeField(write_only=True)
+    end_datetime = serializers.DateTimeField(write_only=True)
+    class Meta:
+        model = ManualStop
+        fields = (
+            'id',
+            'stop_code_id',
+            'start_datetime',
+            'end_datetime',
+            'start_state_event',
+            'end_state_event',
         )

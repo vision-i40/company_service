@@ -292,3 +292,15 @@ class ManualStopViewSet(viewsets.ModelViewSet):
                 pk=self.kwargs['production_lines_pk']
             )
         serializer.save(production_line=production_line)
+
+class AvailabilityViewSet(viewsets.ModelViewSet):
+    authentication_classes = (JWTAuthentication, SessionAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.AvailabilitySerializer
+    filterset_fields = ['production_line_id', 'start_time', 'end_time']
+
+    def get_queryset(self):
+        return models.Availability \
+            .objects \
+            .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk']) \
+            .order_by('start_time')

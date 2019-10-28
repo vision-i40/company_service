@@ -33,6 +33,7 @@ django-cors-headers = "*"
 django-rest-swagger = "*"
 django-heroku = "*"
 drf-writable-nested = "*"
+django-filter = "*"
 
 [requires]
 python_version = "3.6"

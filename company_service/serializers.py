@@ -278,3 +278,23 @@ class ManualStopSerializer(serializers.HyperlinkedModelSerializer):
             'created',
             'modified',
         )
+
+class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
+
+    production_line = ProductionLineSerializer(read_only=True)
+    stop_code = StopCodeSerializer(read_only=True)
+
+    production_line_id = serializers.IntegerField(write_only=True, required=False)
+    stop_code_id = serializers.IntegerField(write_only=True)
+    class Meta:
+        model = Availability
+        fields = (
+            'id',
+            'production_line',
+            'production_line_id',
+            'start_time',
+            'end_time',
+            'stop_code',
+            'stop_code_id',
+            'state',
+        )

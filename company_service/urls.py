@@ -19,6 +19,7 @@ companies_router.register('turn_schemes', views.TurnSchemeViewSet, base_name='co
 companies_router.register('code_groups', views.CodeGroupViewSet, base_name='companies-code_groups')
 companies_router.register('production_orders', views.ProductionOrderViewSet, base_name='production_orders')
 companies_router.register('collectors', views.CollectorViewSet, base_name='companies-collectors')
+companies_router.register('availability', views.AvailabilityViewSet, base_name='companies-availability')
 
 products_router = routers.NestedSimpleRouter(companies_router, 'products', lookup='products')
 products_router.register('units_of_measurement', views.UnitOfMeasurementViewSet,

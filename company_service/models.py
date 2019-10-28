@@ -294,3 +294,19 @@ class ManualStop(IndexedTimeStampedModel):
             'stop_code': self.stop_code.name,
             'state': StateEvent.OFF
         }]
+
+class Availability(IndexedTimeStampedModel):
+    production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
+    start_time = models.DateTimeField(default=None, db_index=True)
+    end_time = models.DateTimeField(default=None, db_index=True)
+
+    ON = 'On'
+    OFF = 'Off'
+
+    STATES = (
+        (ON, 'On'),
+        (OFF, 'Off'),
+    )
+
+    state = models.CharField(max_length=3, choices=STATES, default=ON)
+    stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)

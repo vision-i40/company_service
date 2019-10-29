@@ -1,12 +1,12 @@
 from django.db import models
 from django.utils import timezone
+from django.utils.timezone import now, localtime
 from django.utils.translation import ugettext_lazy as _
 from model_utils.fields import AutoCreatedField, AutoLastModifiedField
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from users.models import User
 from common.models import IndexedTimeStampedModel
 from django.contrib.postgres.fields import ArrayField
-from django.contrib.postgres.fields import JSONField
 
 class Company(IndexedTimeStampedModel):
     trade_name = models.CharField(max_length=256)
@@ -101,6 +101,7 @@ class TurnScheme(IndexedTimeStampedModel):
 
 class Turn(IndexedTimeStampedModel):
     turn_scheme = models.ForeignKey(TurnScheme, on_delete=models.CASCADE, blank=True, null=True)
+    production_line = models.ForeignKey('company_service.ProductionLine', on_delete=models.SET_NULL, null=True, related_name="turns")
     name = models.CharField(max_length=256)
     start_time = models.TimeField()
     end_time = models.TimeField()
@@ -112,7 +113,6 @@ class Turn(IndexedTimeStampedModel):
     def __str__(self):
         return self.name
 
-
 class ProductionLine(IndexedTimeStampedModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     name = models.CharField(max_length=256)
@@ -123,15 +123,16 @@ class ProductionLine(IndexedTimeStampedModel):
     time_to_consider_absence = models.IntegerField(blank=True, null=True)
     reset_production_changing_order = models.BooleanField(default=False)
     micro_stop_seconds = models.IntegerField(blank=True, null=True)
-    turn_scheme = models.ForeignKey(TurnScheme, blank=True, null=True, on_delete=models.SET_NULL)
-    turn = models.ForeignKey(Turn, on_delete=models.SET_NULL, blank=True, null=True)
+
+    def current_turn(self):
+        time_local = localtime().time()
+        return self.turns.filter(Q(start_time__lt=time_local) & Q(end_time__gt=time_local)).values().first()
 
     def in_progress_order(self):
         return self.production_orders.filter(state=ProductionOrder.IN_PROGRESS).first()
 
     def __str__(self):
         return self.name
-
 
 class ProductionLineProductionRate(IndexedTimeStampedModel):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)

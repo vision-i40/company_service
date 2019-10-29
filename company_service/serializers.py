@@ -112,7 +112,7 @@ class TurnSerializer(serializers.HyperlinkedModelSerializer):
 
 class ProductionLineSerializer(WritableNestedModelSerializer, serializers.HyperlinkedModelSerializer):
     in_progress_order = ProductionOrderSerializer(read_only=True)
-    turn = TurnSerializer(read_only=True)
+    current_turn = TurnSerializer(read_only=True, many=True)
 
     class Meta:
         model = ProductionLine
@@ -128,7 +128,7 @@ class ProductionLineSerializer(WritableNestedModelSerializer, serializers.Hyperl
             'reset_production_changing_order',
             'micro_stop_seconds',
             'in_progress_order',
-            'turn',
+            'current_turn',
             'created',
             'modified'
         )

@@ -303,4 +303,15 @@ class AvailabilityViewSet(viewsets.ModelViewSet):
         return models.Availability \
             .objects \
             .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk']) \
-            .order_by('start_time')
+            .order_by('start_time', 'end_time')
+
+    def perform_create(self, serializer):
+        production_line = models.ProductionLine \
+            .objects \
+            .get(
+                company__user=self.request.user,
+                pk=self.kwargs['companies_pk']
+            )
+        serializer.save(
+            production_line=production_line,
+        )

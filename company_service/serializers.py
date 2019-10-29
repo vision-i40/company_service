@@ -287,8 +287,8 @@ class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
     production_line = ProductionLineSerializer(read_only=True)
     stop_code = StopCodeSerializer(read_only=True)
 
-    production_line_id = serializers.IntegerField(write_only=True, required=False)
-    stop_code_id = serializers.IntegerField(write_only=True)
+    production_line_id = serializers.IntegerField(write_only=True)
+    stop_code_id = serializers.IntegerField(write_only=True, required=False)
     class Meta:
         model = Availability
         fields = (

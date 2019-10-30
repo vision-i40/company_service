@@ -302,13 +302,13 @@ class Availability(IndexedTimeStampedModel):
     start_time = models.DateTimeField(default=None, db_index=True)
     end_time = models.DateTimeField(default=None, db_index=True)
 
-    UP = 'Up'
-    DOWN = 'Down'
+    ON = 'On'
+    OFF = 'Off'
 
     STATES = (
-        (UP, 'Up'),
-        (DOWN, 'Down'),
+        (ON, 'On'),
+        (OFF, 'Off'),
     )
 
-    state = models.CharField(max_length=3, choices=STATES, default=UP)
+    state = models.CharField(max_length=3, choices=STATES, default=ON)
     stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)

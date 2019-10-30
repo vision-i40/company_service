@@ -313,5 +313,5 @@ class AvailabilityViewSet(viewsets.ModelViewSet):
                 pk=self.kwargs['companies_pk']
             )
         serializer.save(
-            production_line=production_line,
+            production_line=production_line
         )

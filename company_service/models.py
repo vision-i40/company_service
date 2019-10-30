@@ -123,6 +123,7 @@ class ProductionLine(IndexedTimeStampedModel):
     time_to_consider_absence = models.IntegerField(blank=True, null=True)
     reset_production_changing_order = models.BooleanField(default=False)
     micro_stop_seconds = models.IntegerField(blank=True, null=True)
+    turn_scheme = models.ForeignKey(TurnScheme, blank=True, null=True, on_delete=models.SET_NULL)
 
     def current_turn(self):
         time_local = localtime().time()

@@ -168,15 +168,12 @@ class ProductionOrder(IndexedTimeStampedModel):
     def event_quantity(self, event_type):
         return self.production_events.filter(event_type=event_type).aggregate(Sum('quantity'))['quantity__sum']
 
-    @property
     def production_quantity(self):
         return self.event_quantity(event_type=ProductionEvent.PRODUCTION)
 
-    @property
     def waste_quantity(self):
         return self.event_quantity(event_type=ProductionEvent.WASTE)
 
-    @property
     def rework_quantity(self):
         return self.event_quantity(event_type=ProductionEvent.REWORK)
 

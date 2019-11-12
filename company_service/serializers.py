@@ -62,9 +62,9 @@ class ProductionOrderSerializer(serializers.HyperlinkedModelSerializer):
     product_id = serializers.IntegerField(required=True)
     production_line_id = serializers.IntegerField(required=False)
 
-    production_quantity = serializers.IntegerField(required=True)
-    waste_quantity = serializers.IntegerField(required=True)
-    rework_quantity = serializers.IntegerField(required=True)
+    production_quantity = serializers.IntegerField()
+    waste_quantity = serializers.IntegerField()
+    rework_quantity = serializers.IntegerField()
 
     class Meta:
         model = ProductionOrder

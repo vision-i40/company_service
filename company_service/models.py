@@ -165,6 +165,9 @@ class ProductionOrder(IndexedTimeStampedModel):
         db_index=True
     )
 
+    def event_quantity(self, event_type):
+        return self.production_events.filter(event_type=event_type).aggregate(Sum('quantity'))['quantity__sum']
+
     def production_quantity(self):
         return self.event_quantity(event_type=ProductionEvent.PRODUCTION)
 
@@ -173,9 +176,6 @@ class ProductionOrder(IndexedTimeStampedModel):
 
     def rework_quantity(self):
         return self.event_quantity(event_type=ProductionEvent.REWORK)
-
-    def event_quantity(self, event_type):
-        return self.production_events.filter(event_type=event_type).aggregate(Sum('quantity'))['quantity__sum']
 
     def __str__(self):
         return self.code

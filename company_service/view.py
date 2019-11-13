@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework import filters
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -174,6 +175,7 @@ class ProductionOrderViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.ProductionOrderSerializer
     filterset_fields = ['production_line_id']
+    search_fields = ['production_line_id']
 
     def get_queryset(self):
         return models.ProductionOrder \

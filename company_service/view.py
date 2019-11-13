@@ -173,6 +173,7 @@ class ProductionOrderViewSet(viewsets.ModelViewSet):
     authentication_classes = (JWTAuthentication, SessionAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.ProductionOrderSerializer
+    filterset_fields = ['production_line_id']
 
     def get_queryset(self):
         return models.ProductionOrder \

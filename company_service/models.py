@@ -229,7 +229,7 @@ class Channel(IndexedTimeStampedModel):
         return str(self.number)
 
 class StateEvent(IndexedTimeStampedModel):
-    production_order = models.ForeignKey(ProductionOrder, on_delete=models.SET_NULL, null=True, blank=True, related_name="state_events")
+    production_order = models.ForeignKey(ProductionOrder, on_delete=models.SET_NULL, null=True, blank=True)
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
     stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)

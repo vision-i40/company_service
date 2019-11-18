@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.utils.timezone import now, localtime
 from django.utils.translation import ugettext_lazy as _
 from model_utils.fields import AutoCreatedField, AutoLastModifiedField
-from django.db.models import Sum, Q
+from django.db.models import Sum, Q, Count
 from users.models import User
 from common.models import IndexedTimeStampedModel
 from django.contrib.postgres.fields import ArrayField
@@ -178,7 +178,7 @@ class ProductionOrder(IndexedTimeStampedModel):
         return self.event_quantity(event_type=ProductionEvent.REWORK)
     
     def order_stop_quantity(self):
-        return StateEvent.objects.count()
+        return StateEvent.objects.filter(production_line=self.production_line).count()
 
     def __str__(self):
         return self.code
@@ -229,7 +229,7 @@ class Channel(IndexedTimeStampedModel):
         return str(self.number)
 
 class StateEvent(IndexedTimeStampedModel):
-    production_order = models.ForeignKey(ProductionOrder, on_delete=models.SET_NULL, null=True, blank=True)
+    production_order = models.ForeignKey(ProductionOrder, on_delete=models.SET_NULL, null=True, blank=True, related_name="state_events")
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
     stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)

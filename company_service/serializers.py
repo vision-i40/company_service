@@ -65,6 +65,7 @@ class ProductionOrderSerializer(serializers.HyperlinkedModelSerializer):
     production_quantity = serializers.IntegerField(required=False)
     waste_quantity = serializers.IntegerField(required=False)
     rework_quantity = serializers.IntegerField(required=False)
+    order_stop_quantity = serializers.ReadOnlyField()
 
     class Meta:
         model = ProductionOrder
@@ -78,11 +79,11 @@ class ProductionOrderSerializer(serializers.HyperlinkedModelSerializer):
             'production_quantity',
             'waste_quantity',
             'rework_quantity',
+            'order_stop_quantity',
             'quantity',
             'created',
             'modified',
         )
-
 
 class TurnSchemeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

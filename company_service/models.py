@@ -282,23 +282,22 @@ class ProductionEvent(IndexedTimeStampedModel):
 
 class ManualStop(IndexedTimeStampedModel):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE, null=True)
-    state_event = models.ForeignKey(StateEvent, on_delete=models.SET_NULL, null=True, blank=True)
     stop_code = models.ForeignKey(StopCode, on_delete=models.CASCADE, null=True)
     start_datetime = models.DateTimeField(default=None, db_index=True)
     end_datetime = models.DateTimeField(default=None, db_index=True)
 
-    @property
-    def state_event(self):
-        return [{
-            'start_datetime' : self.start_datetime,
-            'stop_code': self.stop_code.name,
-            'state': StateEvent.OFF,
-        },
-        {
-            'end_datetime': self.end_datetime,
-            'stop_code': self.stop_code.name,
-            'state': StateEvent.OFF
-        }]
+    # @property
+    # def state_event(self):
+    #     return [{
+    #         'start_datetime' : self.start_datetime,
+    #         'stop_code': self.stop_code.name,
+    #         'state': StateEvent.OFF,
+    #     },
+    #     {
+    #         'end_datetime': self.end_datetime,
+    #         'stop_code': self.stop_code.name,
+    #         'state': StateEvent.OFF
+    #     }]
 
 class Availability(IndexedTimeStampedModel):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)

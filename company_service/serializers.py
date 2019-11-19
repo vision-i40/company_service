@@ -267,21 +267,28 @@ class StateEventSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 class ManualStopSerializer(serializers.HyperlinkedModelSerializer):
+    stop_code = StopCodeSerializer(read_only=True)
 
-    stop_code_id = serializers.IntegerField(write_only=True)
-    start_datetime = serializers.DateTimeField(write_only=True)
-    end_datetime = serializers.DateTimeField(write_only=True)
+    stop_code_id = serializers.IntegerField()
+    start_datetime = serializers.DateTimeField()
+    end_datetime = serializers.DateTimeField()
     class Meta:
         model = ManualStop
         fields = (
             'id',
+            'stop_code',
             'stop_code_id',
             'start_datetime',
             'end_datetime',
-            'state_event',
             'created',
             'modified',
         )
+
+    # def create_state_event_through_manual_stop(self, obj):
+    #     if(ManualStop.start_datetime):
+    #         return StateEvent.objects.create(stop_code=ManualStop.objects.get(stop_code=StopCode.objects.get(pk=obj.id)), event_datetime=ManualStop.start_datetime, state=StateEvent.OFF)
+    #     elif(ManualStop.end_datetime):
+    #         return StateEvent.objects.create(stop_code=ManualStop.objects.get(stop_code=StopCode.objects.get(pk=obj.id)), event_datetime=self.data['end_datetime'], state=StateEvent.OFF)
 
 class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
 

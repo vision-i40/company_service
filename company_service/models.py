@@ -178,7 +178,7 @@ class ProductionOrder(IndexedTimeStampedModel):
         return self.event_quantity(event_type=ProductionEvent.REWORK)
     
     def order_stop_quantity(self):
-        return StateEvent.objects.filter(production_line=self.production_line).count()
+        return StateEvent.objects.filter(Q(production_line=self.production_line) & Q(state=StateEvent.OFF)).count()
 
     def __str__(self):
         return self.code

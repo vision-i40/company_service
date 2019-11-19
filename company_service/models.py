@@ -1,12 +1,12 @@
 from django.db import models
 from django.utils import timezone
-from django.utils.timezone import now, localtime
 from django.utils.translation import ugettext_lazy as _
 from model_utils.fields import AutoCreatedField, AutoLastModifiedField
 from django.db.models import Sum, Q, Count
 from users.models import User
 from common.models import IndexedTimeStampedModel
 from django.contrib.postgres.fields import ArrayField
+import datetime
 
 class Company(IndexedTimeStampedModel):
     trade_name = models.CharField(max_length=256)
@@ -126,8 +126,8 @@ class ProductionLine(IndexedTimeStampedModel):
     turn_scheme = models.ForeignKey(TurnScheme, blank=True, null=True, on_delete=models.SET_NULL)
 
     def current_turn(self):
-        time_local = localtime().time()
-        return self.turns.filter(Q(start_time__lt=time_local) & Q(end_time__gt=time_local)).values().first()
+        time_local = datetime.datetime.now().time().replace(microsecond=0)
+        return Turn.objects.filter(Q(start_time__lt=time_local) & Q(end_time__gt=time_local)).values().first()
 
     def in_progress_order(self):
         return self.production_orders.filter(state=ProductionOrder.IN_PROGRESS).first()

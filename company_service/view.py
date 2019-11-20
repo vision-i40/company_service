@@ -5,7 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Sum, Q
 from . import serializers as serializers
 from . import models as models
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class CompanyViewSet(viewsets.ModelViewSet):
     authentication_classes = (JWTAuthentication, SessionAuthentication,)
@@ -286,8 +287,6 @@ class ManualStopViewSet(viewsets.ModelViewSet):
             .order_by('-start_datetime')
     
     def perform_create(self, serializer):
-        stop_code_id = serializer.validated_data['stop_code_id']
-        manual_stop = models.ManualStop.objects.filter(stop_code=stop_code_id)
         production_line = models.ProductionLine \
             .objects \
             .get(
@@ -295,7 +294,6 @@ class ManualStopViewSet(viewsets.ModelViewSet):
                 pk=self.kwargs['production_lines_pk']
             )
         serializer.save(production_line=production_line)
-        # serializers.ManualStopSerializer.create_state_event_through_manual_stop(serializers.ManualStopSerializer, manual_stop)
 
 class AvailabilityViewSet(viewsets.ModelViewSet):
     authentication_classes = (JWTAuthentication, SessionAuthentication,)

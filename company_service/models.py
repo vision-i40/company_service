@@ -6,6 +6,9 @@ from django.db.models import Sum, Q, Count
 from users.models import User
 from common.models import IndexedTimeStampedModel
 from django.contrib.postgres.fields import ArrayField
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 import datetime
 
 class Company(IndexedTimeStampedModel):
@@ -250,7 +253,6 @@ class StateEvent(IndexedTimeStampedModel):
         db_index=True
     )
 
-
 class ProductionEvent(IndexedTimeStampedModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
@@ -285,19 +287,7 @@ class ManualStop(IndexedTimeStampedModel):
     stop_code = models.ForeignKey(StopCode, on_delete=models.CASCADE, null=True)
     start_datetime = models.DateTimeField(default=None, db_index=True)
     end_datetime = models.DateTimeField(default=None, db_index=True)
-
-    # @property
-    # def state_event(self):
-    #     return [{
-    #         'start_datetime' : self.start_datetime,
-    #         'stop_code': self.stop_code.name,
-    #         'state': StateEvent.OFF,
-    #     },
-    #     {
-    #         'end_datetime': self.end_datetime,
-    #         'stop_code': self.stop_code.name,
-    #         'state': StateEvent.OFF
-    #     }]
+    state = StateEvent.OFF
 
 class Availability(IndexedTimeStampedModel):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)

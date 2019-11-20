@@ -65,7 +65,7 @@ class ProductionOrderSerializer(serializers.HyperlinkedModelSerializer):
     production_quantity = serializers.IntegerField(required=False)
     waste_quantity = serializers.IntegerField(required=False)
     rework_quantity = serializers.IntegerField(required=False)
-    order_stop_quantity = serializers.ReadOnlyField()
+    stop_quantity = serializers.ReadOnlyField()
 
     class Meta:
         model = ProductionOrder
@@ -79,7 +79,7 @@ class ProductionOrderSerializer(serializers.HyperlinkedModelSerializer):
             'production_quantity',
             'waste_quantity',
             'rework_quantity',
-            'order_stop_quantity',
+            'stop_quantity',
             'quantity',
             'created',
             'modified',
@@ -268,7 +268,7 @@ class StateEventSerializer(serializers.HyperlinkedModelSerializer):
 
 class ManualStopSerializer(serializers.HyperlinkedModelSerializer):
     stop_code = StopCodeSerializer(read_only=True)
-    
+
     stop_code_id = serializers.IntegerField()
     start_datetime = serializers.DateTimeField()
     end_datetime = serializers.DateTimeField()

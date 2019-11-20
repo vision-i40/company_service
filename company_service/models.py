@@ -104,7 +104,6 @@ class TurnScheme(IndexedTimeStampedModel):
 
 class Turn(IndexedTimeStampedModel):
     turn_scheme = models.ForeignKey(TurnScheme, on_delete=models.CASCADE, blank=True, null=True)
-    production_line = models.ForeignKey('company_service.ProductionLine', on_delete=models.SET_NULL, null=True, related_name="turns")
     name = models.CharField(max_length=256)
     start_time = models.TimeField()
     end_time = models.TimeField()
@@ -180,7 +179,7 @@ class ProductionOrder(IndexedTimeStampedModel):
     def rework_quantity(self):
         return self.event_quantity(event_type=ProductionEvent.REWORK)
     
-    def order_stop_quantity(self):
+    def stop_quantity(self):
         return StateEvent.objects.filter(Q(production_line=self.production_line) & Q(state=StateEvent.OFF)).count()
 
     def __str__(self):

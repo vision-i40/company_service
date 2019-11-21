@@ -302,18 +302,7 @@ class AvailabilityViewSet(viewsets.ModelViewSet):
     filterset_fields = ['production_line_id', 'start_time', 'end_time']
 
     def get_queryset(self):
-        return models.Availability \
-            .objects \
-            .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk']) \
+        availability = models.Availability.objects
+        return availability \
+            .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk'], end_time=availability.values('end_time').latest('end_time')['end_time']) \
             .order_by('-start_time', '-end_time')
-
-    def perform_create(self, serializer):
-        production_line = models.ProductionLine \
-            .objects \
-            .get(
-                company__user=self.request.user,
-                pk=self.kwargs['companies_pk']
-            )
-        serializer.save(
-            production_line=production_line
-        )

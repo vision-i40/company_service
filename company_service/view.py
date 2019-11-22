@@ -304,5 +304,5 @@ class AvailabilityViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         availability = models.Availability.objects
         return availability \
-            .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk'], end_time=availability.values('end_time').latest('end_time')['end_time']) \
+            .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk']) \
             .order_by('-start_time', '-end_time')

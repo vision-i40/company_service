@@ -22,10 +22,10 @@ def create_state_events(sender, **kwargs):
 def create_availability_instance(sender, **kwargs):
     state_event = StateEvent.objects
     if kwargs.get('created', True):
-        if StateEvent.objects.values('state').last()['state'] == StateEvent.ON :
+        if StateEvent.objects.values('state').last()['state'] == StateEvent.ON:
             Availability.objects.create(production_line_id=state_event.values('production_line_id').last()['production_line_id'], 
-                                            start_time=state_event.values('event_datetime').aggregate(Min('event_datetime', state=Q(StateEvent.ON)))['event_datetime__min'],
-                                            end_time=state_event.values('event_datetime').aggregate(Max('event_datetime', state=Q(StateEvent.ON)))['event_datetime__max'], 
+                                            start_time=state_event.filter(state=StateEvent.ON).aggregate(Min('event_datetime'))['event_datetime__min'],
+                                            end_time=state_event.filter(state=StateEvent.ON).aggregate(Max('event_datetime'))['event_datetime__max'], 
                                             stop_code_id=state_event.values('stop_code_id').last()['stop_code_id'],
                                             state=StateEvent.ON)
         elif StateEvent.objects.values('state').last()['state'] == StateEvent.OFF:

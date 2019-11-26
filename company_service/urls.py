@@ -61,4 +61,5 @@ urlpatterns = [
     url(r'^auth/token/$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     url(r'^auth/token/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),
     url('admin/', admin.site.urls),
+    url('availability/availability_chart/', views.AvailabilityViewSet.availability_chart, name='availability_chart'),
 ]

@@ -2,11 +2,10 @@ from rest_framework import viewsets
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
-from django.db.models import Sum, Q
+from django.db.models import Sum, Q, F
 from . import serializers as serializers
 from . import models as models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+import datetime
 
 class CompanyViewSet(viewsets.ModelViewSet):
     authentication_classes = (JWTAuthentication, SessionAuthentication,)
@@ -295,7 +294,7 @@ class ManualStopViewSet(viewsets.ModelViewSet):
             )
         serializer.save(production_line=production_line)
 
-class AvailabilityViewSet(viewsets.ModelViewSet):
+class AvailabilityViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = (JWTAuthentication, SessionAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.AvailabilitySerializer
@@ -306,3 +305,26 @@ class AvailabilityViewSet(viewsets.ModelViewSet):
         return availability \
             .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk']) \
             .order_by('-start_time', '-end_time')
+
+    def availability_chart(self):
+        dataset = models.Availability.objects \
+            .filter(state=models.StateEvent.OFF) \
+            .values('start_time', 'end_time', 'stop_code') \
+            .annotate(duration=F('end_time') - F('start_time')) \
+            .order_by('-start_time', '-end_time')
+            
+        stop_code_data = list()
+        duration_data = list()
+
+        for entry in dataset:
+            stop_code_data.append(entry['stop_code'])
+            duration_data.append(entry['duration'])
+
+        for stop_code in stop_code_data:
+            data = {
+                'duration': duration_data,
+                'stop_code': stop_code_data,
+                'code_group': stop_code_data[stop_code].values('code_group_id')
+            }
+
+        return data

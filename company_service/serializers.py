@@ -134,6 +134,24 @@ class ProductionLineSerializer(WritableNestedModelSerializer, serializers.Hyperl
             'modified'
         )
 
+class ProductionLineInfoOnlySerializer(ProductionLineSerializer):
+        class Meta:
+            model = ProductionLine
+            fields = (
+                'id',
+                'company_id',
+                'name',
+                'is_active',
+                'discount_rework',
+                'discount_waste',
+                'stop_on_production_absence',
+                'time_to_consider_absence',
+                'reset_production_changing_order',
+                'micro_stop_seconds',
+                'created',
+                'modified'
+            )
+
 class CodeGroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CodeGroup
@@ -287,7 +305,7 @@ class ManualStopSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
-    production_line = ProductionLineSerializer(read_only=True)
+    production_line = ProductionLineInfoOnlySerializer(read_only=True)
     stop_code = StopCodeSerializer(read_only=True)
 
     production_line_id = serializers.IntegerField(read_only=True)

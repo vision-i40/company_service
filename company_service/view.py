@@ -309,6 +309,7 @@ class AvailabilityChartViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = (JWTAuthentication, SessionAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.AvailabilitySerializer
+    filterset_fields = ['stop_code']
 
     def get_queryset(self):
         return models.Availability \

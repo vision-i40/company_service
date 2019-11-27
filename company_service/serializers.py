@@ -287,7 +287,6 @@ class ManualStopSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
-
     production_line = ProductionLineSerializer(read_only=True)
     stop_code = StopCodeSerializer(read_only=True)
 

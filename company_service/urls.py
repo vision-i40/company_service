@@ -20,6 +20,7 @@ companies_router.register('code_groups', views.CodeGroupViewSet, base_name='comp
 companies_router.register('production_orders', views.ProductionOrderViewSet, base_name='production_orders')
 companies_router.register('collectors', views.CollectorViewSet, base_name='companies-collectors')
 companies_router.register('availability', views.AvailabilityViewSet, base_name='companies-availability')
+companies_router.register('availability_chart', views.AvailabilityChartViewSet, base_name='companies-availability_chart')
 
 products_router = routers.NestedSimpleRouter(companies_router, 'products', lookup='products')
 products_router.register('units_of_measurement', views.UnitOfMeasurementViewSet,
@@ -61,5 +62,4 @@ urlpatterns = [
     url(r'^auth/token/$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     url(r'^auth/token/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),
     url('admin/', admin.site.urls),
-    url('availability/availability_chart/', views.AvailabilityViewSet.availability_chart, name='availability_chart'),
 ]

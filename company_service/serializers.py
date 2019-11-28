@@ -111,30 +111,7 @@ class TurnSerializer(serializers.HyperlinkedModelSerializer):
             'modified'
         )
 
-class ProductionLineSerializer(WritableNestedModelSerializer, serializers.HyperlinkedModelSerializer):
-    in_progress_order = ProductionOrderSerializer(read_only=True)
-    current_turn = TurnSerializer(read_only=True)
-
-    class Meta:
-        model = ProductionLine
-        fields = (
-            'id',
-            'company_id',
-            'name',
-            'is_active',
-            'discount_rework',
-            'discount_waste',
-            'stop_on_production_absence',
-            'time_to_consider_absence',
-            'reset_production_changing_order',
-            'micro_stop_seconds',
-            'in_progress_order',
-            'current_turn',
-            'created',
-            'modified'
-        )
-
-class ProductionLineInfoOnlySerializer(ProductionLineSerializer):
+class ProductionLineSerializer(serializers.HyperlinkedModelSerializer):
         class Meta:
             model = ProductionLine
             fields = (
@@ -151,6 +128,17 @@ class ProductionLineInfoOnlySerializer(ProductionLineSerializer):
                 'created',
                 'modified'
             )
+
+class ProductionLineWithOrderAndTurnSerializer(WritableNestedModelSerializer, ProductionLineSerializer):
+    in_progress_order = ProductionOrderSerializer(read_only=True)
+    current_turn = TurnSerializer(read_only=True)
+
+    class Meta(ProductionLineSerializer.Meta):
+        model = ProductionLine
+        fields = (
+            ProductionLineSerializer.Meta.fields + ('in_progress_order', 'current_turn')
+        )
+
 
 class CodeGroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -305,7 +293,7 @@ class ManualStopSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
-    production_line = ProductionLineInfoOnlySerializer(read_only=True)
+    production_line = ProductionLineSerializer(read_only=True)
     stop_code = StopCodeSerializer(read_only=True)
 
     start_time = serializers.DateTimeField(read_only=True)
@@ -320,4 +308,18 @@ class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
             'end_time',
             'stop_code',
             'state',
+        )
+
+class ProductionChartSerializer(ProductionEventSerializer):
+    start_datetime = serializers.DateTimeField()
+    end_datetime = serializers.DateTimeField()
+
+    class Meta:
+        model = ProductionEvent
+        fields = (
+            'id',
+            'product',
+            'start_datetime',
+            'end_datetime',
+            'quantity',
         )

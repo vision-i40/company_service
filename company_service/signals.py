@@ -24,8 +24,8 @@ def create_availability_instance(sender, **kwargs):
     state_event = StateEvent.objects
     def set_availability_instance(state):
         Availability.objects.create(production_line_id=state_event.values('production_line_id').last()['production_line_id'], 
-                                start_time=state_event.filter(state=StateEvent.ON).aggregate(Min('event_datetime'))['event_datetime__min'],
-                                end_time=state_event.filter(state=StateEvent.ON).aggregate(Max('event_datetime'))['event_datetime__max'], 
+                                start_time=state_event.filter(state=state).aggregate(Min('event_datetime'))['event_datetime__min'],
+                                end_time=state_event.filter(state=state).aggregate(Max('event_datetime'))['event_datetime__max'], 
                                 stop_code_id=state_event.values('stop_code_id').last()['stop_code_id'],
                                 state=state)
     if kwargs.get('created', True):

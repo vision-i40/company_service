@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
-from django.db.models import Sum, Q, F
+from django.db.models import Sum, Q, F, Max, Min
 from . import serializers as serializers
 from . import models as models
 
@@ -59,7 +59,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 class ProductionLineViewSet(viewsets.ModelViewSet):
     authentication_classes = (JWTAuthentication, SessionAuthentication,)
     permission_classes = (IsAuthenticated,)
-    serializer_class = serializers.ProductionLineSerializer
+    serializer_class = serializers.ProductionLineWithOrderAndTurnSerializer
 
     def get_queryset(self):
         return models.ProductionLine \
@@ -316,3 +316,16 @@ class AvailabilityChartViewSet(viewsets.ReadOnlyModelViewSet):
             .objects \
             .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk'], state=models.StateEvent.OFF) \
             .order_by('-start_time', '-end_time')
+
+class ProductionChartViewSet(viewsets.ReadOnlyModelViewSet):
+    authentication_classes = (JWTAuthentication, SessionAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.ProductionChartSerializer
+    filterset_fields = ['product']
+    
+    def get_queryset(self):
+        return models.ProductionEvent \
+            .objects \
+            .filter(company__user=self.request.user, product__company=self.kwargs['companies_pk'], event_type=models.ProductionEvent.PRODUCTION) \
+            .annotate(start_datetime=Min('event_datetime'), end_datetime=Max('event_datetime')) \
+            .order_by('-start_datetime', '-end_datetime')

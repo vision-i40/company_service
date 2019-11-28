@@ -324,8 +324,10 @@ class ProductionChartViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ['product']
     
     def get_queryset(self):
+        min_datetime = models.ProductionEvent.filter(event_type=models.ProductionEvent.PRODUCTION).aggregate(Min('event_datetime'))['event_datetime__min']
+        max_datetime = models.ProductionEvent.filter(event_type=models.ProductionEvent.PRODUCTION).aggregate(Max('event_datetime'))['event_datetime__max']
         return models.ProductionEvent \
             .objects \
             .filter(company__user=self.request.user, product__company=self.kwargs['companies_pk'], event_type=models.ProductionEvent.PRODUCTION) \
-            .annotate(start_datetime=Min('event_datetime'), end_datetime=Max('event_datetime')) \
+            .annotate(start_datetime=min_datetime, end_datetime=max_datetime) \
             .order_by('-start_datetime', '-end_datetime')

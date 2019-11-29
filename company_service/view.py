@@ -327,5 +327,5 @@ class ProductionChartViewSet(viewsets.ReadOnlyModelViewSet):
         return models.ProductionEvent \
             .objects \
             .filter(company__user=self.request.user, product__company=self.kwargs['companies_pk'], event_type=models.ProductionEvent.PRODUCTION) \
-            .annotate(start_datetime=Min('event_datetime'), end_datetime=Max('event_datetime'))
+            .annotate(start_datetime=Min('event_datetime'), end_datetime=Max('event_datetime')) \
             .order_by('-start_datetime', '-end_datetime')

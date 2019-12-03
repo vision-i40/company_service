@@ -24,11 +24,14 @@ def create_availability_instance(sender, **kwargs):
     state_event = StateEvent.objects
     availability = Availability.objects
     def set_availability_instance(state, start_datetime, end_datetime):
-        Availability.objects.create(production_line_id=state_event.values('production_line_id').last()['production_line_id'], 
-                                start_time=start_datetime,
-                                end_time=end_datetime, 
-                                stop_code_id=state_event.values('stop_code_id').last()['stop_code_id'],
-                                state=state)
+        if start_datetime > end_datetime:
+            raise Exception("Please provide a start datetime smaller than end datetime")
+        else:
+            Availability.objects.create(production_line_id=state_event.values('production_line_id').last()['production_line_id'], 
+                                    start_time=start_datetime,
+                                    end_time=end_datetime, 
+                                    stop_code_id=state_event.values('stop_code_id').last()['stop_code_id'],
+                                    state=state)
         
     def aggregate_availability_instances(state):
 

@@ -10,9 +10,10 @@ def create_state_events(sender, **kwargs):
     end_datetime = manual_stop.values('end_datetime').last()['end_datetime']
     def set_state_events(datetime):
         StateEvent.objects.create(production_line_id=manual_stop.values('production_line_id').last()['production_line_id'], 
-                            stop_code_id=manual_stop.values('stop_code_id').last()['stop_code_id'], 
-                            event_datetime=datetime, 
-                            state=StateEvent.OFF)        
+                stop_code_id=manual_stop.values('stop_code_id').last()['stop_code_id'], 
+                event_datetime=datetime, 
+                state=StateEvent.OFF)
+        
     if kwargs.get('created', True):
         if manual_stop.values('start_datetime'):
             set_state_events(start_datetime)
@@ -24,17 +25,13 @@ def create_availability_instance(sender, **kwargs):
     state_event = StateEvent.objects
     availability = Availability.objects
     def set_availability_instance(state, start_datetime, end_datetime):
-        if start_datetime > end_datetime:
-            raise Exception("Please provide a start datetime smaller than end datetime")
-        else:
-            Availability.objects.create(production_line_id=state_event.values('production_line_id').last()['production_line_id'], 
-                                    start_time=start_datetime,
-                                    end_time=end_datetime, 
-                                    stop_code_id=state_event.values('stop_code_id').last()['stop_code_id'],
-                                    state=state)
+        Availability.objects.create(production_line_id=state_event.values('production_line_id').last()['production_line_id'], 
+                                start_time=start_datetime,
+                                end_time=end_datetime, 
+                                stop_code_id=state_event.values('stop_code_id').last()['stop_code_id'],
+                                state=state)
         
     def aggregate_availability_instances(state):
-
         state_event_stop_code = state_event.values('stop_code_id').last()['stop_code_id']
         
         higher_state_event_time = state_event.filter(Q(state=state) & Q(stop_code_id=state_event_stop_code)).values('event_datetime').aggregate(Max('event_datetime'))['event_datetime__max']

@@ -285,13 +285,18 @@ class ManualStopViewSet(viewsets.ModelViewSet):
             .order_by('-start_datetime')
     
     def perform_create(self, serializer):
-        production_line = models.ProductionLine \
-            .objects \
-            .get(
-                company__user=self.request.user,
-                pk=self.kwargs['production_lines_pk']
-            )
-        serializer.save(production_line=production_line)
+        manual_stop_start_datetime = models.ManualStop.objects.values('start_datetime').last()['start_datetime']
+        manual_stop_end_datetime = models.ManualStop.objects.values('end_datetime').last()['end_datetime']
+        if manual_stop_start_datetime > manual_stop_end_datetime:
+            raise Exception("Please provide a start_datetime lower than end_datetime.")
+        else:
+            production_line = models.ProductionLine \
+                .objects \
+                .get(
+                    company__user=self.request.user,
+                    pk=self.kwargs['production_lines_pk']
+                )
+            serializer.save(production_line=production_line)
 
 class AvailabilityViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = (JWTAuthentication, SessionAuthentication,)

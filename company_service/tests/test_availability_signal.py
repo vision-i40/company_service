@@ -98,16 +98,16 @@ class AvailabilitySignalTest(TestCase):
 
         create_availability_instance(self.sixth_state_event)
     
-    def signal_helper(self, state, stop_code):
-        lower_datetime_with_off_state = Availability.objects.filter(Q(state=state) & Q(stop_code=stop_code)).aggregate(Min('start_time'))['start_time__min']
-        higher_datetime_with_off_state = Availability.objects.filter(Q(state=state) & Q(stop_code=stop_code)).aggregate(Max('end_time'))['end_time__max']
-        start_time = Availability.objects.filter(Q(state=state) & Q(stop_code=stop_code)).values('start_time').last()['start_time']
-        end_time = Availability.objects.filter(Q(state=state) & Q(stop_code=stop_code)).values('end_time').last()['end_time']
-        stop_code = Availability.objects.filter(Q(state=state) & Q(stop_code=stop_code)).values('stop_code').last()['stop_code']
+    def signal_helper(self, state, stop_code_id):
+        lower_datetime = Availability.objects.filter(Q(state=state) & Q(stop_code=stop_code_id)).aggregate(Min('start_time'))['start_time__min']
+        higher_datetime = Availability.objects.filter(Q(state=state) & Q(stop_code=stop_code_id)).aggregate(Max('end_time'))['end_time__max']
+        start_time = Availability.objects.filter(Q(state=state) & Q(stop_code=stop_code_id)).values('start_time').last()['start_time']
+        end_time = Availability.objects.filter(Q(state=state) & Q(stop_code=stop_code_id)).values('end_time').last()['end_time']
+        stop_code = Availability.objects.filter(Q(state=state) & Q(stop_code=stop_code_id)).values('stop_code').last()['stop_code']
 
-        self.assertEqual(lower_datetime_with_off_state, start_time)
-        self.assertEqual(higher_datetime_with_off_state, end_time)
-        self.assertEqual(stop_code, stop_code)
+        self.assertEqual(lower_datetime, start_time)
+        self.assertEqual(higher_datetime, end_time)
+        self.assertEqual(stop_code, stop_code_id)
 
     def test_to_see_if_the_events_with_state_off_and_same_stop_code_were_aggregated(self):
         self.signal_helper(StateEvent.OFF, self.first_stop_code.id)

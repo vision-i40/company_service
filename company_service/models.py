@@ -293,15 +293,6 @@ class Availability(IndexedTimeStampedModel):
     state_event = models.ForeignKey(StateEvent, on_delete=models.CASCADE, null=True)
     start_time = models.DateTimeField(default=None, db_index=True)
     end_time = models.DateTimeField(default=None, db_index=True)
-
-    ON = 'On'
-    OFF = 'Off'
-
-    STATES = (
-        (ON, 'On'),
-        (OFF, 'Off'),
-    )
-
-    state = models.CharField(max_length=3, choices=STATES, default=ON)
+    state = models.CharField(max_length=3)
     stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)
         

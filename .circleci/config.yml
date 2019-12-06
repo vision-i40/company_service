@@ -62,7 +62,6 @@ jobs:
           name: Deploying and migrating on Heroku
           command: |
               git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
-              pipenv python3 manage.py migrate --no-input
 
 workflows:
   version: 2

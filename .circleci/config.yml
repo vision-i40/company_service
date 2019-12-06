@@ -48,7 +48,6 @@ jobs:
           environment:
             DJANGO_SETTINGS_MODULE: 'company_service.settings.production'
             SECRET_KEY: $SECRET_KEY
-            DATABASE_URL: $DATABASE_URL
             ALLOWED_HOSTS: '.example.org'
   deploy:
     staging:

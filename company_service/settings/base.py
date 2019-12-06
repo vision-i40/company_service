@@ -23,11 +23,11 @@ ADMINS = (
     ('Admin', os.environ.get('ADMIN_EMAIL')),
 )
 
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=config('DATABASE_URL', '')
-#     )
-# }
+DATABASES = {
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL', '')
+    )
+}
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {

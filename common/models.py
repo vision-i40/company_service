@@ -11,3 +11,13 @@ class IndexedTimeStampedModel(models.Model):
 
     class Meta:
         abstract = True
+
+class Chart(models.Model):
+    def start_datetime(self):
+        pass
+
+    def end_datetime(self):
+        pass
+
+    class Meta:
+        abstract = True

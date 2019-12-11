@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from model_utils.fields import AutoCreatedField, AutoLastModifiedField
 from django.db.models import Sum, Q, Count
 from users.models import User
-from common.models import IndexedTimeStampedModel
+from common.models import IndexedTimeStampedModel, Chart
 from django.contrib.postgres.fields import ArrayField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -178,7 +178,7 @@ class ProductionOrder(IndexedTimeStampedModel):
 
     def rework_quantity(self):
         return self.event_quantity(event_type=ProductionEvent.REWORK)
-    
+
     def stop_quantity(self):
         return StateEvent.objects.filter(Q(production_line=self.production_line) & Q(state=StateEvent.OFF)).count()
 
@@ -256,6 +256,7 @@ class ProductionEvent(IndexedTimeStampedModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
     production_order = models.ForeignKey(ProductionOrder, on_delete=models.SET_NULL, null=True, blank=True, related_name="production_events")
+    production_chart = models.ForeignKey('company_service.ProductionChart', on_delete=models.SET_NULL, null=True, blank=True, related_name="production_events")
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     channel = models.ForeignKey(Channel, on_delete=models.SET_NULL, null=True, blank=True)
     unit_of_measurement = models.ForeignKey(UnitOfMeasurement, on_delete=models.SET_NULL, null=True, blank=True)
@@ -295,4 +296,19 @@ class Availability(IndexedTimeStampedModel):
     end_time = models.DateTimeField(default=None, db_index=True)
     state = models.CharField(max_length=3)
     stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)
-        
+
+class ProductionChart(Chart, IndexedTimeStampedModel):
+    production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
+    production_order = models.ForeignKey(ProductionOrder, on_delete=models.CASCADE)
+
+    def start_datetime(self):
+        return ProductionEvent.objects.filter(event_type=ProductionEvent.PRODUCTION).values('event_datetime').last()['event_datetime']
+
+    def end_datetime(self):
+        return StateEvent.objects.filter(state=StateEvent.OFF).values('event_datetime').last()['event_datetime']
+
+    def quantity(self):
+        return ProductionEvent.objects.values('quantity').last()['quantity']
+
+    def product(self):
+        return ProductionEvent.objects.values('product').last()['product']

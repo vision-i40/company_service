@@ -3,6 +3,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Sum, Q, F, Max, Min
+from django.http import HttpResponse
 from . import serializers as serializers
 from . import models as models
 
@@ -263,7 +264,7 @@ class StateEventViewSet(viewsets.ModelViewSet):
             .objects \
             .filter(production_line__company__user=self.request.user, production_line=self.kwargs['production_lines_pk']) \
             .order_by('-created')
-    
+
     def perform_create(self, serializer):
         production_line = models.ProductionLine \
             .objects \
@@ -283,7 +284,7 @@ class ManualStopViewSet(viewsets.ModelViewSet):
             .objects \
             .filter(production_line__company__user=self.request.user, production_line=self.kwargs['production_lines_pk']) \
             .order_by('-start_datetime')
-    
+
     def perform_create(self, serializer):
         manual_stop_start_datetime = models.ManualStop.objects.values('start_datetime').last()['start_datetime']
         manual_stop_end_datetime = models.ManualStop.objects.values('end_datetime').last()['end_datetime']
@@ -326,11 +327,9 @@ class ProductionChartViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = (JWTAuthentication, SessionAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.ProductionChartSerializer
-    filterset_fields = ['product']
-    
+
     def get_queryset(self):
-        return models.ProductionEvent \
+        return models.ProductionChart \
             .objects \
-            .filter(company__user=self.request.user, product__company=self.kwargs['companies_pk'], event_type=models.ProductionEvent.PRODUCTION) \
-            .annotate(start_datetime=Min('event_datetime'), end_datetime=Max('event_datetime')) \
-            .order_by('-start_datetime', '-end_datetime')
+            .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk']) \
+            .order_by('-created')

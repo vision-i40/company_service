@@ -310,12 +310,14 @@ class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
             'state',
         )
 
-class ProductionChartSerializer(ProductionEventSerializer):
+class ProductionChartSerializer(serializers.HyperlinkedModelSerializer):
     start_datetime = serializers.DateTimeField()
-    end_datetime = serializers.DateTimeField()
+    end_datetime = serializers.DateTimeField(allow_null=True)
+
+    product = ProductSerializer(read_only=True)
 
     class Meta:
-        model = ProductionEvent
+        model = ProductionChart
         fields = (
             'id',
             'product',

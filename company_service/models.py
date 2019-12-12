@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from model_utils.fields import AutoCreatedField, AutoLastModifiedField
-from django.db.models import Sum, Q, Count
+from django.db.models import Sum, Q, Count, Max, Min
 from users.models import User
 from common.models import IndexedTimeStampedModel, Chart
 from django.contrib.postgres.fields import ArrayField
@@ -233,6 +233,7 @@ class Channel(IndexedTimeStampedModel):
 class StateEvent(IndexedTimeStampedModel):
     production_order = models.ForeignKey(ProductionOrder, on_delete=models.SET_NULL, null=True, blank=True)
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
+    availability = models.ForeignKey('company_service.Availability', on_delete=models.SET_NULL, null=True, blank=True, related_name="state_events")
     stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     channel = models.ForeignKey(Channel, on_delete=models.SET_NULL, null=True, blank=True)
@@ -291,11 +292,23 @@ class ManualStop(IndexedTimeStampedModel):
 
 class Availability(IndexedTimeStampedModel):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
-    state_event = models.ForeignKey(StateEvent, on_delete=models.CASCADE, null=True)
-    start_time = models.DateTimeField(default=None, db_index=True)
-    end_time = models.DateTimeField(default=None, db_index=True)
-    state = models.CharField(max_length=3)
-    stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)
+
+    def get_state(self):
+        return StateEvent.objects.values('state').last()['state']
+
+    def stop_code(self):
+        return StateEvent.objects.values('stop_code').last()['stop_code']
+
+    def start_datetime(self):
+        if StateEvent.state == self.get_state() and StateEvent.stop_code == self.stop_code():
+            return self.state_events.values('state', 'stop_code').aggregate(Min('event_datetime'))['event_datetime__min']
+
+    def end_datetime(self):
+        if StateEvent.state == self.get_state() and StateEvent.stop_code == self.stop_code():
+            return self.state_events.values('state', 'stop_code').aggregate(Max('event_datetime'))['event_datetime__max']
+
+    def state(self):
+        return self.get_state()
 
 class ProductionChart(Chart, IndexedTimeStampedModel):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)

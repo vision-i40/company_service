@@ -306,10 +306,9 @@ class AvailabilityViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ['production_line_id', 'start_time', 'end_time']
 
     def get_queryset(self):
-        availability = models.Availability.objects
-        return availability \
-            .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk']) \
-            .order_by('-start_time', '-end_time')
+        return models.Availability \
+            .objects \
+            .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk'])
 
 class AvailabilityChartViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = (JWTAuthentication, SessionAuthentication,)
@@ -320,8 +319,7 @@ class AvailabilityChartViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return models.Availability \
             .objects \
-            .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk'], state=models.StateEvent.OFF) \
-            .order_by('-start_time', '-end_time')
+            .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk'], state=models.StateEvent.OFF)
 
 class ProductionChartViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = (JWTAuthentication, SessionAuthentication,)

@@ -260,21 +260,21 @@ class CustomManualStopAdmin(admin.ModelAdmin):
         })
     )
 
-class CustomAvailabilityAdmin(admin.ModelAdmin):
-    list_display = ('id', 'production_line', 'start_time', 'end_time', 'state', 'stop_code')
-    list_filter = ('production_line', 'start_time', 'end_time')
-    search_fields = ('production_line', 'start_time', 'end_time', 'stop_code')
-    ordering = ('start_time',)
+# class CustomAvailabilityAdmin(admin.ModelAdmin):
+#     list_display = ('id', 'production_line', 'start_datetime', 'end_datetime', 'state', 'stop_code')
+#     list_filter = ('production_line', 'start_datetime', 'end_datetime')
+#     search_fields = ('production_line', 'start_datetime', 'end_datetime', 'stop_code')
+#     ordering = ('start_time',)
 
-    fieldsets = (
-        (None, {'fields': ('production_line', 'start_time', 'end_time', 'state',)}),
-    )
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('production_line', 'start_time', 'end_time', 'state',)
-        })
-    )
+#     fieldsets = (
+#         (None, {'fields': ('production_line', 'start_datetime', 'end_datetime', 'state',)}),
+#     )
+#     add_fieldsets = (
+#         (None, {
+#             'classes': ('wide',),
+#             'fields': ('production_line', 'start_datetime', 'end_datetime', 'state',)
+#         })
+#     )
 
 admin.site.register(models.Company, CustomCompanyAdmin)
 admin.site.register(models.Product, CustomProductAdmin)
@@ -292,4 +292,4 @@ admin.site.register(models.Collector, CustomCollectorAdmin)
 admin.site.register(models.Channel, CustomChannelAdmin)
 admin.site.register(models.StateEvent, CustomStateEventAdmin)
 admin.site.register(models.ManualStop, CustomManualStopAdmin)
-admin.site.register(models.Availability, CustomAvailabilityAdmin)
+# admin.site.register(models.Availability, CustomAvailabilityAdmin)

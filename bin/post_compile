@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ -n "$AUTO_MIGRATE" ] && [ "$AUTO_MIGRATE" == 1 ]then;
+if [ -n "$AUTO_MIGRATE" ] && [ "$AUTO_MIGRATE" == 1 ]; then
     echo "-----> Running python manage.py migrate"
     python manage.py migrate --noinput
     echo "-----> Migrations made successfully"

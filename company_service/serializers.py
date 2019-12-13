@@ -258,6 +258,7 @@ class StateEventSerializer(serializers.HyperlinkedModelSerializer):
 
     channel_id = serializers.IntegerField(required=False)
     stop_code_id = serializers.IntegerField(required=False)
+    availability_id = serializers.IntegerField()
     class Meta:
         model = StateEvent
         fields = (
@@ -266,6 +267,7 @@ class StateEventSerializer(serializers.HyperlinkedModelSerializer):
             'channel_id',
             'stop_code',
             'stop_code_id',
+            'availability_id',
             'event_datetime',
             'state',
             'created',

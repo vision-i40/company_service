@@ -293,22 +293,17 @@ class ManualStop(IndexedTimeStampedModel):
 class Availability(IndexedTimeStampedModel):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
 
-    def get_state(self):
-        return StateEvent.objects.values('state').last()['state']
-
-    def stop_code(self):
-        return StateEvent.objects.values('stop_code').last()['stop_code']
-
     def start_datetime(self):
-        if StateEvent.state == self.get_state() and StateEvent.stop_code == self.stop_code():
-            return self.state_events.values('state', 'stop_code').aggregate(Min('event_datetime'))['event_datetime__min']
+        return self.state_events.aggregate(Min('event_datetime'))['event_datetime__min']
 
     def end_datetime(self):
-        if StateEvent.state == self.get_state() and StateEvent.stop_code == self.stop_code():
-            return self.state_events.values('state', 'stop_code').aggregate(Max('event_datetime'))['event_datetime__max']
+        return self.state_events.aggregate(Max('event_datetime'))['event_datetime__max']
 
     def state(self):
-        return self.get_state()
+        return self.state_events.values('state').last()['state']
+
+    def stop_code(self):
+        return self.state_events.values('stop_code').last()['stop_code']
 
 class ProductionChart(Chart, IndexedTimeStampedModel):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)

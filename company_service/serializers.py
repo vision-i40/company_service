@@ -327,3 +327,11 @@ class ProductionChartSerializer(serializers.HyperlinkedModelSerializer):
             'end_datetime',
             'quantity',
         )
+
+class ProductionLineStopSerializer(AvailabilitySerializer):
+    class Meta(AvailabilitySerializer.Meta):
+        model = Availability
+        fields = (
+            AvailabilitySerializer.Meta.fields
+        )
+

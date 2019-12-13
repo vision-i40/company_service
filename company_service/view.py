@@ -331,3 +331,6 @@ class ProductionChartViewSet(viewsets.ReadOnlyModelViewSet):
             .objects \
             .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk']) \
             .order_by('-created')
+
+class ProductionLineStopsViewSet(AvailabilityChartViewSet):
+    serializer_class = serializers.ProductionLineStopSerializer

@@ -298,9 +298,9 @@ class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
     production_line = ProductionLineSerializer(read_only=True)
     stop_code = StopCodeSerializer(read_only=True)
 
-    start_datetime = serializers.DateTimeField()
-    end_datetime = serializers.DateTimeField()
-    state = serializers.CharField()
+    start_datetime = serializers.DateTimeField(required=False)
+    end_datetime = serializers.DateTimeField(required=False)
+    state = serializers.CharField(required=False)
     class Meta:
         model = Availability
         fields = (

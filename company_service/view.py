@@ -299,7 +299,7 @@ class ManualStopViewSet(viewsets.ModelViewSet):
                 )
             serializer.save(production_line=production_line)
 
-class AvailabilityViewSet(viewsets.ReadOnlyModelViewSet):
+class AvailabilityViewSet(viewsets.ModelViewSet):
     authentication_classes = (JWTAuthentication, SessionAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.AvailabilitySerializer

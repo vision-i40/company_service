@@ -47,6 +47,11 @@ class ProductionChartTestCase(TestCase):
             quantity=1000,
             state=ProductionOrder.IN_PROGRESS)
 
+        self.first_production_chart = ProductionChart.objects.create(
+            production_line=self.first_production_line,
+            production_order=self.first_production_order
+        )
+
         self.first_production_event = ProductionEvent.objects.create(
             company=self.first_company,
             product=self.first_product,
@@ -54,7 +59,8 @@ class ProductionChartTestCase(TestCase):
             production_order=self.first_production_order,
             quantity=500,
             event_type=ProductionEvent.PRODUCTION,
-            event_datetime=datetime.datetime(2019, 12, 3, 11, 3, 55, 988870, tzinfo=pytz.UTC)
+            event_datetime=datetime.datetime(2019, 12, 3, 11, 3, 55, 988870, tzinfo=pytz.UTC),
+            production_chart=self.first_production_chart
         )
 
         self.first_state_event = StateEvent.objects.create(
@@ -63,11 +69,6 @@ class ProductionChartTestCase(TestCase):
             stop_code=self.first_stop_code,
             event_datetime=datetime.datetime(2019, 12, 3, 12, 3, 55, 988870, tzinfo=pytz.UTC),
             state=StateEvent.OFF
-        )
-
-        self.first_production_chart = ProductionChart.objects.create(
-            production_line=self.first_production_line,
-            production_order=self.first_production_order
         )
 
     def test_production_chart_instance(self):

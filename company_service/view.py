@@ -303,23 +303,25 @@ class AvailabilityViewSet(viewsets.ModelViewSet):
     authentication_classes = (JWTAuthentication, SessionAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.AvailabilitySerializer
-    filterset_fields = ['production_line_id', 'start_time', 'end_time']
+    filterset_fields = ['production_line_id']
 
     def get_queryset(self):
         return models.Availability \
             .objects \
             .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk'])
 
-class AvailabilityChartViewSet(viewsets.ReadOnlyModelViewSet):
-    authentication_classes = (JWTAuthentication, SessionAuthentication,)
-    permission_classes = (IsAuthenticated,)
-    serializer_class = serializers.AvailabilitySerializer
-    filterset_fields = ['stop_code']
+class AvailabilityChartViewSet(viewsets.ReadOnlyModelViewSet, AvailabilityViewSet):
+    def get_permissions(self):
+        return super().get_permissions()
+
+    def get_serializer_class(self):
+        return super().get_serializer_class()
+
+    def get_authenticators(self):
+        return super().get_authenticators()
 
     def get_queryset(self):
-        return models.Availability \
-            .objects \
-            .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk'], state=models.StateEvent.OFF)
+        return super().get_queryset().filter(state=models.StateEvent.OFF)
 
 class ProductionChartViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = (JWTAuthentication, SessionAuthentication,)

@@ -218,6 +218,7 @@ class ProductionEventSerializer(serializers.HyperlinkedModelSerializer):
             'event_type',
             'waste_code',
             'rework_code',
+            'production_chart',
             'created',
             'modified',
         )
@@ -298,9 +299,7 @@ class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
     production_line = ProductionLineSerializer(read_only=True)
     stop_code = StopCodeSerializer(read_only=True)
 
-    start_datetime = serializers.DateTimeField(required=False)
-    end_datetime = serializers.DateTimeField(required=False)
-    state = serializers.CharField(required=False)
+    stop_code_id = serializers.IntegerField(required=False)
     class Meta:
         model = Availability
         fields = (
@@ -309,6 +308,7 @@ class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
             'start_datetime',
             'end_datetime',
             'stop_code',
+            'stop_code_id',
             'state',
         )
 

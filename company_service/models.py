@@ -302,21 +302,21 @@ class Availability(IndexedTimeStampedModel):
     def state(self):
         return self.state_events.values('state').last()['state']
 
-    def stop_code(self):
-        return self.state_events.values('stop_code').last()['stop_code']
+    def stop_code_id(self):
+        return self.state_events.values('stop_code_id').last()['stop_code_id']
 
 class ProductionChart(Chart, IndexedTimeStampedModel):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
     production_order = models.ForeignKey(ProductionOrder, on_delete=models.CASCADE)
 
     def start_datetime(self):
-        return ProductionEvent.objects.filter(event_type=ProductionEvent.PRODUCTION).values('event_datetime').last()['event_datetime']
+        return self.production_events.filter(event_type=ProductionEvent.PRODUCTION).values('event_datetime').last()['event_datetime']
 
     def end_datetime(self):
-        return StateEvent.objects.filter(state=StateEvent.OFF).values('event_datetime').last()['event_datetime']
+        return StateEvent.objects.filter(state=StateEvent.OFF).values('event_datetime').values('event_datetime').last()['event_datetime']
 
     def quantity(self):
-        return ProductionEvent.objects.values('quantity').last()['quantity']
+        return self.production_events.values('quantity').last()['quantity']
 
     def product(self):
-        return ProductionEvent.objects.values('product').last()['product']
+        return self.production_events.values('product').last()['product']

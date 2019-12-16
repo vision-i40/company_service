@@ -93,13 +93,13 @@ class AvailabilityModelTest(TestCase):
         start_datetime = availability_instance.start_datetime()
         end_datetime = availability_instance.end_datetime()
         state = availability_instance.state()
-        stop_code = availability_instance.stop_code()
+        stop_code_id = availability_instance.stop_code_id()
 
         self.assertEqual(first_event.event_datetime, start_datetime)
         self.assertEqual(last_event.event_datetime, end_datetime)
         self.assertEqual(last_event.state, state)
         if StateEvent.state == 'Off':
-            self.assertEqual(last_event.stop_code.id, stop_code)
+            self.assertEqual(last_event.stop_code.id, stop_code_id)
 
     def test_availability_instance_aggregation(self):
         self.availability_aggregation_helper(self.first_availability_instance, self.first_state_event, self.second_state_event)

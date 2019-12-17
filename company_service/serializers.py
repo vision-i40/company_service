@@ -322,10 +322,10 @@ class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
         return obj.state_events.values('event_datetime').aggregate(Max('event_datetime'))['event_datetime__max']
 
     def get_state(self, obj):
-        return obj.state_events.values('state').last()
+        return obj.state_events.values('state').last()['state']
 
     def get_stop_code_id(self, obj):
-        return obj.state_events.values('stop_code_id').last()
+        return obj.state_events.values('stop_code_id').last()['stop_code_id']
 
 class ProductionChartSerializer(serializers.HyperlinkedModelSerializer):
     start_datetime = serializers.DateTimeField()

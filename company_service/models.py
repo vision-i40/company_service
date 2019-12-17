@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from model_utils.fields import AutoCreatedField, AutoLastModifiedField
 from django.db.models import Sum, Q, Count, Max, Min
 from users.models import User
-from common.models import IndexedTimeStampedModel, Chart
+from common.models import IndexedTimeStampedModel, DateTimedEvent
 from django.contrib.postgres.fields import ArrayField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -290,22 +290,12 @@ class ManualStop(IndexedTimeStampedModel):
     end_datetime = models.DateTimeField(default=None, db_index=True)
     state = StateEvent.OFF
 
-class Availability(IndexedTimeStampedModel):
+class Availability(DateTimedEvent):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
+    state = models.CharField(max_length=3, db_index=True, default=StateEvent.ON)
+    stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True, blank=True)
 
-    def start_datetime(self):
-        return self.state_events.aggregate(Min('event_datetime'))['event_datetime__min']
-
-    def end_datetime(self):
-        return self.state_events.aggregate(Max('event_datetime'))['event_datetime__max']
-
-    def state(self):
-        return self.state_events.values('state').last()['state']
-
-    def stop_code_id(self):
-        return self.state_events.values('stop_code_id').last()['stop_code_id']
-
-class ProductionChart(Chart, IndexedTimeStampedModel):
+class ProductionChart(IndexedTimeStampedModel):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
     production_order = models.ForeignKey(ProductionOrder, on_delete=models.CASCADE)
 

@@ -259,7 +259,7 @@ class StateEventSerializer(serializers.HyperlinkedModelSerializer):
 
     channel_id = serializers.IntegerField(required=False)
     stop_code_id = serializers.IntegerField(required=False)
-    availability_id = serializers.IntegerField()
+    availability_id = serializers.IntegerField(required=False)
     class Meta:
         model = StateEvent
         fields = (
@@ -299,7 +299,10 @@ class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
     production_line = ProductionLineSerializer(read_only=True)
     stop_code = StopCodeSerializer(read_only=True)
 
-    stop_code_id = serializers.IntegerField(required=False)
+    start_datetime = serializers.SerializerMethodField()
+    end_datetime = serializers.SerializerMethodField()
+    state = serializers.SerializerMethodField()
+    stop_code_id = serializers.SerializerMethodField()
     class Meta:
         model = Availability
         fields = (
@@ -311,6 +314,18 @@ class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
             'stop_code_id',
             'state',
         )
+
+    def get_start_datetime(self, obj):
+        return obj.state_events.values('event_datetime').aggregate(Min('event_datetime'))['event_datetime__min']
+
+    def get_end_datetime(self, obj):
+        return obj.state_events.values('event_datetime').aggregate(Max('event_datetime'))['event_datetime__max']
+
+    def get_state(self, obj):
+        return obj.state_events.values('state').last()
+
+    def get_stop_code_id(self, obj):
+        return obj.state_events.values('stop_code_id').last()
 
 class ProductionChartSerializer(serializers.HyperlinkedModelSerializer):
     start_datetime = serializers.DateTimeField()

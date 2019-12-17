@@ -12,12 +12,9 @@ class IndexedTimeStampedModel(models.Model):
     class Meta:
         abstract = True
 
-class Chart(models.Model):
-    def start_datetime(self):
-        pass
-
-    def end_datetime(self):
-        pass
+class DateTimedEvent(models.Model):
+    start_datetime = models.DateTimeField(default=None, db_index=True, null=True, blank=True)
+    end_datetime = models.DateTimeField(default=None, db_index=True, null=True, blank=True)
 
     class Meta:
         abstract = True

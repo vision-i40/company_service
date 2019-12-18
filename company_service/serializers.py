@@ -255,10 +255,8 @@ class ChannelSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 class StateEventSerializer(serializers.HyperlinkedModelSerializer):
-    channel = ChannelSerializer(read_only=True)
     stop_code = StopCodeSerializer(read_only=True)
 
-    channel_id = serializers.IntegerField(required=False)
     stop_code_id = serializers.IntegerField(required=False)
     availability_id = serializers.IntegerField(required=False)
     class Meta:

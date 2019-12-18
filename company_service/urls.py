@@ -22,6 +22,7 @@ companies_router.register('collectors', views.CollectorViewSet, base_name='compa
 companies_router.register('availability', views.AvailabilityViewSet, base_name='companies-availability')
 companies_router.register('availability_chart', views.AvailabilityChartViewSet, base_name='companies-availability_chart')
 companies_router.register('production_chart', views.ProductionChartViewSet, base_name='companies-production_chart')
+companies_router.register('reject_chart', views.RejectChartViewSet, base_name='companies-reject_chart')
 
 products_router = routers.NestedSimpleRouter(companies_router, 'products', lookup='products')
 products_router.register('units_of_measurement', views.UnitOfMeasurementViewSet,

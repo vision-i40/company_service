@@ -326,6 +326,20 @@ class ProductionChartSerializer(serializers.HyperlinkedModelSerializer):
             'quantity',
         )
 
+class RejectChartSerializer(serializers.HyperlinkedModelSerializer):
+    waste_code = WasteCodeSerializer(read_only=True)
+    rework_code = ReworkCodeSerializer(read_only=True)
+
+    class Meta:
+        model = RejectChart
+        fields = (
+            'id',
+            'waste_code',
+            'rework_code',
+            'quantity',
+            'state',
+        )
+
 class ProductionLineStopSerializer(AvailabilitySerializer):
     class Meta(AvailabilitySerializer.Meta):
         model = Availability

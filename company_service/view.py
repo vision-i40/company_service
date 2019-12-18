@@ -345,5 +345,16 @@ class ProductionChartViewSet(viewsets.ReadOnlyModelViewSet):
             .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk']) \
             .order_by('-created')
 
+class RejectChartViewSet(viewsets.ReadOnlyModelViewSet):
+    authentication_classes = (JWTAuthentication, SessionAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.RejectChartSerializer
+
+    def get_queryset(self):
+        return models.RejectChart \
+            .objects \
+            .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk']) \
+            .order_by('-created')
+
 class ProductionLineStopsViewSet(AvailabilityChartViewSet):
     serializer_class = serializers.ProductionLineStopSerializer

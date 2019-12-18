@@ -300,10 +300,6 @@ class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
     production_line = ProductionLineSerializer(read_only=True)
     stop_code = StopCodeSerializer(read_only=True)
 
-    start_datetime = serializers.SerializerMethodField()
-    end_datetime = serializers.SerializerMethodField()
-    state = serializers.SerializerMethodField()
-    stop_code_id = serializers.SerializerMethodField()
     class Meta:
         model = Availability
         fields = (
@@ -312,21 +308,8 @@ class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
             'start_datetime',
             'end_datetime',
             'stop_code',
-            'stop_code_id',
             'state',
         )
-
-    def get_start_datetime(self, obj):
-        return obj.state_events.values('event_datetime').aggregate(Min('event_datetime'))['event_datetime__min']
-
-    def get_end_datetime(self, obj):
-        return obj.state_events.values('event_datetime').aggregate(Max('event_datetime'))['event_datetime__max']
-
-    def get_state(self, obj):
-        return obj.state_events.values('state').last()['state']
-
-    def get_stop_code_id(self, obj):
-        return obj.state_events.values('stop_code_id').last()['stop_code_id']
 
 class ProductionChartSerializer(serializers.HyperlinkedModelSerializer):
     product_id = serializers.IntegerField()

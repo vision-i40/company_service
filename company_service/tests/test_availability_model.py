@@ -1,12 +1,11 @@
 from django.test import TestCase
 from company_service.models import Availability, Company, ProductionLine, StateEvent, CodeGroup, StopCode
-from company_service.serializers import AvailabilitySerializer
 from django.db.models import Q, Max, Min
 
 import datetime
 import pytz
 
-class AvailabilitySerializerTest(TestCase):
+class AvailabilityTest(TestCase):
     def setUp(self):
         self.first_company = Company.objects.create(
             trade_name="company one",
@@ -40,12 +39,10 @@ class AvailabilitySerializerTest(TestCase):
         self.first_availability_instance = Availability.objects.create(
             production_line=self.first_production_line,
         )
-        self.first_availability_instance_serializer = AvailabilitySerializer(self.first_availability_instance)
 
         self.second_availability_instance = Availability.objects.create(
             production_line=self.first_production_line,
         )
-        self.second_availability_instance_serializer = AvailabilitySerializer(self.second_availability_instance)
 
         self.first_state_event = StateEvent.objects.create(
             production_line=self.first_production_line,
@@ -92,18 +89,18 @@ class AvailabilitySerializerTest(TestCase):
             state=StateEvent.OFF
         )
 
-    def availability_aggregation_helper(self, availability_instance_serializer, first_event, last_event):
-        start_datetime = availability_instance_serializer.data['start_datetime']
-        end_datetime = availability_instance_serializer.data['end_datetime']
-        state = availability_instance_serializer.data['state']
-        stop_code_id = availability_instance_serializer.data['stop_code_id']
+    def availability_aggregation_helper(self, availability_instance, first_event, last_event):
+        start_datetime = availability_instance.start_time()
+        end_datetime = availability_instance.end_time()
+        state = availability_instance.event_state()
+        stop_code = availability_instance.code_reason()
 
         self.assertEqual(first_event.event_datetime, start_datetime)
         self.assertEqual(last_event.event_datetime, end_datetime)
         self.assertEqual(last_event.state, state)
         if StateEvent.state == 'Off':
-            self.assertEqual(last_event.stop_code.id, stop_code_id)
+            self.assertEqual(last_event.stop_code.id, stop_code)
 
     def test_availability_instance_serializer(self):
-        self.availability_aggregation_helper(self.first_availability_instance_serializer, self.first_state_event, self.second_state_event)
-        self.availability_aggregation_helper(self.second_availability_instance_serializer, self.third_state_event, self.fifth_state_event)
+        self.availability_aggregation_helper(self.first_availability_instance, self.first_state_event, self.second_state_event)
+        self.availability_aggregation_helper(self.second_availability_instance, self.third_state_event, self.fifth_state_event)

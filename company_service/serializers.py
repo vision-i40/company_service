@@ -2,6 +2,7 @@ from .models import *
 from rest_framework import serializers
 from drf_writable_nested import WritableNestedModelSerializer
 from typing import Dict, Any
+from django.db.models import Q
 
 class CompanySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -328,16 +329,15 @@ class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
         return obj.state_events.values('stop_code_id').last()['stop_code_id']
 
 class ProductionChartSerializer(serializers.HyperlinkedModelSerializer):
+    product_id = serializers.IntegerField()
     start_datetime = serializers.DateTimeField()
-    end_datetime = serializers.DateTimeField(allow_null=True)
-
-    product = ProductSerializer(read_only=True)
-
+    end_datetime = serializers.DateTimeField()
+    quantity = serializers.IntegerField()
     class Meta:
         model = ProductionChart
         fields = (
             'id',
-            'product',
+            'product_id',
             'start_datetime',
             'end_datetime',
             'quantity',

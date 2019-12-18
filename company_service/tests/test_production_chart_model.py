@@ -72,12 +72,12 @@ class ProductionChartTestCase(TestCase):
         )
 
     def test_production_chart_instance(self):
-        start_datetime = self.first_production_chart.start_datetime()
-        end_datetime = self.first_production_chart.end_datetime()
-        quantity = self.first_production_chart.quantity()
-        product = self.first_production_chart.product()
+        start_datetime = self.first_production_chart.production_start()
+        end_datetime = self.first_production_chart.production_end()
+        quantity_produced = self.first_production_chart.quantity_produced()
+        product = self.first_production_chart.product_produced()
 
         self.assertEqual(self.first_production_event.event_datetime, start_datetime)
         self.assertEqual(self.first_state_event.event_datetime, end_datetime)
-        self.assertEqual(self.first_production_event.quantity, quantity)
-        self.assertEqual(self.first_production_event.product.id, product)
+        self.assertEqual(self.first_production_event.quantity, quantity_produced)
+        self.assertEqual(self.first_production_event.product.id, product.id)

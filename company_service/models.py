@@ -295,18 +295,24 @@ class Availability(DateTimedEvent):
     state = models.CharField(max_length=3, db_index=True, default=StateEvent.ON)
     stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True, blank=True)
 
-class ProductionChart(IndexedTimeStampedModel):
+class ProductionChart(DateTimedEvent):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
     production_order = models.ForeignKey(ProductionOrder, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=0)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
 
-    def start_datetime(self):
-        return self.production_events.filter(event_type=ProductionEvent.PRODUCTION).values('event_datetime').last()['event_datetime']
+    def production_start(self):
+        self.start_datetime = self.production_events.filter(event_type=ProductionEvent.PRODUCTION).values('event_datetime').aggregate(Min('event_datetime'))['event_datetime__min']
+        return self.start_datetime
 
-    def end_datetime(self):
-        return StateEvent.objects.filter(state=StateEvent.OFF).values('event_datetime').values('event_datetime').last()['event_datetime']
+    def production_end(self):
+        self.end_datetime = StateEvent.objects.filter(state=StateEvent.OFF).values('event_datetime').last()['event_datetime']
+        return self.end_datetime
 
-    def quantity(self):
-        return self.production_events.values('quantity').last()['quantity']
+    def quantity_produced(self):
+        self.quantity = self.production_events.last().quantity
+        return self.quantity
 
-    def product(self):
-        return self.production_events.values('product').last()['product']
+    def product_produced(self):
+        self.product = self.production_events.last().product
+        return self.product

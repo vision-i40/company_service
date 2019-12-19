@@ -219,7 +219,6 @@ class ProductionEventSerializer(serializers.HyperlinkedModelSerializer):
             'event_type',
             'waste_code',
             'rework_code',
-            'production_chart',
             'created',
             'modified',
         )

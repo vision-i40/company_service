@@ -60,7 +60,6 @@ class ProductionChartTestCase(TestCase):
             quantity=500,
             event_type=ProductionEvent.PRODUCTION,
             event_datetime=datetime.datetime(2019, 12, 3, 11, 3, 55, 988870, tzinfo=pytz.UTC),
-            production_chart=self.first_production_chart
         )
 
         self.first_state_event = StateEvent.objects.create(

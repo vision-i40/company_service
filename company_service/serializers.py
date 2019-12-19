@@ -276,8 +276,6 @@ class ManualStopSerializer(serializers.HyperlinkedModelSerializer):
     stop_code = StopCodeSerializer(read_only=True)
 
     stop_code_id = serializers.IntegerField()
-    start_datetime = serializers.DateTimeField()
-    end_datetime = serializers.DateTimeField()
     state = serializers.CharField(read_only=True)
     class Meta:
         model = ManualStop

@@ -257,7 +257,6 @@ class ProductionEvent(IndexedTimeStampedModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
     production_order = models.ForeignKey(ProductionOrder, on_delete=models.SET_NULL, null=True, blank=True, related_name="production_events")
-    production_chart = models.ForeignKey('company_service.ProductionChart', on_delete=models.SET_NULL, null=True, blank=True, related_name="production_events")
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     channel = models.ForeignKey(Channel, on_delete=models.SET_NULL, null=True, blank=True)
     unit_of_measurement = models.ForeignKey(UnitOfMeasurement, on_delete=models.SET_NULL, null=True, blank=True)
@@ -318,7 +317,7 @@ class ProductionChart(DateTimedEvent):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
 
     def production_start(self):
-        self.start_datetime = self.production_events.filter(event_type=ProductionEvent.PRODUCTION).values('event_datetime').aggregate(Min('event_datetime'))['event_datetime__min']
+        self.start_datetime = self.production_order.production_events.filter(event_type=ProductionEvent.PRODUCTION).values('event_datetime').aggregate(Min('event_datetime'))['event_datetime__min']
         return self.start_datetime
 
     def production_end(self):
@@ -326,11 +325,11 @@ class ProductionChart(DateTimedEvent):
         return self.end_datetime
 
     def quantity_produced(self):
-        self.quantity = self.production_events.last().quantity
+        self.quantity = self.production_order.production_quantity()
         return self.quantity
 
     def product_produced(self):
-        self.product = self.production_events.last().product
+        self.product = self.production_order.production_events.last().product
         return self.product
 
 class RejectChart(IndexedTimeStampedModel):

@@ -263,8 +263,6 @@ class StateEventSerializer(serializers.HyperlinkedModelSerializer):
         model = StateEvent
         fields = (
             'id',
-            'channel',
-            'channel_id',
             'stop_code',
             'stop_code_id',
             'availability_id',

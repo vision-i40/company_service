@@ -333,10 +333,17 @@ class RejectChartSerializer(serializers.HyperlinkedModelSerializer):
             'state',
         )
 
-class ProductionLineStopSerializer(AvailabilitySerializer):
-    class Meta(AvailabilitySerializer.Meta):
-        model = Availability
+class ProductionLineStopSerializer(serializers.HyperlinkedModelSerializer):
+    stop_code = StopCodeSerializer(read_only=True)
+
+    class Meta:
+        model = ProductionLineStop
         fields = (
-            AvailabilitySerializer.Meta.fields
+            'id',
+            'stop_code',
+            'start_datetime',
+            'end_datetime',
+            'created',
+            'modified',
         )
 

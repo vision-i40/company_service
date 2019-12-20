@@ -47,3 +47,6 @@ class ManualStopSignalTestCase(TestCase):
 
     def test_to_check_if_were_created_a_stop_instance_through_manual_stop(self):
         self.assertEqual(ProductionLineStop.objects.count(), 1)
+
+    def test_to_check_if_the_stop_instance_created_returned_with_is_manual_flag_true(self):
+        self.assertTrue(ProductionLineStop.objects.values('is_manual'))

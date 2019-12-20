@@ -1,5 +1,5 @@
 from django.test import TestCase
-from company_service.models import ManualStop, StateEvent, ProductionLine, StopCode, CodeGroup, Company
+from company_service.models import ManualStop, StateEvent, ProductionLine, StopCode, CodeGroup, Company, ProductionLineStop
 
 import datetime
 import pytz
@@ -43,6 +43,7 @@ class ManualStopSignalTestCase(TestCase):
         )
 
     def test_to_see_if_the_state_events_were_created_through_manual_stop(self):
-        state_events = StateEvent.objects.all()
+        self.assertEqual(StateEvent.objects.count(), 2)
 
-        self.assertEqual(len(state_events), 2)
+    def test_to_check_if_were_created_a_stop_instance_through_manual_stop(self):
+        self.assertEqual(ProductionLineStop.objects.count(), 1)

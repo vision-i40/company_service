@@ -285,6 +285,7 @@ class ProductionEvent(IndexedTimeStampedModel):
 class ProductionLineStop(IndexedTimeStampedModel, DateTimedEvent):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE, null=True)
     stop_code = models.ForeignKey(StopCode, on_delete=models.CASCADE, null=True)
+    is_manual = models.BooleanField(default=False)
 
 class ManualStop(IndexedTimeStampedModel, DateTimedEvent):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE, null=True)

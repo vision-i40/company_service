@@ -311,51 +311,44 @@ class Availability(Chart):
     def stop_code(self):
         return self.state_events.last().stop_code
 
-class ProductionChart(DateTimedEvent):
+class ProductionChart(Chart):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
     production_order = models.ForeignKey(ProductionOrder, on_delete=models.CASCADE)
-    quantity = models.IntegerField(default=0)
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
 
-    def production_start(self):
-        self.start_datetime = self.production_order.production_events.filter(event_type=ProductionEvent.PRODUCTION).values('event_datetime').aggregate(Min('event_datetime'))['event_datetime__min']
-        return self.start_datetime
+    @property
+    def start_datetime(self):
+        return self.production_line.in_progress_order().production_events.filter(event_type=ProductionEvent.PRODUCTION).aggregate(Min('event_datetime'))['event_datetime__min']
 
-    def production_end(self):
-        self.end_datetime = StateEvent.objects.filter(state=StateEvent.OFF).values('event_datetime').last()['event_datetime']
-        return self.end_datetime
+    @property
+    def end_datetime(self):
+        return StateEvent.objects.filter(state=StateEvent.OFF).values('event_datetime').last()['event_datetime']
 
-    def quantity_produced(self):
-        self.quantity = self.production_order.production_quantity()
-        return self.quantity
+    @property
+    def quantity(self):
+        return self.production_line.in_progress_order().production_quantity()
 
-    def product_produced(self):
-        self.product = self.production_order.production_events.last().product
-        return self.product
+    @property
+    def product(self):
+        return self.production_line.in_progress_order().product
 
 class RejectChart(IndexedTimeStampedModel):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
     production_order = models.ForeignKey(ProductionOrder, on_delete=models.CASCADE)
-    quantity = models.IntegerField(default=0)
-    state = models.CharField(max_length=6, db_index=True)
-    waste_code = models.ForeignKey(WasteCode, on_delete=models.SET_NULL, null=True, blank=True)
-    rework_code = models.ForeignKey(ReworkCode, on_delete=models.SET_NULL, null=True, blank=True)
 
-    def event_state(self):
-        self.state = self.production_order.production_events.last().event_type
-        return self.state
+    @property
+    def state(self):
+        return self.production_line.in_progress_order().production_events.last().event_type
 
-    def quantity_rejected(self):
+    @property
+    def quantity(self):
         if self.state == ProductionEvent.WASTE:
-            self.quantity = self.production_order.waste_quantity()
+            return self.production_line.in_progress_order().waste_quantity()
         else:
-            self.quantity = self.production_order.rework_quantity()
-        return self.quantity
+            return self.production_line.in_progress_order().rework_quantity()
 
-    def code_reason(self):
+    @property
+    def code(self):
         if self.state == ProductionEvent.WASTE:
-            self.waste_code = self.production_order.production_events.last().waste_code
-            return self.waste_code
+            return self.production_line.in_progress_order().production_events.last().waste_code
         else:
-            self.rework_code = self.production_order.production_events.last().rework_code
-            return self.rework_code
+            return self.production_line.in_progress_order().production_events.last().rework_code

@@ -89,9 +89,9 @@ class ProductionChartTestCase(TestCase):
             rework_code=self.first_rework_code)
 
     def test_reject_chart_instance(self):
-        quantity_rejected = self.first_reject_chart.quantity_rejected()
-        code_reason = self.first_reject_chart.code_reason()
-        state = self.first_reject_chart.event_state()
+        quantity_rejected = self.first_reject_chart.quantity
+        code_reason = self.first_reject_chart.code
+        state = self.first_reject_chart.state
 
         if state == ProductionEvent.WASTE:
             self.assertEqual(quantity_rejected, self.first_production_event.quantity)

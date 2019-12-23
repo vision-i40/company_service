@@ -294,8 +294,6 @@ class ManualStop(IndexedTimeStampedModel, DateTimedEvent):
 
 class Availability(Chart):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
-    # state = models.CharField(max_length=3, db_index=True, default=StateEvent.ON)
-    # stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True, blank=True)
 
     @property
     def start_datetime(self):

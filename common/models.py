@@ -4,6 +4,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from model_utils.fields import AutoCreatedField, AutoLastModifiedField
 
+import abc
+
 
 class IndexedTimeStampedModel(models.Model):
     created = AutoCreatedField(_('created'), db_index=True)
@@ -15,6 +17,18 @@ class IndexedTimeStampedModel(models.Model):
 class DateTimedEvent(models.Model):
     start_datetime = models.DateTimeField(default=None, db_index=True, null=True, blank=True)
     end_datetime = models.DateTimeField(default=None, db_index=True, null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+class Chart(models.Model):
+    @abc.abstractmethod
+    def start_datetime(self):
+        pass
+
+    @abc.abstractmethod
+    def end_datetime(self):
+        pass
 
     class Meta:
         abstract = True

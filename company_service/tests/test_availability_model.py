@@ -90,10 +90,10 @@ class AvailabilityTest(TestCase):
         )
 
     def availability_aggregation_helper(self, availability_instance, first_event, last_event):
-        start_datetime = availability_instance.start_time()
-        end_datetime = availability_instance.end_time()
-        state = availability_instance.event_state()
-        stop_code = availability_instance.code_reason()
+        start_datetime = availability_instance.start_datetime
+        end_datetime = availability_instance.end_datetime
+        state = availability_instance.state
+        stop_code = availability_instance.stop_code
 
         self.assertEqual(first_event.event_datetime, start_datetime)
         self.assertEqual(last_event.event_datetime, end_datetime)

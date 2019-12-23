@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from model_utils.fields import AutoCreatedField, AutoLastModifiedField
 from django.db.models import Sum, Q, Count, Max, Min
 from users.models import User
-from common.models import IndexedTimeStampedModel, DateTimedEvent
+from common.models import IndexedTimeStampedModel, DateTimedEvent, Chart
 from django.contrib.postgres.fields import ArrayField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -292,26 +292,26 @@ class ManualStop(IndexedTimeStampedModel, DateTimedEvent):
     stop_code = models.ForeignKey(StopCode, on_delete=models.CASCADE, null=True)
     state = StateEvent.OFF
 
-class Availability(DateTimedEvent):
+class Availability(Chart):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
-    state = models.CharField(max_length=3, db_index=True, default=StateEvent.ON)
-    stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True, blank=True)
+    # state = models.CharField(max_length=3, db_index=True, default=StateEvent.ON)
+    # stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True, blank=True)
 
-    def start_time(self):
-        self.start_datetime = self.state_events.values('event_datetime').aggregate(Min('event_datetime'))['event_datetime__min']
-        return self.start_datetime
+    @property
+    def start_datetime(self):
+        return self.state_events.values('event_datetime').aggregate(Min('event_datetime'))['event_datetime__min']
 
-    def end_time(self):
-        self.end_datetime = self.state_events.values('event_datetime').aggregate(Max('event_datetime'))['event_datetime__max']
-        return self.end_datetime
+    @property
+    def end_datetime(self):
+        return self.state_events.values('event_datetime').aggregate(Max('event_datetime'))['event_datetime__max']
 
-    def event_state(self):
-        self.state = self.state_events.last().state
-        return self.state
+    @property
+    def state(self):
+        return self.state_events.last().state
 
-    def code_reason(self):
-        self.stop_code = self.state_events.last().stop_code
-        return self.stop_code
+    @property
+    def stop_code(self):
+        return self.state_events.last().stop_code
 
 class ProductionChart(DateTimedEvent):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)

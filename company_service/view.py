@@ -311,16 +311,6 @@ class AvailabilityViewSet(viewsets.ModelViewSet):
             .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk']) \
             .order_by('-end_datetime')
 
-    def perform_update(self, serializer):
-        production_line = models.ProductionLine \
-            .objects \
-            .get(
-                production_line_company__user=self.request.user,
-                production_line_company=self.kwargs['companies_pk'],
-                pk=self.kwargs['production_lines_pk']
-            )
-        serializer.save(production_line=production_line)
-
 class AvailabilityChartViewSet(viewsets.ReadOnlyModelViewSet, AvailabilityViewSet):
     def get_permissions(self):
         return super().get_permissions()

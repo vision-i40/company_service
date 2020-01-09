@@ -5,6 +5,7 @@ from model_utils.fields import AutoCreatedField, AutoLastModifiedField
 from django.db.models import Sum, Q, Count, Max, Min
 from users.models import User
 from common.models import IndexedTimeStampedModel, DateTimedEvent, Chart
+from company_service import choices
 from django.contrib.postgres.fields import ArrayField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -232,24 +233,16 @@ class Channel(IndexedTimeStampedModel):
 
 class StateEvent(IndexedTimeStampedModel):
     production_order = models.ForeignKey(ProductionOrder, on_delete=models.SET_NULL, null=True, blank=True)
-    production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
-    availability = models.ForeignKey('company_service.Availability', on_delete=models.SET_NULL, null=True, blank=True, related_name="state_events")
+    production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE, related_name='state_events')
     stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     channel = models.ForeignKey(Channel, on_delete=models.SET_NULL, null=True, blank=True)
     event_datetime = models.DateTimeField(default=None, db_index=True)
 
-    ON = 'On'
-    OFF = 'Off'
-    STATES = (
-        (ON, 'On'),
-        (OFF, 'Off'),
-    )
-
     state = models.CharField(
         max_length=3,
-        choices=STATES,
-        default=ON,
+        choices=choices.STATES,
+        default=choices.ON,
         db_index=True
     )
 
@@ -290,26 +283,12 @@ class ProductionLineStop(IndexedTimeStampedModel, DateTimedEvent):
 class ManualStop(IndexedTimeStampedModel, DateTimedEvent):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE, null=True)
     stop_code = models.ForeignKey(StopCode, on_delete=models.CASCADE, null=True)
-    state = StateEvent.OFF
+    state = choices.OFF
 
-class Availability(Chart):
+class Availability(DateTimedEvent):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
-
-    @property
-    def start_datetime(self):
-        return self.state_events.values('event_datetime').aggregate(Min('event_datetime'))['event_datetime__min']
-
-    @property
-    def end_datetime(self):
-        return self.state_events.values('event_datetime').aggregate(Max('event_datetime'))['event_datetime__max']
-
-    @property
-    def state(self):
-        return self.state_events.last().state
-
-    @property
-    def stop_code(self):
-        return self.state_events.last().stop_code
+    state = models.CharField(max_length=3, choices=choices.STATES, default=choices.ON)
+    stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)
 
 class ProductionChart(Chart):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
@@ -321,7 +300,7 @@ class ProductionChart(Chart):
 
     @property
     def end_datetime(self):
-        return StateEvent.objects.filter(state=StateEvent.OFF).values('event_datetime').last()['event_datetime']
+        return StateEvent.objects.filter(state=choices.OFF).values('event_datetime').last()['event_datetime']
 
     @property
     def quantity(self):

@@ -257,14 +257,12 @@ class StateEventSerializer(serializers.HyperlinkedModelSerializer):
     stop_code = StopCodeSerializer(read_only=True)
 
     stop_code_id = serializers.IntegerField(required=False)
-    availability_id = serializers.IntegerField(required=False)
     class Meta:
         model = StateEvent
         fields = (
             'id',
             'stop_code',
             'stop_code_id',
-            'availability_id',
             'event_datetime',
             'state',
             'created',
@@ -293,6 +291,7 @@ class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
     production_line = ProductionLineSerializer(read_only=True)
     stop_code = StopCodeSerializer(read_only=True)
 
+    stop_code_id = serializers.IntegerField(required=False)
     class Meta:
         model = Availability
         fields = (
@@ -301,6 +300,7 @@ class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
             'start_datetime',
             'end_datetime',
             'stop_code',
+            'stop_code_id',
             'state',
         )
 
@@ -346,4 +346,3 @@ class ProductionLineStopSerializer(serializers.HyperlinkedModelSerializer):
             'created',
             'modified',
         )
-

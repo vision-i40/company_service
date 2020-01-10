@@ -287,6 +287,11 @@ class ManualStopSerializer(serializers.HyperlinkedModelSerializer):
             'modified',
         )
 
+    def validate(self, data):
+        if data['start_datetime'] >= data['end_datetime']:
+            raise serializers.ValidationError('Please provide to end_datetime a value higher than the start_datetime.')
+        return data
+
 class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
     production_line = ProductionLineSerializer(read_only=True)
     stop_code = StopCodeSerializer(read_only=True)

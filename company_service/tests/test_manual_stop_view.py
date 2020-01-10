@@ -1,8 +1,10 @@
 from django.test import TestCase
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.serializers import ValidationError
 
 from company_service import view as views
 from company_service.models import ManualStop, ProductionLine, StopCode, CodeGroup, Company
+from company_service.serializers import ManualStopSerializer
 from company_service.tests.view_test_support import *
 from users.models import User
 
@@ -93,3 +95,21 @@ class ManualStopViewSetTest(TestCase):
         self.assertEqual(response_dict['start_datetime'], payload['start_datetime'])
         self.assertEqual(response_dict['end_datetime'], payload['end_datetime'])
         self.assertEqual(response_dict['stop_code_id'], payload['stop_code_id'])
+
+    def test_add_manual_stop_with_start_datetime_higher_than_end_datetime_response_is_400(self):
+        manual_stop_view = self.view.as_view({'post': 'create'})
+        factory = APIRequestFactory()
+
+        payload = {
+            'start_datetime': '2019-10-14T18:39:13Z',
+            'end_datetime': '2019-10-13T16:14:03Z',
+            'stop_code_id': self.first_stop_code.id
+        }
+
+        request = factory.post(self.index_route, payload, format='json', HTTP_AUTHORIZATION=self.authorization_active_token)
+        response = manual_stop_view(request, production_lines_pk=self.first_production_line.id)
+
+        response.render()
+
+        self.assertEqual(response.status_code, 400)
+

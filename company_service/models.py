@@ -290,25 +290,12 @@ class Availability(DateTimedEvent, IndexedTimeStampedModel):
     state = models.CharField(max_length=3, choices=choices.STATES, default=choices.ON)
     stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)
 
-class ProductionChart(Chart):
+class ProductionChart(DateTimedEvent):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
     production_order = models.ForeignKey(ProductionOrder, on_delete=models.CASCADE)
-
-    @property
-    def start_datetime(self):
-        return self.production_line.in_progress_order().production_events.filter(event_type=ProductionEvent.PRODUCTION).aggregate(Min('event_datetime'))['event_datetime__min']
-
-    @property
-    def end_datetime(self):
-        return StateEvent.objects.filter(state=choices.OFF).values('event_datetime').last()['event_datetime']
-
-    @property
-    def quantity(self):
-        return self.production_line.in_progress_order().production_quantity()
-
-    @property
-    def product(self):
-        return self.production_line.in_progress_order().product
+    quantity = models.IntegerField(default=1)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
+    event_type = models.CharField(max_length=20, choices=ProductionEvent.EVENT_TYPES, default=ProductionEvent.PRODUCTION, db_index=True)
 
 class RejectChart(IndexedTimeStampedModel):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)

@@ -2,7 +2,7 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.db.models import Q
 
-from company_service.models import ManualStop, StateEvent, Availability
+from company_service.models import ManualStop, StateEvent, Availability, ProductionEvent, ProductionChart
 from company_service import models, choices
 
 def get_attribute_of_the_first_object_from(attribute, *args, model=StateEvent):

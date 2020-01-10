@@ -3,7 +3,6 @@ from rest_framework.test import APIRequestFactory
 from rest_framework_simplejwt.tokens import RefreshToken
 from company_service.models import Availability, Company, ProductionLine, StateEvent, CodeGroup, StopCode
 from company_service import view as views
-from company_service.tests.view_test_support import *
 from company_service import choices
 from users.models import User
 
@@ -41,14 +40,14 @@ class AvailabilityViewSetTest(TestCase):
 
         self.index_route = f'/v1/companies/{self.first_company.id}/availability/'
 
-        self.state_event_list = [
+        self.state_events = [
             self.create_state_event(self.first_production_line, None, datetime.datetime(2019, 12, 3, 11, 3, 55, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.ON),
             self.create_state_event(self.first_production_line, None, datetime.datetime(2019, 12, 3, 12, 3, 54, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.ON),
-            # self.create_state_event(self.first_production_line, self.first_stop_code, datetime.datetime(2019, 12, 3, 12, 3, 55, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.OFF),
-            # self.create_state_event(self.first_production_line, self.first_stop_code, datetime.datetime(2019, 12, 3, 12, 50, 54, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.OFF),
-            # self.create_state_event(self.first_production_line, self.first_stop_code, datetime.datetime(2019, 12, 3, 13, 30, 54, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.OFF),
-            # self.create_state_event(self.first_production_line, None, datetime.datetime(2019, 12, 3, 13, 40, 54, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.ON),
-            # self.create_state_event(self.first_production_line, None, datetime.datetime(2019, 12, 3, 13, 45, 54, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.ON)
+            self.create_state_event(self.first_production_line, self.first_stop_code, datetime.datetime(2019, 12, 3, 12, 3, 55, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.OFF),
+            self.create_state_event(self.first_production_line, self.first_stop_code, datetime.datetime(2019, 12, 3, 12, 50, 54, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.OFF),
+            self.create_state_event(self.first_production_line, self.first_stop_code, datetime.datetime(2019, 12, 3, 13, 30, 54, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.OFF),
+            self.create_state_event(self.first_production_line, None, datetime.datetime(2019, 12, 3, 13, 40, 54, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.ON),
+            self.create_state_event(self.first_production_line, None, datetime.datetime(2019, 12, 3, 13, 45, 54, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.ON)
         ]
 
     def create_state_event(self, production_line, stop_code, event_datetime, state):
@@ -70,7 +69,4 @@ class AvailabilityViewSetTest(TestCase):
         response_dict = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response_dict['results']), 1)
-        self.assertEqual(response_dict['results'][0]['start_datetime'], self.state_event_list[0].event_datetime)
-        self.assertEqual(response_dict['results'][0]['end_datetime'], self.state_event_list[1].event_datetime)
-        # self.assertEqual(response_dict['results'][1]['start_datetime'], self.state_event_list[2].event_datetime)
+        self.assertEqual(len(response_dict['results']), 3)

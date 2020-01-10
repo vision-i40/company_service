@@ -309,7 +309,7 @@ class AvailabilityViewSet(viewsets.ModelViewSet):
         return models.Availability \
             .objects \
             .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk']) \
-            .order_by('-end_datetime')
+            .order_by('-created')
 
 class AvailabilityChartViewSet(viewsets.ReadOnlyModelViewSet, AvailabilityViewSet):
     def get_permissions(self):

@@ -2,10 +2,10 @@ from rest_framework import viewsets
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
-from django.db.models import Sum, Q, F, Max, Min
-from django.http import HttpResponse
 from . import serializers as serializers
 from . import models as models
+
+from company_service import choices
 
 class CompanyViewSet(viewsets.ModelViewSet):
     authentication_classes = (JWTAuthentication, SessionAuthentication,)
@@ -306,7 +306,7 @@ class AvailabilityViewSet(viewsets.ModelViewSet):
             .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk']) \
             .order_by('-created')
 
-class AvailabilityChartViewSet(viewsets.ReadOnlyModelViewSet, AvailabilityViewSet):
+class AvailabilityChartViewSet(AvailabilityViewSet):
     def get_permissions(self):
         return super().get_permissions()
 
@@ -317,7 +317,7 @@ class AvailabilityChartViewSet(viewsets.ReadOnlyModelViewSet, AvailabilityViewSe
         return super().get_authenticators()
 
     def get_queryset(self):
-        return super().get_queryset().filter(state=models.StateEvent.OFF)
+        return super().get_queryset().filter(state=choices.OFF)
 
 class ProductionChartViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = (JWTAuthentication, SessionAuthentication,)

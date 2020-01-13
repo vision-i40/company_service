@@ -43,7 +43,13 @@ def post_save_state_event(sender, **kwargs):
         availability_object.end_datetime = get_attribute_of_the_last_object_from(StateEvent, 'event_datetime')
         availability_object.save()
 
-    if StateEvent.objects.values('state').order_by('created').last() == Availability.objects.values('state').order_by('created').last() and StateEvent.objects.values('stop_code_id').order_by('created').last() == Availability.objects.values('stop_code_id').order_by('created').last():
+    def last_object_of(model, attribute):
+        return model.objects.values(attribute).order_by('created').last()
+
+    state_events_state_equals_availabilitys_state = last_object_of(StateEvent, 'state') == last_object_of(Availability, 'state')
+    state_events_stop_code_equals_availabilitys_stop_code = last_object_of(StateEvent, 'stop_code_id') == last_object_of(Availability, 'stop_code_id')
+
+    if state_events_state_equals_availabilitys_state and state_events_stop_code_equals_availabilitys_stop_code:
         update_availability_object()
     else:
         create_availability_object()

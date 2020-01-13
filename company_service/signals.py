@@ -24,15 +24,19 @@ def post_save_manual_stop(sender, **kwargs):
     create_state_events_using(manual_stop_start_datetime)
     create_state_events_using(manual_stop_end_datetime)
 
+def create_object_with(model, **kwargs):
+    return model.objects.create(**kwargs)
+
 @receiver(post_save, sender=StateEvent)
 def post_save_state_event(sender, **kwargs):
     def create_availability_object():
-        Availability.objects.create(
+        create_object_with(
+            Availability, 
             production_line_id=get_attribute_of_the_last_object_from(StateEvent, 'production_line_id'),
             start_datetime=get_attribute_of_the_last_object_from(StateEvent, 'event_datetime'),
             end_datetime=get_attribute_of_the_last_object_from(StateEvent, 'event_datetime'),
             state=get_attribute_of_the_last_object_from(StateEvent, 'state'),
-            stop_code_id=get_attribute_of_the_last_object_from(StateEvent, 'stop_code_id')
+            stop_code_id=get_attribute_of_the_last_object_from(StateEvent, 'stop_code_id'),
         )
 
     def update_availability_object():

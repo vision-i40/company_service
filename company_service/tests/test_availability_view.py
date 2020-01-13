@@ -70,3 +70,9 @@ class AvailabilityViewSetTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response_dict['results']), 3)
+        self.assertEqual(response_dict['results'][0]['start_datetime'], self.state_events[5].event_datetime)
+        self.assertEqual(response_dict['results'][0]['end_datetime'], self.state_events[6].event_datetime)
+        self.assertEqual(response_dict['results'][1]['start_datetime'], self.state_events[2].event_datetime)
+        self.assertEqual(response_dict['results'][1]['end_datetime'], self.state_events[4].event_datetime)
+        self.assertEqual(response_dict['results'][2]['start_datetime'], self.state_events[0].event_datetime)
+        self.assertEqual(response_dict['results'][2]['end_datetime'], self.state_events[1].event_datetime)

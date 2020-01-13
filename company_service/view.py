@@ -283,7 +283,7 @@ class ManualStopViewSet(viewsets.ModelViewSet):
         return models.ManualStop \
             .objects \
             .filter(production_line__company__user=self.request.user, production_line=self.kwargs['production_lines_pk']) \
-            .order_by('-start_datetime')
+            .order_by('-created')
 
     def perform_create(self, serializer):
         production_line = models.ProductionLine \

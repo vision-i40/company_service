@@ -66,7 +66,6 @@ class ProductionOrderSerializer(serializers.HyperlinkedModelSerializer):
     production_quantity = serializers.IntegerField(required=False)
     waste_quantity = serializers.IntegerField(required=False)
     rework_quantity = serializers.IntegerField(required=False)
-    stop_quantity = serializers.ReadOnlyField()
 
     class Meta:
         model = ProductionOrder
@@ -80,7 +79,6 @@ class ProductionOrderSerializer(serializers.HyperlinkedModelSerializer):
             'production_quantity',
             'waste_quantity',
             'rework_quantity',
-            'stop_quantity',
             'quantity',
             'created',
             'modified',
@@ -133,11 +131,11 @@ class ProductionLineSerializer(serializers.HyperlinkedModelSerializer):
 class ProductionLineWithOrderAndTurnSerializer(WritableNestedModelSerializer, ProductionLineSerializer):
     in_progress_order = ProductionOrderSerializer(read_only=True)
     current_turn = TurnSerializer(read_only=True)
-
+    stop_quantity = serializers.ReadOnlyField()
     class Meta(ProductionLineSerializer.Meta):
         model = ProductionLine
         fields = (
-            ProductionLineSerializer.Meta.fields + ('in_progress_order', 'current_turn')
+            ProductionLineSerializer.Meta.fields + ('in_progress_order', 'current_turn', 'stop_quantity')
         )
 
 

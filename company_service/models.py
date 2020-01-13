@@ -135,6 +135,10 @@ class ProductionLine(IndexedTimeStampedModel):
     def in_progress_order(self):
         return self.production_orders.filter(state=ProductionOrder.IN_PROGRESS).first()
 
+    @property
+    def stop_quantity(self):
+        return self.availabilities.filter(state=choices.OFF).count()
+
     def __str__(self):
         return self.name
 
@@ -179,9 +183,6 @@ class ProductionOrder(IndexedTimeStampedModel):
 
     def rework_quantity(self):
         return self.event_quantity(event_type=ProductionEvent.REWORK)
-
-    # def stop_quantity(self):
-    #     return Availability.objects.filter(Q(production_line=self.production_line) & Q(state=StateEvent.OFF)).count()
 
     def __str__(self):
         return self.code
@@ -286,7 +287,7 @@ class ManualStop(IndexedTimeStampedModel, DateTimedEvent):
     state = choices.OFF
 
 class Availability(DateTimedEvent, IndexedTimeStampedModel):
-    production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
+    production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE, related_name='availabilities')
     state = models.CharField(max_length=3, choices=choices.STATES, default=choices.ON)
     stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)
 

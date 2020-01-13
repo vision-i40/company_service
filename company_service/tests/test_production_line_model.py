@@ -1,7 +1,13 @@
 from django.test import TestCase
-from company_service.models import ProductionLine, Company, Product, ProductionOrder
+from company_service.models import ProductionLine, Company, Product, ProductionOrder, Availability
+from company_service import choices
+
+import datetime
+import pytz
 
 class ProductionLineModelTest(TestCase):
+    test_date_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+
     def setUp(self):
         self.first_company = Company.objects.create(
             trade_name="company one",
@@ -63,6 +69,18 @@ class ProductionLineModelTest(TestCase):
             quantity=1200,
             state=ProductionOrder.IN_PROGRESS)
 
+        self.create_availability_object(self.first_production_line, datetime.datetime(2020, 1, 3, 10, 33, 15, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), datetime.datetime(2020, 1, 3, 11, 38, 15, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.OFF, None),
+        self.create_availability_object(self.first_production_line, datetime.datetime(2020, 1, 3, 11, 38, 16, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), datetime.datetime(2020, 1, 3, 12, 0, 0, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.ON, None),
+        self.create_availability_object(self.first_production_line, datetime.datetime(2020, 1, 3, 12, 0, 1, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), datetime.datetime(2020, 1, 3, 12, 34, 15, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.OFF, None)
+
+    def create_availability_object(self, production_line, start_datetime, end_datetime, state, stop_code):
+        return Availability.objects.create(
+            production_line=production_line,
+            start_datetime=start_datetime,
+            end_datetime=end_datetime,
+            state=state,
+            stop_code=stop_code
+        )
 
     def test_show_in_progress_production_order_in_the_line_retrieved(self):
         in_progress_order = self.first_production_line.in_progress_order()
@@ -75,5 +93,10 @@ class ProductionLineModelTest(TestCase):
         none_order = self.third_production_line.in_progress_order()
 
         self.assertEqual(none_order, None)
+
+    def test_the_quantity_of_stops_from_a_production_line(self):
+        stop_quantity = self.first_production_line.stop_quantity
+
+        self.assertEqual(stop_quantity, 2)
 
 

@@ -5,6 +5,7 @@ from company_service.models import (Availability, Company, ProductionLine,
                                     StateEvent, CodeGroup, StopCode)
 from company_service import view as views
 from company_service import choices
+from company_service.tests.view_test_support import *
 from users.models import User
 
 import json
@@ -33,11 +34,19 @@ class AvailabilityViewSetTest(TestCase):
             micro_stop_seconds=10200
         )
 
+        self.noise_company = Company.objects.create(trade_name="company two", slug="c2", is_active=False)
+
         self.first_company.users.add(self.active_user)
         active_refresh = RefreshToken.for_user(self.active_user)
 
         self.active_token = str(active_refresh.access_token)
         self.authorization_active_token = f'Bearer {self.active_token}'
+
+        self.unactivated_user = User.objects.create(email="unactivatedtest@test.com", password="any-pwd", is_active=False)
+        self.noise_company.users.add(self.unactivated_user)
+
+        unactivated_refresh = RefreshToken.for_user(self.unactivated_user)
+        self.unactivated_token = str(unactivated_refresh.access_token)
 
         self.index_route = f'/v1/companies/{self.first_company.id}/availability/'
 
@@ -57,6 +66,34 @@ class AvailabilityViewSetTest(TestCase):
             stop_code=stop_code,
             event_datetime=event_datetime,
             state=state
+        )
+
+    def tearDown(self):
+        StateEvent.objects.all().delete()
+
+    def test_availability_list_authentication_response_is_401_when_there_is_no_authentication_token(self):
+        assert_unauthorized_with_no_token(
+            self,
+            self.index_route,
+            resource='list',
+            companies_pk=self.first_company.id
+        )
+
+    def test_availability_list_authentication_response_is_401_when_an_invalid_authentication_token_is_provided(self):
+        assert_unauthorized_with_invalid_token(
+            self,
+            self.index_route,
+            resource='list',
+            companies_pk=self.first_company.id
+        )
+
+    def test_availability_list_authentication_response_is_401_when_a_token_from_an_unactivated_user_is_provided(self):
+        assert_unauthorized_with_unactivated_user(
+            self,
+            self.index_route,
+            self.unactivated_token,
+            resource='list',
+            companies_pk=self.first_company.id
         )
 
     def test_availability_list_response_is_200(self):

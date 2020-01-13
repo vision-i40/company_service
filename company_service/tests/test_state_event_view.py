@@ -1,12 +1,14 @@
 from django.test import TestCase
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.test import APIRequestFactory
 
 from company_service import view as views
-from company_service.models import Company, CodeGroup, StopCode, StateEvent, ProductionLine, ManualStop
+from company_service.models import (Company, CodeGroup, StopCode, 
+                                    StateEvent, ProductionLine, ManualStop)
 from company_service import choices
-from company_service.tests.view_test_support import *
 from users.models import User
 
+import json
 import datetime
 import pytz
 

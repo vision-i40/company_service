@@ -1,7 +1,8 @@
 from django.test import TestCase
 from rest_framework.test import APIRequestFactory
 from rest_framework_simplejwt.tokens import RefreshToken
-from company_service.models import Availability, Company, ProductionLine, StateEvent, CodeGroup, StopCode
+from company_service.models import (Availability, Company, ProductionLine, 
+                                    StateEvent, CodeGroup, StopCode)
 from company_service import view as views
 from company_service import choices
 from users.models import User

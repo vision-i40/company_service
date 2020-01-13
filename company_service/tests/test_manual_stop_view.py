@@ -1,13 +1,13 @@
 from django.test import TestCase
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.serializers import ValidationError
+from rest_framework.test import APIRequestFactory
 
 from company_service import view as views
 from company_service.models import ManualStop, ProductionLine, StopCode, CodeGroup, Company
 from company_service.serializers import ManualStopSerializer
-from company_service.tests.view_test_support import *
 from users.models import User
 
+import json
 import datetime
 import pytz
 

@@ -12,7 +12,7 @@ model-mommy = "*"
 pylint = "*"
 
 [packages]
-django = ">=2.2.4"
+django = ">=2.2.8"
 celery = {extras = ["redis"]}
 django-model-utils = "*"
 django-import-export = "*"

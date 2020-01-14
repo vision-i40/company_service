@@ -34,6 +34,18 @@ class AvailabilityViewSetTest(TestCase):
             micro_stop_seconds=10200
         )
 
+        self.second_production_line = ProductionLine.objects.create(
+            company=self.first_company,
+            name="pl2",
+            is_active=True,
+            discount_rework=True,
+            discount_waste=True,
+            stop_on_production_absence=True,
+            time_to_consider_absence=True,
+            reset_production_changing_order=True,
+            micro_stop_seconds=20500
+        )
+
         self.noise_company = Company.objects.create(trade_name="company two", slug="c2", is_active=False)
 
         self.first_company.users.add(self.active_user)
@@ -53,11 +65,13 @@ class AvailabilityViewSetTest(TestCase):
         self.state_events = [
             self.create_state_event(self.first_production_line, None, datetime.datetime(2019, 12, 3, 11, 3, 55, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.ON),
             self.create_state_event(self.first_production_line, None, datetime.datetime(2019, 12, 3, 12, 3, 54, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.ON),
+            self.create_state_event(self.second_production_line, None, datetime.datetime(2019, 12, 3, 12, 3, 54, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.ON),
+            self.create_state_event(self.second_production_line, None, datetime.datetime(2019, 12, 3, 12, 8, 54, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.ON),
             self.create_state_event(self.first_production_line, self.first_stop_code, datetime.datetime(2019, 12, 3, 12, 3, 55, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.OFF),
             self.create_state_event(self.first_production_line, self.first_stop_code, datetime.datetime(2019, 12, 3, 12, 50, 54, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.OFF),
             self.create_state_event(self.first_production_line, self.first_stop_code, datetime.datetime(2019, 12, 3, 13, 30, 54, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.OFF),
-            self.create_state_event(self.first_production_line, None, datetime.datetime(2019, 12, 3, 13, 40, 54, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.ON),
-            self.create_state_event(self.first_production_line, None, datetime.datetime(2019, 12, 3, 13, 45, 54, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.ON)
+            self.create_state_event(self.second_production_line, None, datetime.datetime(2019, 12, 3, 12, 3, 55, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.ON),
+            self.create_state_event(self.second_production_line, None, datetime.datetime(2019, 12, 3, 12, 8, 54, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.ON)
         ]
 
     def create_state_event(self, production_line, stop_code, event_datetime, state):
@@ -107,10 +121,57 @@ class AvailabilityViewSetTest(TestCase):
         response_dict = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response_dict['results']), 3)
-        self.assertEqual(response_dict['results'][0]['start_datetime'], self.state_events[5].event_datetime)
-        self.assertEqual(response_dict['results'][0]['end_datetime'], self.state_events[6].event_datetime)
-        self.assertEqual(response_dict['results'][1]['start_datetime'], self.state_events[2].event_datetime)
-        self.assertEqual(response_dict['results'][1]['end_datetime'], self.state_events[4].event_datetime)
-        self.assertEqual(response_dict['results'][2]['start_datetime'], self.state_events[0].event_datetime)
-        self.assertEqual(response_dict['results'][2]['end_datetime'], self.state_events[1].event_datetime)
+        self.assertEqual(len(response_dict['results']), 4)
+        self.assertEqual(response_dict['results'][0]['start_datetime'], self.state_events[7].event_datetime)
+        self.assertEqual(response_dict['results'][0]['end_datetime'], self.state_events[8].event_datetime)
+        self.assertEqual(response_dict['results'][1]['start_datetime'], self.state_events[4].event_datetime)
+        self.assertEqual(response_dict['results'][1]['end_datetime'], self.state_events[6].event_datetime)
+        self.assertEqual(response_dict['results'][2]['start_datetime'], self.state_events[2].event_datetime)
+        self.assertEqual(response_dict['results'][2]['end_datetime'], self.state_events[3].event_datetime)
+        self.assertEqual(response_dict['results'][3]['start_datetime'], self.state_events[0].event_datetime)
+        self.assertEqual(response_dict['results'][3]['end_datetime'], self.state_events[1].event_datetime)
+
+    def test_the_availability_filtered_by_production_line(self):
+        url = f'/v1/companies/1/availability/?production_line_id={self.first_production_line.id}&start_datetime=&end_datetime='
+
+        availability_view = self.view.as_view({'get': 'list'})
+        factory = APIRequestFactory()
+
+        request = factory.get(url, HTTP_AUTHORIZATION=self.authorization_active_token)
+        response = availability_view(request, companies_pk=self.first_company.id)
+
+        response.render()
+        response_dict = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response_dict['results']), 2)
+
+    def test_the_availability_filtered_by_start_datetime(self):
+        url = f'/v1/companies/1/availability/?production_line_id=&start_datetime={self.state_events[4].event_datetime}&end_datetime='
+
+        availability_view = self.view.as_view({'get': 'list'})
+        factory = APIRequestFactory()
+
+        request = factory.get(url, HTTP_AUTHORIZATION=self.authorization_active_token)
+        response = availability_view(request, companies_pk=self.first_company.id)
+
+        response.render()
+        response_dict = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response_dict['results']), 2)
+
+    def test_the_availability_filtered_by_end_datetime(self):
+        url = f'/v1/companies/1/availability/?production_line_id=&start_datetime=&end_datetime={self.state_events[1].event_datetime}'
+
+        availability_view = self.view.as_view({'get': 'list'})
+        factory = APIRequestFactory()
+
+        request = factory.get(url, HTTP_AUTHORIZATION=self.authorization_active_token)
+        response = availability_view(request, companies_pk=self.first_company.id)
+
+        response.render()
+        response_dict = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response_dict['results']), 1)

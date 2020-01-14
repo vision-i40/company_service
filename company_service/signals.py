@@ -48,10 +48,13 @@ def post_save_state_event(sender, **kwargs):
         availability_object.end_datetime = get_attribute_from_the_last_object_of(StateEvent, 'event_datetime')['event_datetime']
         availability_object.save()
 
+    state_events_production_line_equals_availabilitys_production_line = get_attribute_from_the_last_object_of(StateEvent, 'production_line_id') == get_attribute_from_the_last_object_of(Availability, 'production_line_id')
     state_events_state_equals_availabilitys_state = get_attribute_from_the_last_object_of(StateEvent, 'state') == get_attribute_from_the_last_object_of(Availability, 'state')
     state_events_stop_code_equals_availabilitys_stop_code = get_attribute_from_the_last_object_of(StateEvent, 'stop_code_id') == get_attribute_from_the_last_object_of(Availability, 'stop_code_id')
 
-    if state_events_state_equals_availabilitys_state and state_events_stop_code_equals_availabilitys_stop_code:
+    if (state_events_state_equals_availabilitys_state and 
+        state_events_stop_code_equals_availabilitys_stop_code and 
+        state_events_production_line_equals_availabilitys_production_line):
         update_availability_object()
     else:
         create_availability_object()
@@ -77,9 +80,11 @@ def post_save_production_event(sender, **kwargs):
         production_chart_object.end_datetime = get_attribute_from_the_last_object_of(ProductionEvent, 'event_datetime')['event_datetime']
         production_chart_object.save()
 
+    production_event_production_line_equals_production_chart_production_line = get_attribute_from_the_last_object_of(ProductionEvent, 'production_line_id') == get_attribute_from_the_last_object_of(ProductionChart, 'production_line_id')
     production_event_type_equals_production_chart_type = get_attribute_from_the_last_object_of(ProductionEvent, 'event_type') == get_attribute_from_the_last_object_of(ProductionChart, 'event_type')
 
-    if production_event_type_equals_production_chart_type:
+    if (production_event_production_line_equals_production_chart_production_line and 
+        production_event_type_equals_production_chart_type):
         update_production_chart_object()
     else:
         create_production_chart_object()

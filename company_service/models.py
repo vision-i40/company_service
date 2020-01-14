@@ -291,7 +291,7 @@ class Availability(DateTimedEvent, IndexedTimeStampedModel):
     state = models.CharField(max_length=3, choices=choices.STATES, default=choices.ON)
     stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)
 
-class ProductionChart(DateTimedEvent):
+class ProductionChart(DateTimedEvent, IndexedTimeStampedModel):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
     production_order = models.ForeignKey(ProductionOrder, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)

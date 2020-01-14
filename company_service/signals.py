@@ -24,13 +24,16 @@ def post_save_manual_stop(sender, **kwargs):
     create_state_events_using(manual_stop_start_datetime)
     create_state_events_using(manual_stop_end_datetime)
 
-def create_object_with(model, **kwargs):
+def create_object_of(model, **kwargs):
     return model.objects.create(**kwargs)
+
+def last_object_of(model, attribute):
+    return model.objects.values(attribute).order_by('created').last()
 
 @receiver(post_save, sender=StateEvent)
 def post_save_state_event(sender, **kwargs):
     def create_availability_object():
-        create_object_with(
+        create_object_of(
             Availability, 
             production_line_id=get_attribute_of_the_last_object_from(StateEvent, 'production_line_id'),
             start_datetime=get_attribute_of_the_last_object_from(StateEvent, 'event_datetime'),
@@ -47,9 +50,6 @@ def post_save_state_event(sender, **kwargs):
         availability_object.end_datetime = get_attribute_of_the_last_object_from(StateEvent, 'event_datetime')
         availability_object.save()
 
-    def last_object_of(model, attribute):
-        return model.objects.values(attribute).order_by('created').last()
-
     state_events_state_equals_availabilitys_state = last_object_of(StateEvent, 'state') == last_object_of(Availability, 'state')
     state_events_stop_code_equals_availabilitys_stop_code = last_object_of(StateEvent, 'stop_code_id') == last_object_of(Availability, 'stop_code_id')
 
@@ -57,3 +57,31 @@ def post_save_state_event(sender, **kwargs):
         update_availability_object()
     else:
         create_availability_object()
+
+@receiver(post_save, sender=ProductionEvent)
+def post_save_production_event(sender, **kwargs):
+    def create_production_chart_object():
+        create_object_of(
+            ProductionChart,
+            production_line_id=get_attribute_of_the_last_object_from(ProductionEvent, 'production_line_id'),
+            production_order_id=get_attribute_of_the_last_object_from(ProductionEvent, 'production_order_id'),
+            start_datetime=get_attribute_of_the_last_object_from(ProductionEvent, 'event_datetime'),
+            end_datetime=get_attribute_of_the_last_object_from(ProductionEvent, 'event_datetime'),
+            quantity=get_attribute_of_the_last_object_from(ProductionEvent, 'quantity'),
+            product_id=get_attribute_of_the_last_object_from(ProductionEvent, 'product_id'),
+            event_type=get_attribute_of_the_last_object_from(ProductionEvent, 'event_type')
+        )
+
+    def update_production_chart_object():
+        production_chart_object = ProductionChart.objects.filter(
+            event_type=get_attribute_of_the_last_object_from(ProductionEvent, 'event_type')
+        ).order_by('created').last()
+        production_chart_object.end_datetime = get_attribute_of_the_last_object_from(ProductionEvent, 'event_datetime')
+        production_chart_object.save()
+
+    production_event_type_equals_production_chart_type = last_object_of(ProductionEvent, 'event_type') == last_object_of(ProductionChart, 'event_type')
+
+    if production_event_type_equals_production_chart_type:
+        update_production_chart_object()
+    else:
+        create_production_chart_object()

@@ -307,15 +307,6 @@ class AvailabilityViewSet(viewsets.ModelViewSet):
             .order_by('-created')
 
 class AvailabilityChartViewSet(AvailabilityViewSet):
-    def get_permissions(self):
-        return super().get_permissions()
-
-    def get_serializer_class(self):
-        return super().get_serializer_class()
-
-    def get_authenticators(self):
-        return super().get_authenticators()
-
     def get_queryset(self):
         return super().get_queryset().filter(state=choices.OFF)
 
@@ -340,27 +331,3 @@ class RejectChartViewSet(viewsets.ReadOnlyModelViewSet):
             .objects \
             .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk']) \
             .order_by('-created')
-
-class ProductionLineStopViewSet(viewsets.ReadOnlyModelViewSet):
-    authentication_classes = (JWTAuthentication, SessionAuthentication,)
-    permission_classes = (IsAuthenticated,)
-    serializer_class = serializers.ProductionLineStopSerializer
-
-    def get_queryset(self):
-        return models.ProductionLineStop \
-            .objects \
-            .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk']) \
-            .order_by('-end_datetime')
-
-class ProductionLinePendingStopViewSet(ProductionLineStopViewSet):
-    def get_authenticators(self):
-        return super().get_authenticators()
-
-    def get_permissions(self):
-        return super().get_permissions()
-
-    def get_serializer_class(self):
-        return super().get_serializer_class()
-
-    def get_queryset(self):
-        return super().get_queryset().filter(stop_code=None)

@@ -276,11 +276,6 @@ class ProductionEvent(IndexedTimeStampedModel):
     waste_code = models.ForeignKey(WasteCode, on_delete=models.SET_NULL, null=True, blank=True)
     rework_code = models.ForeignKey(ReworkCode, on_delete=models.SET_NULL, null=True, blank=True)
 
-class ProductionLineStop(IndexedTimeStampedModel, DateTimedEvent):
-    production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE, null=True)
-    stop_code = models.ForeignKey(StopCode, on_delete=models.CASCADE, null=True)
-    is_manual = models.BooleanField(default=False)
-
 class ManualStop(IndexedTimeStampedModel, DateTimedEvent):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE, null=True)
     stop_code = models.ForeignKey(StopCode, on_delete=models.CASCADE, null=True)

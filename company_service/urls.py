@@ -39,8 +39,6 @@ code_group_router.register('rework_codes', views.ReworkCodeViewSet, 'companies-c
 production_line_router = routers.NestedSimpleRouter(companies_router, 'production_lines', lookup='production_lines')
 production_line_router.register('state_events', views.StateEventViewSet, 'companies-production_lines-state_events')
 production_line_router.register('manual_stops', views.ManualStopViewSet, 'companies-production_lines-manual_stops')
-production_line_router.register('stops', views.ProductionLineStopViewSet, 'companies-production_lines-stops')
-production_line_router.register('pending_stops', views.ProductionLinePendingStopViewSet, 'companies-production_lines-pending_stops')
 
 production_order_router = routers.NestedSimpleRouter(companies_router, 'production_orders', lookup='production_orders')
 production_order_router.register('production_events', views.ProductionEventViewSet, 'companies-production_orders-production_events')

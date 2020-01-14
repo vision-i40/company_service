@@ -341,17 +341,3 @@ class RejectChartSerializer(serializers.HyperlinkedModelSerializer):
             'quantity',
             'state',
         )
-
-class ProductionLineStopSerializer(serializers.HyperlinkedModelSerializer):
-    stop_code = StopCodeSerializer(read_only=True)
-
-    class Meta:
-        model = ProductionLineStop
-        fields = (
-            'id',
-            'stop_code',
-            'start_datetime',
-            'end_datetime',
-            'created',
-            'modified',
-        )

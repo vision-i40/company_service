@@ -318,7 +318,7 @@ class ProductionChartViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return models.ProductionChart \
             .objects \
-            .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk'], event_type=models.ProductionEvent.PRODUCTION) \
+            .filter(production_order__production_line__company__user=self.request.user, production_order__production_line__company=self.kwargs['companies_pk'], event_type=models.ProductionEvent.PRODUCTION) \
             .order_by('-end_datetime')
 
 class RejectChartViewSet(viewsets.ReadOnlyModelViewSet):

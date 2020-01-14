@@ -226,29 +226,26 @@ class CollectorSerializer(serializers.HyperlinkedModelSerializer):
         model = Collector
         fields = (
             'id',
-            'created',
-            'modified',
             'mac',
             'collector_type',
+            'created',
+            'modified',
         )
 
 class ChannelSerializer(serializers.HyperlinkedModelSerializer):
     production_line = ProductionLineSerializer(read_only=True)
 
-    production_line_id = serializers.IntegerField(required=False, allow_null=True)
-
     class Meta:
         model = Channel
         fields = (
             'id',
-            'created',
-            'modified',
+            'production_line',
             'number',
             'channel_type',
             'inverse_state',
             'is_cumulative',
-            'production_line',
-            'production_line_id',
+            'created',
+            'modified',
         )
 
 class StateEventSerializer(serializers.HyperlinkedModelSerializer):
@@ -312,14 +309,12 @@ class ProductionChartSerializer(serializers.HyperlinkedModelSerializer):
     production_order = ProductionOrderSerializer(read_only=True)
 
     production_line_id = serializers.IntegerField()
-    production_order_id = serializers.IntegerField()
     product_id = serializers.IntegerField()
     class Meta:
         model = ProductionChart
         fields = (
             'id',
             'production_order',
-            'production_order_id',
             'production_line_id',
             'product_id',
             'start_datetime',

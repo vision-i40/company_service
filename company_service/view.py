@@ -319,7 +319,7 @@ class ProductionChartViewSet(viewsets.ModelViewSet):
         return models.ProductionChart \
             .objects \
             .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk'], event_type=models.ProductionEvent.PRODUCTION) \
-            .order_by('-created')
+            .order_by('-end_datetime')
 
 class RejectChartViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = (JWTAuthentication, SessionAuthentication,)

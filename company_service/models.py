@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from model_utils.fields import AutoCreatedField, AutoLastModifiedField
 from django.db.models import Sum, Q, Count, Max, Min
 from users.models import User
-from common.models import IndexedTimeStampedModel, DateTimedEvent, Chart
+from common.models import IndexedTimeStampedModel, DateTimedEvent
 from company_service import choices
 from django.contrib.postgres.fields import ArrayField
 from django.db.models.signals import post_save

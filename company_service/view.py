@@ -332,3 +332,10 @@ class RejectChartViewSet(ProductionChartViewSet):
             .filter(production_order__production_line__company__user=self.request.user, production_order__production_line__company=self.kwargs['companies_pk']) \
             .filter(Q(event_type=models.ProductionEvent.WASTE) | Q(event_type=models.ProductionEvent.REWORK)) \
             .order_by('-end_datetime')
+
+class ProductionLineStopsViewSet(AvailabilityViewSet):
+    def get_queryset(self):
+        return models.Availability \
+            .objects \
+            .filter(production_line__company__user=self.request.user, production_line=self.kwargs['production_lines_pk'], state=choices.OFF) \
+            .order_by('-end_datetime')

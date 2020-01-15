@@ -292,25 +292,3 @@ class ProductionChart(DateTimedEvent, IndexedTimeStampedModel):
     quantity = models.IntegerField(default=1)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
     event_type = models.CharField(max_length=20, choices=ProductionEvent.EVENT_TYPES, default=ProductionEvent.PRODUCTION, db_index=True)
-
-class RejectChart(IndexedTimeStampedModel):
-    production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
-    production_order = models.ForeignKey(ProductionOrder, on_delete=models.CASCADE)
-
-    @property
-    def state(self):
-        return self.production_line.in_progress_order().production_events.last().event_type
-
-    @property
-    def quantity(self):
-        if self.state == ProductionEvent.WASTE:
-            return self.production_line.in_progress_order().waste_quantity()
-        else:
-            return self.production_line.in_progress_order().rework_quantity()
-
-    @property
-    def code(self):
-        if self.state == ProductionEvent.WASTE:
-            return self.production_line.in_progress_order().production_events.last().waste_code
-        else:
-            return self.production_line.in_progress_order().production_events.last().rework_code

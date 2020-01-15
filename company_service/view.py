@@ -5,6 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from . import serializers as serializers
 from . import models as models
 
+from django.db.models import Q
+
 from company_service import choices
 
 class CompanyViewSet(viewsets.ModelViewSet):
@@ -321,13 +323,12 @@ class ProductionChartViewSet(viewsets.ModelViewSet):
             .filter(production_order__production_line__company__user=self.request.user, production_order__production_line__company=self.kwargs['companies_pk'], event_type=models.ProductionEvent.PRODUCTION) \
             .order_by('-end_datetime')
 
-class RejectChartViewSet(viewsets.ReadOnlyModelViewSet):
-    authentication_classes = (JWTAuthentication, SessionAuthentication,)
-    permission_classes = (IsAuthenticated,)
+class RejectChartViewSet(ProductionChartViewSet):
     serializer_class = serializers.RejectChartSerializer
 
     def get_queryset(self):
-        return models.RejectChart \
+        return models.ProductionChart \
             .objects \
-            .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk']) \
-            .order_by('-created')
+            .filter(production_order__production_line__company__user=self.request.user, production_order__production_line__company=self.kwargs['companies_pk']) \
+            .filter(Q(event_type=models.ProductionEvent.WASTE) | Q(event_type=models.ProductionEvent.REWORK)) \
+            .order_by('-end_datetime')

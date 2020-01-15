@@ -323,16 +323,10 @@ class ProductionChartSerializer(serializers.HyperlinkedModelSerializer):
             'event_type'
         )
 
-class RejectChartSerializer(serializers.HyperlinkedModelSerializer):
-    waste_code = WasteCodeSerializer(read_only=True)
-    rework_code = ReworkCodeSerializer(read_only=True)
-
-    class Meta:
-        model = RejectChart
+class RejectChartSerializer(ProductionChartSerializer):
+    event_type = serializers.CharField()
+    class Meta(ProductionChartSerializer.Meta):
+        model = ProductionChart
         fields = (
-            'id',
-            'waste_code',
-            'rework_code',
-            'quantity',
-            'state',
+            ProductionChartSerializer.Meta.fields + ('event_type',)
         )

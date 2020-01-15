@@ -10,6 +10,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: company_service
+    # security_opt: 
+    #   - 'apparmor=unconfined'
 
   adminer:
     image: adminer

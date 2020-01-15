@@ -20,15 +20,3 @@ class DateTimedEvent(models.Model):
 
     class Meta:
         abstract = True
-
-class Chart(models.Model):
-    @abc.abstractmethod
-    def start_datetime(self):
-        pass
-
-    @abc.abstractmethod
-    def end_datetime(self):
-        pass
-
-    class Meta:
-        abstract = True

@@ -20,9 +20,6 @@ companies_router.register('code_groups', views.CodeGroupViewSet, 'companies-code
 companies_router.register('production_orders', views.ProductionOrderViewSet, 'production_orders')
 companies_router.register('collectors', views.CollectorViewSet, 'companies-collectors')
 companies_router.register('availability', views.AvailabilityViewSet, 'companies-availability')
-companies_router.register('availability_chart', views.AvailabilityChartViewSet, 'companies-availability_chart')
-companies_router.register('production_chart', views.ProductionChartViewSet, 'companies-production_chart')
-companies_router.register('reject_chart', views.RejectChartViewSet, 'companies-reject_chart')
 
 products_router = routers.NestedSimpleRouter(companies_router, 'products', lookup='products')
 products_router.register('units_of_measurement', views.UnitOfMeasurementViewSet,
@@ -63,6 +60,7 @@ urlpatterns = [
     url(r'^v1/', include(production_order_router.urls)),
     url(r'^v1/', include(production_line_router.urls)),
     url(r'^v1/', include(collectors_router.urls)),
+    url(r'^v1/companies/(?P<companies_pk>\d+)/charts/', include(('charts.urls', 'charts'), namespace='charts')),
     url(r'^auth/token/$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     url(r'^auth/token/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),
     url('admin/', admin.site.urls),

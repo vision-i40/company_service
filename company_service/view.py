@@ -308,31 +308,6 @@ class AvailabilityViewSet(viewsets.ModelViewSet):
             .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk']) \
             .order_by('-created')
 
-class AvailabilityChartViewSet(AvailabilityViewSet):
-    def get_queryset(self):
-        return super().get_queryset().filter(state=choices.OFF)
-
-class ProductionChartViewSet(viewsets.ModelViewSet):
-    authentication_classes = (JWTAuthentication, SessionAuthentication,)
-    permission_classes = (IsAuthenticated,)
-    serializer_class = serializers.ProductionChartSerializer
-
-    def get_queryset(self):
-        return models.ProductionChart \
-            .objects \
-            .filter(production_order__production_line__company__user=self.request.user, production_order__production_line__company=self.kwargs['companies_pk'], event_type=models.ProductionEvent.PRODUCTION) \
-            .order_by('-end_datetime')
-
-class RejectChartViewSet(ProductionChartViewSet):
-    serializer_class = serializers.RejectChartSerializer
-
-    def get_queryset(self):
-        return models.ProductionChart \
-            .objects \
-            .filter(production_order__production_line__company__user=self.request.user, production_order__production_line__company=self.kwargs['companies_pk']) \
-            .filter(Q(event_type=models.ProductionEvent.WASTE) | Q(event_type=models.ProductionEvent.REWORK)) \
-            .order_by('-end_datetime')
-
 class ProductionLineStopsViewSet(AvailabilityViewSet):
     def get_queryset(self):
         return models.Availability \

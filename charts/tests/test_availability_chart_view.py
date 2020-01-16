@@ -3,7 +3,7 @@ from rest_framework.test import APIRequestFactory
 from rest_framework_simplejwt.tokens import RefreshToken
 from company_service.models import (Availability, Company, ProductionLine, 
                                     StateEvent, CodeGroup, StopCode)
-from company_service import view as views
+from charts import views
 from company_service import choices
 from company_service.tests.view_test_support import *
 from users.models import User
@@ -49,7 +49,7 @@ class AvailabilityChartViewSetTest(TestCase):
         unactivated_refresh = RefreshToken.for_user(self.unactivated_user)
         self.unactivated_token = str(unactivated_refresh.access_token)
 
-        self.index_route = f'/v1/companies/{self.first_company.id}/availability_chart/'
+        self.index_route = f'/v1/companies/{self.first_company.id}/charts/availability_chart/'
 
         self.availability_objects = [
             self.create_availability_object(self.first_production_line, datetime.datetime(2020, 1, 3, 10, 33, 15, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), datetime.datetime(2020, 1, 3, 11, 38, 15, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.OFF, self.first_stop_code),

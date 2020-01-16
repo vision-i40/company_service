@@ -285,10 +285,3 @@ class Availability(DateTimedEvent, IndexedTimeStampedModel):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE, related_name='availabilities')
     state = models.CharField(max_length=3, choices=choices.STATES, default=choices.ON)
     stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)
-
-class ProductionChart(DateTimedEvent, IndexedTimeStampedModel):
-    production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE)
-    production_order = models.ForeignKey(ProductionOrder, on_delete=models.CASCADE)
-    quantity = models.IntegerField(default=1)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
-    event_type = models.CharField(max_length=20, choices=ProductionEvent.EVENT_TYPES, default=ProductionEvent.PRODUCTION, db_index=True)

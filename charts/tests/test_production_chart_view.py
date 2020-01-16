@@ -2,8 +2,9 @@ from django.test import TestCase
 from rest_framework.test import APIRequestFactory
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from company_service.models import ProductionEvent, Product, Company, StopCode, CodeGroup, ProductionChart, ProductionLine, ProductionOrder
-from company_service import view as views
+from company_service.models import (ProductionEvent, Product, Company, StopCode, 
+                                    CodeGroup, ProductionLine, ProductionOrder)
+from charts import views
 from users.models import User
 
 import json
@@ -46,7 +47,7 @@ class ProductionChartTestCase(TestCase):
         self.active_token = str(active_refresh.access_token)
         self.authorization_active_token = f'Bearer {self.active_token}'
 
-        self.index_route = f'/v1/companies/{self.first_company.id}/production_chart/'
+        self.index_route = f'/v1/companies/{self.first_company.id}/charts/production_chart/'
 
         self.production_events = [
             self.create_production_event(ProductionEvent.PRODUCTION, 20, self.first_production_order, datetime.datetime(2019, 12, 26, 9, 23, 15, 940070, tzinfo=pytz.UTC).strftime(self.test_date_format)),

@@ -1,9 +1,9 @@
 from django.test import TestCase
 from rest_framework.test import APIRequestFactory
 from rest_framework_simplejwt.tokens import RefreshToken
-from company_service.models import (ProductionEvent, Product, Company, ReworkCode, 
-                                    WasteCode, CodeGroup, ProductionLine, ProductionOrder)
-from company_service import view as views
+from company_service.models import (ProductionEvent, Product, Company, 
+                                    CodeGroup, ProductionLine, ProductionOrder)
+from charts import views
 from users.models import User
 from company_service.tests.view_test_support import *
 
@@ -60,7 +60,7 @@ class ProductionChartTestCase(TestCase):
         unactivated_refresh = RefreshToken.for_user(self.unactivated_user)
         self.unactivated_token = str(unactivated_refresh.access_token)
 
-        self.index_route = f'/v1/companies/{self.first_company.id}/reject_chart/'
+        self.index_route = f'/v1/companies/{self.first_company.id}/charts/reject_chart/'
 
         self.production_events = [
             self.create_production_event(ProductionEvent.PRODUCTION, 47, self.first_production_order, datetime.datetime(2019, 12, 26, 9, 23, 15, 940070, tzinfo=pytz.UTC).strftime(self.test_date_format)),

@@ -2,8 +2,10 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.db.models import Q
 
-from company_service.models import ManualStop, StateEvent, Availability, ProductionEvent, ProductionChart
+from company_service.models import ManualStop, StateEvent, Availability, ProductionEvent
 from company_service import models, choices
+
+from charts.models import ProductionChart
 
 def get_attribute_from_the_last_object_of(model, attribute):
     return model.objects.values(attribute).order_by('created').last()

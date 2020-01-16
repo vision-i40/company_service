@@ -13,37 +13,37 @@ router.register('companies', views.CompanyViewSet, basename="companies")
 router.register('users', UserViewSet, basename='users')
 
 companies_router = routers.NestedSimpleRouter(router, 'companies', lookup='companies')
-companies_router.register('production_lines', views.ProductionLineViewSet, base_name='companies-production_lines')
-companies_router.register('products', views.ProductViewSet, base_name='companies-products')
-companies_router.register('turn_schemes', views.TurnSchemeViewSet, base_name='companies-turn_schemes')
-companies_router.register('code_groups', views.CodeGroupViewSet, base_name='companies-code_groups')
-companies_router.register('production_orders', views.ProductionOrderViewSet, base_name='production_orders')
-companies_router.register('collectors', views.CollectorViewSet, base_name='companies-collectors')
-companies_router.register('availability', views.AvailabilityViewSet, base_name='companies-availability')
+companies_router.register('production_lines', views.ProductionLineViewSet, basename='companies-production_lines')
+companies_router.register('products', views.ProductViewSet, basename='companies-products')
+companies_router.register('turn_schemes', views.TurnSchemeViewSet, basename='companies-turn_schemes')
+companies_router.register('code_groups', views.CodeGroupViewSet, basename='companies-code_groups')
+companies_router.register('production_orders', views.ProductionOrderViewSet, basename='production_orders')
+companies_router.register('collectors', views.CollectorViewSet, basename='companies-collectors')
+companies_router.register('availability', views.AvailabilityViewSet, basename='companies-availability')
 
 products_router = routers.NestedSimpleRouter(companies_router, 'products', lookup='products')
 products_router.register('units_of_measurement', views.UnitOfMeasurementViewSet,
-                         base_name='companies-products-units_of_measurement')
+                         basename='companies-products-units_of_measurement')
 
 turn_schemes_router = routers.NestedSimpleRouter(companies_router, 'turn_schemes', lookup='turn_schemes')
-turn_schemes_router.register(r'turns', views.TurnViewSet, base_name='companies-turn_schemes-turns')
+turn_schemes_router.register(r'turns', views.TurnViewSet, basename='companies-turn_schemes-turns')
 
 code_group_router = routers.NestedSimpleRouter(companies_router, 'code_groups', lookup='code_groups')
-code_group_router.register('stop_codes', views.StopCodeViewSet, base_name='companies-code_groups-stop_codes')
-code_group_router.register('waste_codes', views.WasteCodeViewSet, base_name='companies-code_groups-waste_codes')
-code_group_router.register('rework_codes', views.ReworkCodeViewSet, base_name='companies-code_groups-rework_codes')
+code_group_router.register('stop_codes', views.StopCodeViewSet, basename='companies-code_groups-stop_codes')
+code_group_router.register('waste_codes', views.WasteCodeViewSet, basename='companies-code_groups-waste_codes')
+code_group_router.register('rework_codes', views.ReworkCodeViewSet, basename='companies-code_groups-rework_codes')
 
 production_line_router = routers.NestedSimpleRouter(companies_router, 'production_lines', lookup='production_lines')
-production_line_router.register('state_events', views.StateEventViewSet, base_name='companies-production_lines-state_events')
-production_line_router.register('manual_stops', views.ManualStopViewSet, base_name='companies-production_lines-manual_stops')
-production_line_router.register('stops', views.ProductionLineStopsViewSet, base_name='companies-production_lines-stops')
-production_line_router.register('pending_stops', views.ProductionLinePendingStopsViewSet, base_name='companies-production_lines-pending_stops')
+production_line_router.register('state_events', views.StateEventViewSet, basename='companies-production_lines-state_events')
+production_line_router.register('manual_stops', views.ManualStopViewSet, basename='companies-production_lines-manual_stops')
+production_line_router.register('stops', views.ProductionLineStopsViewSet, basename='companies-production_lines-stops')
+production_line_router.register('pending_stops', views.ProductionLinePendingStopsViewSet, basename='companies-production_lines-pending_stops')
 
 production_order_router = routers.NestedSimpleRouter(companies_router, 'production_orders', lookup='production_orders')
-production_order_router.register('production_events', views.ProductionEventViewSet, base_name='companies-production_orders-production_events')
+production_order_router.register('production_events', views.ProductionEventViewSet, basename='companies-production_orders-production_events')
 
 collectors_router = routers.NestedSimpleRouter(companies_router, 'collectors', lookup='collectors')
-collectors_router.register('channels', views.ChannelViewSet, base_name='companies-collectors-channels')
+collectors_router.register('channels', views.ChannelViewSet, basename='companies-collectors-channels')
 
 swagger_view = get_schema_view(
     title='Docs',

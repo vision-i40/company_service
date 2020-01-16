@@ -339,3 +339,7 @@ class ProductionLineStopsViewSet(AvailabilityViewSet):
             .objects \
             .filter(production_line__company__user=self.request.user, production_line=self.kwargs['production_lines_pk'], state=choices.OFF) \
             .order_by('-end_datetime')
+
+class ProductionLinePendingStopsViewSet(ProductionLineStopsViewSet):
+    def get_queryset(self):
+        return super().get_queryset().filter(stop_code=None)

@@ -3,7 +3,7 @@ from rest_framework.test import APIRequestFactory
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from company_service.models import (Company, CodeGroup, StopCode, 
-                                    ProductionLine, StateEvent, StateEvent)
+                                    ProductionLine, StateEvent)
 from company_service import view as views
 from company_service import choices
 from users.models import User

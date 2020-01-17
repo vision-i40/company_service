@@ -68,8 +68,8 @@ class ProductionChartTestCase(TestCase):
             self.create_production_event(ProductionEvent.WASTE, 14, self.first_production_order, datetime.datetime(2019, 12, 26, 9, 33, 15, 940070, tzinfo=pytz.UTC).strftime(self.test_date_format)),
             self.create_production_event(ProductionEvent.WASTE, 5, self.first_production_order, datetime.datetime(2019, 12, 26, 9, 38, 25, 840070, tzinfo=pytz.UTC).strftime(self.test_date_format)),
             self.create_production_event(ProductionEvent.WASTE, 8, self.first_production_order, datetime.datetime(2019, 12, 26, 9, 48, 15, 840070, tzinfo=pytz.UTC).strftime(self.test_date_format)),
-            self.create_production_event(ProductionEvent.REWORK, 47, self.first_production_order, datetime.datetime(2019, 12, 26, 10, 15, 5, 940070, tzinfo=pytz.UTC).strftime(self.test_date_format)),
-            self.create_production_event(ProductionEvent.REWORK, 32, self.first_production_order, datetime.datetime(2019, 12, 26, 10, 59, 15, 940070, tzinfo=pytz.UTC).strftime(self.test_date_format)),
+            self.create_production_event(ProductionEvent.REWORK, 7, self.first_production_order, datetime.datetime(2019, 12, 26, 10, 15, 5, 940070, tzinfo=pytz.UTC).strftime(self.test_date_format)),
+            self.create_production_event(ProductionEvent.REWORK, 12, self.first_production_order, datetime.datetime(2019, 12, 26, 10, 59, 15, 940070, tzinfo=pytz.UTC).strftime(self.test_date_format)),
         ]
 
     def create_production_event(self, event_type, quantity, production_order, event_datetime):
@@ -123,5 +123,7 @@ class ProductionChartTestCase(TestCase):
         self.assertEqual(len(response_dict['results']), 2)
         self.assertEqual(response_dict['results'][0]['start_datetime'], self.production_events[5].event_datetime)
         self.assertEqual(response_dict['results'][0]['end_datetime'], self.production_events[6].event_datetime)
+        self.assertEqual(response_dict['results'][0]['quantity'], 19)
         self.assertEqual(response_dict['results'][1]['start_datetime'], self.production_events[2].event_datetime)
         self.assertEqual(response_dict['results'][1]['end_datetime'], self.production_events[4].event_datetime)
+        self.assertEqual(response_dict['results'][1]['quantity'], 27)

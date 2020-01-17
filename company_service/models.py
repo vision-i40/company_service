@@ -276,12 +276,12 @@ class ProductionEvent(IndexedTimeStampedModel):
     waste_code = models.ForeignKey(WasteCode, on_delete=models.SET_NULL, null=True, blank=True)
     rework_code = models.ForeignKey(ReworkCode, on_delete=models.SET_NULL, null=True, blank=True)
 
-class ManualStop(IndexedTimeStampedModel, DateTimedEvent):
-    production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE, null=True)
-    stop_code = models.ForeignKey(StopCode, on_delete=models.CASCADE, null=True)
-    state = choices.OFF
-
 class Availability(DateTimedEvent, IndexedTimeStampedModel):
     production_line = models.ForeignKey(ProductionLine, on_delete=models.CASCADE, related_name='availabilities')
     state = models.CharField(max_length=3, choices=choices.STATES, default=choices.ON)
     stop_code = models.ForeignKey(StopCode, on_delete=models.SET_NULL, null=True)
+    is_manual = models.BooleanField(default=False)
+
+class ManualStop(Availability):
+    class Meta:
+        proxy = True

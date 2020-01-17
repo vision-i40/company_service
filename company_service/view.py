@@ -276,26 +276,6 @@ class StateEventViewSet(viewsets.ModelViewSet):
             )
         serializer.save(production_line=production_line)
 
-class ManualStopViewSet(viewsets.ModelViewSet):
-    authentication_classes = (JWTAuthentication, SessionAuthentication,)
-    permission_classes = (IsAuthenticated,)
-    serializer_class = serializers.ManualStopSerializer
-
-    def get_queryset(self):
-        return models.ManualStop \
-            .objects \
-            .filter(production_line__company__user=self.request.user, production_line=self.kwargs['production_lines_pk']) \
-            .order_by('-created')
-
-    def perform_create(self, serializer):
-        production_line = models.ProductionLine \
-            .objects \
-            .get(
-                company__user=self.request.user,
-                pk=self.kwargs['production_lines_pk']
-            )
-        serializer.save(production_line=production_line)
-
 class AvailabilityViewSet(viewsets.ModelViewSet):
     authentication_classes = (JWTAuthentication, SessionAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -307,6 +287,24 @@ class AvailabilityViewSet(viewsets.ModelViewSet):
             .objects \
             .filter(production_line__company__user=self.request.user, production_line__company=self.kwargs['companies_pk']) \
             .order_by('-created')
+
+class ManualStopViewSet(AvailabilityViewSet):
+    serializer_class = serializers.ManualStopSerializer
+
+    def get_queryset(self):
+        return models.ManualStop \
+            .objects \
+            .filter(production_line__company__user=self.request.user, production_line=self.kwargs['production_lines_pk'], is_manual=True) \
+            .order_by('-created')
+
+    def perform_create(self, serializer):
+        production_line = models.ProductionLine \
+            .objects \
+            .get(
+                company__user=self.request.user,
+                pk=self.kwargs['production_lines_pk']
+            )
+        serializer.save(production_line=production_line, is_manual=True)
 
 class ProductionLineStopsViewSet(AvailabilityViewSet):
     def get_queryset(self):

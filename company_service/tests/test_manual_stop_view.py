@@ -3,7 +3,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.test import APIRequestFactory
 
 from company_service import view as views
-from company_service.models import ManualStop, ProductionLine, StopCode, CodeGroup, Company
+from company_service.models import (ManualStop, ProductionLine, StopCode,
+                                    CodeGroup, Company, StateEvent)
 from company_service.serializers import ManualStopSerializer
 from users.models import User
 
@@ -37,14 +38,16 @@ class ManualStopViewSetTest(TestCase):
             production_line=self.first_production_line,
             start_datetime=datetime.datetime(2019, 12, 3, 11, 3, 55, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format),
             end_datetime=datetime.datetime(2019, 12, 3, 12, 3, 55, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format),
-            stop_code=self.first_stop_code
+            stop_code=self.first_stop_code,
+            is_manual=True
         )
 
         self.second_manual_stop = ManualStop.objects.create(
             production_line=self.first_production_line,
             start_datetime=datetime.datetime(2019, 12, 3, 21, 3, 55, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format),
             end_datetime=datetime.datetime(2019, 12, 3, 22, 3, 55, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format),
-            stop_code=self.first_stop_code
+            stop_code=self.first_stop_code,
+            is_manual=True
         )
 
         self.first_company.users.add(self.active_user)
@@ -82,7 +85,7 @@ class ManualStopViewSetTest(TestCase):
         payload = {
             'start_datetime': '2019-10-14T11:39:13Z',
             'end_datetime': '2019-10-14T12:39:13Z',
-            'stop_code_id': self.first_stop_code.id
+            'stop_code_id': self.first_stop_code.id,
         }
 
         request = factory.post(self.index_route, payload, format='json', HTTP_AUTHORIZATION=self.authorization_active_token)
@@ -95,6 +98,7 @@ class ManualStopViewSetTest(TestCase):
         self.assertEqual(response_dict['start_datetime'], payload['start_datetime'])
         self.assertEqual(response_dict['end_datetime'], payload['end_datetime'])
         self.assertEqual(response_dict['stop_code_id'], payload['stop_code_id'])
+        self.assertEqual(response_dict['is_manual'], True)
 
     def test_add_manual_stop_with_start_datetime_higher_than_end_datetime_response_is_400(self):
         manual_stop_view = self.view.as_view({'post': 'create'})
@@ -112,4 +116,7 @@ class ManualStopViewSetTest(TestCase):
         response.render()
 
         self.assertEqual(response.status_code, 400)
+
+    def test_to_check_if_state_events_were_created(self):
+        self.assertEqual(StateEvent.objects.count(), 4)
 

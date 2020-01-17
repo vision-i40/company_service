@@ -264,29 +264,6 @@ class StateEventSerializer(serializers.HyperlinkedModelSerializer):
             'modified',
         )
 
-class ManualStopSerializer(serializers.HyperlinkedModelSerializer):
-    stop_code = StopCodeSerializer(read_only=True)
-
-    stop_code_id = serializers.IntegerField()
-    state = serializers.CharField(read_only=True)
-    class Meta:
-        model = ManualStop
-        fields = (
-            'id',
-            'stop_code',
-            'stop_code_id',
-            'start_datetime',
-            'end_datetime',
-            'state',
-            'created',
-            'modified',
-        )
-
-    def validate(self, data):
-        if data['start_datetime'] >= data['end_datetime']:
-            raise serializers.ValidationError('Please provide to end_datetime a value higher than the start_datetime.')
-        return data
-
 class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
     production_line = ProductionLineSerializer(read_only=True)
     stop_code = StopCodeSerializer(read_only=True)
@@ -302,4 +279,23 @@ class AvailabilitySerializer(serializers.HyperlinkedModelSerializer):
             'stop_code',
             'stop_code_id',
             'state',
+        )
+
+class ManualStopSerializer(AvailabilitySerializer):
+    class Meta(AvailabilitySerializer.Meta):
+        model = Availability
+        fields = (
+            AvailabilitySerializer.Meta.fields + ('is_manual', 'created', 'modified')
+        )
+
+    def validate(self, data):
+        if data['start_datetime'] >= data['end_datetime']:
+            raise serializers.ValidationError('Please provide to end_datetime a value higher than the start_datetime.')
+        return data
+
+class ProductionLineStopSerializer(AvailabilitySerializer):
+    class Meta(AvailabilitySerializer.Meta):
+        model = Availability
+        fields = (
+            AvailabilitySerializer.Meta.fields + ('is_manual',)
         )

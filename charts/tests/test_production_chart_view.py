@@ -7,6 +7,8 @@ from company_service.models import (ProductionEvent, Product, Company, StopCode,
 from charts import views
 from users.models import User
 
+from company_service.tests.view_test_support import *
+
 import json
 import datetime
 import pytz
@@ -41,11 +43,19 @@ class ProductionChartTestCase(TestCase):
             quantity=1000,
             state=ProductionOrder.IN_PROGRESS)
 
+        self.noise_company = Company.objects.create(trade_name="company two", slug="c2", is_active=False)
+        self.unactivated_user = User.objects.create(email="unactivatedtest@test.com", password="any-pwd", is_active=False)
+
         self.first_company.users.add(self.active_user)
         active_refresh = RefreshToken.for_user(self.active_user)
 
         self.active_token = str(active_refresh.access_token)
         self.authorization_active_token = f'Bearer {self.active_token}'
+
+        self.noise_company.users.add(self.unactivated_user)
+        unactive_refresh = RefreshToken.for_user(self.unactivated_user)
+
+        self.unactivated_token = str(unactive_refresh.access_token)
 
         self.index_route = f'/v1/companies/{self.first_company.id}/charts/production_chart/'
 
@@ -68,6 +78,31 @@ class ProductionChartTestCase(TestCase):
             event_datetime=event_datetime,
             quantity=quantity,
             event_type=event_type)
+
+    def test_production_chart_list_authentication_response_is_401_when_there_is_no_authentication_token(self):
+        assert_unauthorized_with_no_token(
+            self,
+            self.index_route,
+            resource='list',
+            companies_pk=self.first_company.id
+        )
+
+    def test_production_chart_list_authentication_response_is_401_when_an_invalid_authentication_token_is_provided(self):
+        assert_unauthorized_with_invalid_token(
+            self,
+            self.index_route,
+            resource='list',
+            companies_pk=self.first_company.id
+        )
+
+    def test_production_chart_list_authentication_response_is_401_when_a_token_from_an_unactivated_user_is_provided(self):
+        assert_unauthorized_with_unactivated_user(
+            self,
+            self.index_route,
+            self.unactivated_token,
+            resource='list',
+            companies_pk=self.first_company.id
+        )
 
     def test_production_chart_list_response_is_200(self):
         production_chart_view = self.view.as_view({'get': 'list'})

@@ -1,7 +1,7 @@
 from django.test import TestCase
 from rest_framework.test import APIRequestFactory
 from rest_framework_simplejwt.tokens import RefreshToken
-from company_service.models import (Availability, Company, ProductionLine, 
+from company_service.models import (Company, ProductionLine, 
                                     StateEvent, CodeGroup, StopCode)
 from charts import views
 from company_service import choices
@@ -51,23 +51,25 @@ class AvailabilityChartViewSetTest(TestCase):
 
         self.index_route = f'/v1/companies/{self.first_company.id}/charts/availability_chart/'
 
-        self.availability_objects = [
-            self.create_availability_object(self.first_production_line, datetime.datetime(2020, 1, 3, 10, 33, 15, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), datetime.datetime(2020, 1, 3, 11, 38, 15, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.OFF, self.first_stop_code),
-            self.create_availability_object(self.first_production_line, datetime.datetime(2020, 1, 3, 11, 38, 16, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), datetime.datetime(2020, 1, 3, 12, 0, 0, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.ON, None),
-            self.create_availability_object(self.first_production_line, datetime.datetime(2020, 1, 3, 12, 0, 1, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), datetime.datetime(2020, 1, 3, 12, 34, 15, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.OFF, self.second_stop_code)
+        self.state_events = [
+            self.create_state_event(self.first_production_line, self.first_stop_code, datetime.datetime(2020, 1, 3, 10, 33, 15, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.OFF),
+            self.create_state_event(self.first_production_line, self.first_stop_code, datetime.datetime(2020, 1, 3, 11, 38, 15, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.OFF),
+            self.create_state_event(self.first_production_line, None, datetime.datetime(2020, 1, 3, 11, 38, 16, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.ON),
+            self.create_state_event(self.first_production_line, None, datetime.datetime(2020, 1, 3, 12, 0, 1, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.ON),
+            self.create_state_event(self.first_production_line, self.second_stop_code, datetime.datetime(2020, 1, 3, 12, 0, 1, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.OFF),
+            self.create_state_event(self.first_production_line, self.second_stop_code, datetime.datetime(2020, 1, 3, 12, 34, 15, 988870, tzinfo=pytz.UTC).strftime(self.test_date_format), choices.OFF),
         ]
     
-    def create_availability_object(self, production_line, start_datetime, end_datetime, state, stop_code):
-        return Availability.objects.create(
+    def create_state_event(self, production_line, stop_code, event_datetime, state):
+        return StateEvent.objects.create(
             production_line=production_line,
-            start_datetime=start_datetime,
-            end_datetime=end_datetime,
-            state=state,
-            stop_code=stop_code
+            stop_code=stop_code,
+            event_datetime=event_datetime,
+            state=state
         )
 
     def tearDown(self):
-        Availability.objects.all().delete()
+        StateEvent.objects.all().delete()
 
     def test_availability_list_authentication_response_is_401_when_there_is_no_authentication_token(self):
         assert_unauthorized_with_no_token(
@@ -105,7 +107,7 @@ class AvailabilityChartViewSetTest(TestCase):
         response_dict = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(len(response_dict['results']), 2)
-        self.assertEqual(response_dict['results'][0]['start_datetime'], self.availability_objects[2].start_datetime)
-        self.assertEqual(response_dict['results'][0]['end_datetime'], self.availability_objects[2].end_datetime)
-        self.assertEqual(response_dict['results'][1]['start_datetime'], self.availability_objects[0].start_datetime)
-        self.assertEqual(response_dict['results'][1]['end_datetime'], self.availability_objects[0].end_datetime)
+        self.assertEqual(response_dict['results'][0]['start_datetime'], self.state_events[4].event_datetime)
+        self.assertEqual(response_dict['results'][0]['end_datetime'], self.state_events[5].event_datetime)
+        self.assertEqual(response_dict['results'][1]['start_datetime'], self.state_events[0].event_datetime)
+        self.assertEqual(response_dict['results'][1]['end_datetime'], self.state_events[1].event_datetime)

@@ -83,6 +83,8 @@ class ProductionChartTestCase(TestCase):
         self.assertEqual(len(response_dict['results']), 2)
         self.assertEqual(response_dict['results'][0]['start_datetime'], self.production_events[5].event_datetime)
         self.assertEqual(response_dict['results'][0]['end_datetime'], self.production_events[6].event_datetime)
+        self.assertEqual(response_dict['results'][0]['quantity'], 79)
         self.assertEqual(response_dict['results'][1]['start_datetime'], self.production_events[0].event_datetime)
         self.assertEqual(response_dict['results'][1]['end_datetime'], self.production_events[2].event_datetime)
+        self.assertEqual(response_dict['results'][1]['quantity'], 46)
 
